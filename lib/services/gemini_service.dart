@@ -1,32 +1,20 @@
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:flutter/foundation.dart';
 import 'package:klaro/models/quiz_question.dart';
 import 'package:klaro/utils/constants.dart';
 import 'package:klaro/utils/helpers.dart';
 
-/// ============================================================
-/// Gemini Service (Firebase AI Logic SDK)
-/// ============================================================
-/// Handles all AI interactions using the Firebase AI Logic SDK.
-/// No API key needed in the codebase — Firebase manages it server-side.
-///
-/// Migration notes:
-/// - Replaced manual HTTP calls with FirebaseAI.googleAI()
-/// - Removed geminiApiKey dependency from constants.dart
-/// - All prompts and parsing logic remain unchanged
+/// Handles all AI interactions through Firebase AI Logic.
+class GeminiServiceException implements Exception {
+  const GeminiServiceException(this.message);
+
+  final String message;
+
+  @override
+  String toString() => message;
+}
 
 class GeminiService {
-  late final GenerativeModel _model;
-
-  GeminiService() {
-    _model = FirebaseAI.googleAI().generativeModel(
-      model: AppConstants.geminiModel,
-      generationConfig: GenerationConfig(
-        temperature: 0.2,
-        maxOutputTokens: 4096,
-      ),
-    );
-  }
-
   /// Create a model instance with custom generation config.
   GenerativeModel _modelWith({
     double temperature = 0.2,
@@ -52,25 +40,76 @@ class GeminiService {
       maxOutputTokens: maxOutputTokens,
     );
 
-    final response = await model.generateContent([Content.text(prompt)]);
-    final text = response.text;
+    try {
+      final response = await model.generateContent([Content.text(prompt)]);
+      final text = response.text;
 
-    if (text == null || text.trim().isEmpty) {
-      throw StateError('Gemini returned no text.');
+      if (text == null || text.trim().isEmpty) {
+        throw const GeminiServiceException(
+          'Klaro AI returned an empty response. Please try again.',
+        );
+      }
+
+      return text.trim();
+    } on GeminiServiceException {
+      rethrow;
+    } on FirebaseAISdkException catch (error, stackTrace) {
+      debugPrint('Firebase AI SDK error: ${error.message}');
+      debugPrintStack(stackTrace: stackTrace);
+      throw const GeminiServiceException(
+        'The Firebase AI SDK could not read the response. Update packages and try again.',
+      );
+    } on FirebaseAIException catch (error, stackTrace) {
+      debugPrint('Firebase AI request failed: ${error.message}');
+      debugPrintStack(stackTrace: stackTrace);
+      throw GeminiServiceException(_friendlyFirebaseAIMessage(error.message));
+    } catch (error, stackTrace) {
+      debugPrint('Klaro AI request failed: $error');
+      debugPrintStack(stackTrace: stackTrace);
+      throw const GeminiServiceException(
+        'Klaro AI is unavailable right now. Check internet and Firebase AI setup.',
+      );
     }
-
-    return text.trim();
   }
 
-  // ── Word Simplification ───────────────────────────────────
+  String _friendlyFirebaseAIMessage(String message) {
+    final normalized = message.toLowerCase();
 
-  /// Simplify a word and provide Tagalog/Taglish translation.
-  /// Returns a map with 'explanation' and 'tagalog' keys.
-  Future<Map<String, String>> simplifyWord(String word,
-      {String? context}) async {
+    if (normalized.contains('firebasevertexai.googleapis.com') ||
+        normalized.contains('firebase ai logic api') ||
+        normalized.contains('vertex ai in firebase api') ||
+        normalized.contains('service_disabled')) {
+      return 'Firebase AI Logic is not enabled for this Firebase project yet. Enable AI Logic in Firebase Console, wait a few minutes, then try again.';
+    }
+
+    if (normalized.contains('api_key_invalid') ||
+        normalized.contains('api key')) {
+      return 'Firebase rejected the Android API key. Check that google-services.json belongs to this Firebase project and Android app.';
+    }
+
+    if (normalized.contains('limit: 0') && normalized.contains('quota')) {
+      return 'This Firebase project has zero quota for the selected Gemini model. Update the model or enable billing/quota in Google AI Studio.';
+    }
+
+    if (normalized.contains('quota')) {
+      return 'Firebase AI quota was exceeded. Wait a few seconds, then try again. If it keeps happening, check the project quota.';
+    }
+
+    if (normalized.contains('permission_denied') ||
+        normalized.contains('permission denied')) {
+      return 'Firebase AI permission was denied. Check Firebase AI Logic, billing/API access, and the Android app configuration.';
+    }
+
+    return 'Klaro AI failed: $message';
+  }
+
+  Future<Map<String, String>> simplifyWord(
+    String word, {
+    String? context,
+  }) async {
     final prompt = '''
-You are a helpful tutor for Filipino Grade 8 students.
-Explain this word in very simple terms that a 13-year-old can understand.
+You are a helpful tutor for Filipino Grade 7 students.
+Explain this word in very simple terms that a 12-13-year-old can understand.
 Also provide a Tagalog or Taglish translation/explanation.
 Keep each answer to one short sentence.
 
@@ -84,7 +123,7 @@ Respond in this exact JSON format only, no other text:
 }
 ''';
 
-    final text = await _generateText(prompt, maxOutputTokens: 2048);
+    final text = await _generateText(prompt, maxOutputTokens: 512);
     final parsed = Helpers.tryParseJson(text);
 
     if (parsed != null && parsed is Map) {
@@ -97,23 +136,18 @@ Respond in this exact JSON format only, no other text:
     }
 
     if (text.trim().startsWith('{')) {
-      throw StateError('Gemini returned incomplete JSON.');
+      throw const GeminiServiceException('Klaro AI returned incomplete JSON.');
     }
 
-    // Fallback: return plain text as explanation if Gemini did not use JSON.
     return {
       'explanation': text,
       'tagalog': 'Hindi available ang translation.',
     };
   }
 
-  // ── Quiz Generation ───────────────────────────────────────
-
-  /// Generate quiz questions from lesson content.
-  /// Returns a list of QuizQuestion objects.
   Future<List<QuizQuestion>> generateQuizQuestions(String lessonContent) async {
     final prompt = '''
-You are creating a comprehension quiz for a Filipino Grade 8 student.
+You are creating a comprehension quiz for a Filipino Grade 7 student.
 Based on this lesson, generate exactly 3 quiz questions.
 
 Rules:
@@ -128,10 +162,10 @@ $lessonContent
 Respond in this exact JSON format only, no other text:
 [
   {
-    "question": "What is evaporation?",
+    "question": "Question text here?",
     "type": "multipleChoice",
-    "choices": ["A) Water turning to gas", "B) Gas turning to water", "C) Water turning to ice", "D) Ice turning to water"],
-    "correctAnswer": "A) Water turning to gas"
+    "choices": ["A) Option 1", "B) Option 2", "C) Option 3", "D) Option 4"],
+    "correctAnswer": "A) Option 1"
   },
   {
     "question": "Another question here?",
@@ -140,16 +174,16 @@ Respond in this exact JSON format only, no other text:
     "correctAnswer": "B) Option 2"
   },
   {
-    "question": "Explain in your own words what happens during condensation.",
+    "question": "Explain the main idea in your own words.",
     "type": "shortAnswer",
     "choices": null,
-    "correctAnswer": "Water vapor cools down and turns back into liquid water droplets"
+    "correctAnswer": "A short expected answer here"
   }
 ]
 ''';
 
     try {
-      final text = await _generateText(prompt);
+      final text = await _generateText(prompt, maxOutputTokens: 2048);
       final parsed = Helpers.tryParseJson(text);
 
       if (parsed != null && parsed is List) {
@@ -159,9 +193,9 @@ Respond in this exact JSON format only, no other text:
         }).toList();
       }
 
-      // Fallback: return hardcoded questions
       return _fallbackQuestions();
-    } catch (e) {
+    } catch (error) {
+      debugPrint('Quiz generation failed: $error');
       return _fallbackQuestions();
     }
   }
@@ -172,37 +206,34 @@ Respond in this exact JSON format only, no other text:
         question: 'What is the main topic of this lesson?',
         type: QuestionType.multipleChoice,
         choices: [
-          'A) The water cycle',
-          'B) The food chain',
-          'C) The solar system',
-          'D) The human body',
+          'A) The lesson topic',
+          'B) An unrelated topic',
+          'C) A classroom rule',
+          'D) A personal opinion',
         ],
-        correctAnswer: 'A) The water cycle',
+        correctAnswer: 'A) The lesson topic',
       ),
       QuizQuestion(
-        question: 'What happens during evaporation?',
+        question: 'What should you do with important terms from the lesson?',
         type: QuestionType.multipleChoice,
         choices: [
-          'A) Water freezes into ice',
-          'B) Water turns into vapor due to heat',
-          'C) Clouds form in the sky',
-          'D) Rain falls from clouds',
+          'A) Ignore them',
+          'B) Memorize without understanding',
+          'C) Use them to explain the lesson',
+          'D) Remove them from notes',
         ],
-        correctAnswer: 'B) Water turns into vapor due to heat',
+        correctAnswer: 'C) Use them to explain the lesson',
       ),
       QuizQuestion(
         question:
-            'In your own words, explain why the water cycle is important for life on Earth.',
+            'Explain one important idea from this lesson in your own words.',
         type: QuestionType.shortAnswer,
         correctAnswer:
-            'The water cycle distributes fresh water, regulates temperature, and supports all living things.',
+            'The answer should explain a key idea from the lesson clearly.',
       ),
     ];
   }
 
-  // ── Quiz Evaluation ───────────────────────────────────────
-
-  /// Evaluate student answers and return scores with feedback.
   Future<Map<String, dynamic>> evaluateQuizAnswers(
     List<QuizQuestion> questions,
     List<String> studentAnswers,
@@ -218,7 +249,7 @@ Student Answer: $answer
     }).join('\n');
 
     final prompt = '''
-Evaluate these student answers for a Grade 8 quiz.
+Evaluate these student answers for a Grade 7 quiz.
 Be encouraging but honest. For short answer questions, accept answers that show understanding even if not word-perfect.
 
 $questionsText
@@ -236,16 +267,16 @@ Respond in this exact JSON format only, no other text:
 ''';
 
     try {
-      final text = await _generateText(prompt);
+      final text = await _generateText(prompt, maxOutputTokens: 2048);
       final parsed = Helpers.tryParseJson(text);
 
       if (parsed != null && parsed is Map) {
         return Map<String, dynamic>.from(parsed);
       }
 
-      // Fallback: simple evaluation
       return _fallbackEvaluation(questions, studentAnswers);
-    } catch (e) {
+    } catch (error) {
+      debugPrint('Quiz evaluation failed: $error');
       return _fallbackEvaluation(questions, studentAnswers);
     }
   }
@@ -276,10 +307,6 @@ Respond in this exact JSON format only, no other text:
     return {'score': score, 'total': questions.length, 'results': results};
   }
 
-  // ── Conversational AI ─────────────────────────────────────
-
-  /// Conduct a conversational AI assessment.
-  /// Takes lesson content and conversation history, returns AI response.
   Future<Map<String, dynamic>> conductConversation(
     String lessonContent,
     List<Map<String, String>> conversationHistory,
@@ -295,7 +322,7 @@ Respond in this exact JSON format only, no other text:
     final isNearEnd = exchangeCount >= 4;
 
     final prompt = '''
-You are a friendly AI tutor named Klaro, helping a Filipino Grade 8 student understand a lesson.
+You are a friendly AI tutor named Klaro, helping a Filipino Grade 7 student understand a lesson.
 
 Rules:
 - Ask follow-up questions to confirm their understanding.
@@ -303,7 +330,7 @@ Rules:
 - Relate concepts to everyday Filipino life when possible.
 - Keep responses short (2-3 sentences max).
 ${isNearEnd ? '''
-- This is exchange $exchangeCount. It's time to wrap up.
+- This is exchange $exchangeCount. It is time to wrap up.
 - After your response, provide a final assessment.
 - End your message with the student's score and summary in this exact format on a new line:
 ASSESSMENT_JSON: {"score": 4.5, "summary": "Brief summary of student understanding"}
@@ -329,7 +356,6 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
         maxOutputTokens: 1024,
       );
 
-      // Check if the response contains the assessment JSON
       if (text.contains('ASSESSMENT_JSON:')) {
         final parts = text.split('ASSESSMENT_JSON:');
         final message = parts[0].trim();
@@ -348,7 +374,8 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
         'message': text.trim(),
         'isComplete': false,
       };
-    } catch (e) {
+    } catch (error) {
+      debugPrint('Conversation generation failed: $error');
       return {
         'message': 'I had trouble understanding. Can you try explaining again?',
         'isComplete': false,
@@ -356,8 +383,7 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
     }
   }
 
-  /// Get the initial AI greeting for a conversation.
   String getInitialGreeting(String lessonTitle) {
-    return "Hi there! I'm Klaro, your AI tutor. Let's talk about \"$lessonTitle\" to make sure you really understand it. Ready? Tell me — what is the main idea of this lesson in your own words?";
+    return "Hi there! I'm Klaro, your AI tutor. Let's talk about \"$lessonTitle\" to make sure you really understand it. Ready? Tell me the main idea of this lesson in your own words.";
   }
 }

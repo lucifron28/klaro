@@ -32,6 +32,8 @@ class WordPopup extends StatelessWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      isDismissible: !isLoading,
+      enableDrag: !isLoading,
       backgroundColor: Colors.transparent,
       builder: (context) => WordPopup(
         word: word,
@@ -95,7 +97,8 @@ class WordPopup extends StatelessWidget {
                   ),
                 ),
                 Spacer(),
-                Icon(Icons.auto_awesome, color: KlaroTheme.accentYellow, size: 20),
+                Icon(Icons.auto_awesome,
+                    color: KlaroTheme.accentYellow, size: 20),
               ],
             ),
             SizedBox(height: 20),

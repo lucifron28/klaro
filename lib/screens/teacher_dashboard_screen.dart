@@ -538,7 +538,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                       color: statusColor,
                     ),
                     SizedBox(width: 4),
-                    Text(
+                    TranslatableText(
                       student.statusLabel,
                       style: TextStyle(
                         fontSize: 11,

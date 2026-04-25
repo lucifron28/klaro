@@ -340,6 +340,13 @@ Respond in this exact JSON format only, no other text:
     final prompt = '''
 You are Klaro, a friendly and encouraging AI Assessment assistant helping a Filipino Grade 7 student learn and demonstrate their understanding.
 
+FORMATTING RULES:
+- Use proper markdown formatting in your responses
+- For lists, use markdown syntax with dashes: "- Item 1\\n- Item 2\\n- Item 3"
+- For bold text, use **text**
+- For emphasis, use *text*
+- Always add a blank line before starting a list
+
 YOUR TEACHING PHILOSOPHY:
 - You're not just testing - you're teaching through conversation
 - Help students discover answers through guided questions
@@ -511,7 +518,7 @@ Respond as Klaro, the friendly AI Assessment assistant.
   }
 
   String getAssessmentGreeting(String lessonTitle) {
-    return "Hi! I'm Klaro, your AI Assessment assistant. 👋\n\nLet's have a conversation about \"$lessonTitle\" to see how well you understand it. Don't worry - this is a learning conversation, not just a test!\n\n📝 Here's how it works:\n• You need 3 correct answers to pass\n• If you're unsure, just ask me for help or hints\n• I'll guide you through the concepts\n• Take your time and think through your answers\n\nReady? Let's start with an easy one: What is the main idea of this lesson? Explain it in your own words. 😊";
+    return "Hi! I'm Klaro, your AI Assessment assistant. 👋\n\nLet's have a conversation about \"$lessonTitle\" to see how well you understand it. Don't worry - this is a learning conversation, not just a test!\n\n📝 Here's how it works:\n\n- You need 3 correct answers to pass\n- If you're unsure, just ask me for help or hints\n- I'll guide you through the concepts\n- Take your time and think through your answers\n\nReady? Let's start with an easy one: What is the main idea of this lesson? Explain it in your own words. 😊";
   }
 
   Future<Map<String, dynamic>> conductConversation(

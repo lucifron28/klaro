@@ -68,8 +68,12 @@ class _TranslatableTextState extends State<TranslatableText> {
           await _localStorage.getLanguagePreference() ??
           'en';
 
+      debugPrint('TranslatableText loading: "${widget.text}" with language: $languageCode');
+
       // Get hardcoded translation
       final translated = AppTranslations.translate(widget.text, languageCode);
+
+      debugPrint('TranslatableText result: "$translated"');
 
       if (mounted) {
         setState(() {
@@ -77,6 +81,7 @@ class _TranslatableTextState extends State<TranslatableText> {
         });
       }
     } catch (e) {
+      debugPrint('TranslatableText error: $e');
       // Fallback to original text on error
       if (mounted) {
         setState(() {

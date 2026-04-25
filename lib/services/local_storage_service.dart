@@ -104,9 +104,13 @@ class LocalStorageService {
 
   // ── Quiz Scores ───────────────────────────────────────────
 
-  Future<void> saveQuizResponse(QuizResponse response) async {
+  Future<void> saveQuizResponse(QuizResponse response, {String? userId}) async {
     final box = Hive.box(AppConstants.scoresBox);
-    await box.put('quiz_${response.lessonId}', response.toMap());
+    final data = response.toMap();
+    if (userId != null) {
+      data['userId'] = userId;
+    }
+    await box.put('quiz_${response.lessonId}', data);
   }
 
   Future<QuizResponse?> getQuizResponse(String lessonId) async {
@@ -118,13 +122,17 @@ class LocalStorageService {
     return null;
   }
 
-  Future<List<QuizResponse>> getAllQuizResponses() async {
+  Future<List<QuizResponse>> getAllQuizResponses({String? userId}) async {
     final box = Hive.box(AppConstants.scoresBox);
     final responses = <QuizResponse>[];
     for (final key in box.keys) {
       if (key.toString().startsWith('quiz_')) {
         final data = box.get(key);
         if (data != null) {
+          // Filter by userId if provided
+          if (userId != null && data['userId'] != null && data['userId'] != userId) {
+            continue;
+          }
           responses.add(QuizResponse.fromMap(Map<dynamic, dynamic>.from(data)));
         }
       }
@@ -134,9 +142,13 @@ class LocalStorageService {
 
   // ── AI Conversations ──────────────────────────────────────
 
-  Future<void> saveAIConversation(AIConversation conversation) async {
+  Future<void> saveAIConversation(AIConversation conversation, {String? userId}) async {
     final box = Hive.box(AppConstants.conversationsBox);
-    await box.put('ai_${conversation.lessonId}', conversation.toMap());
+    final data = conversation.toMap();
+    if (userId != null) {
+      data['userId'] = userId;
+    }
+    await box.put('ai_${conversation.lessonId}', data);
   }
 
   Future<AIConversation?> getAIConversation(String lessonId) async {
@@ -148,13 +160,17 @@ class LocalStorageService {
     return null;
   }
 
-  Future<List<AIConversation>> getAllAIConversations() async {
+  Future<List<AIConversation>> getAllAIConversations({String? userId}) async {
     final box = Hive.box(AppConstants.conversationsBox);
     final conversations = <AIConversation>[];
     for (final key in box.keys) {
       if (key.toString().startsWith('ai_')) {
         final data = box.get(key);
         if (data != null) {
+          // Filter by userId if provided
+          if (userId != null && data['userId'] != null && data['userId'] != userId) {
+            continue;
+          }
           conversations
               .add(AIConversation.fromMap(Map<dynamic, dynamic>.from(data)));
         }

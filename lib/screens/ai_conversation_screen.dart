@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:klaro/models/lesson.dart';
 import 'package:klaro/models/ai_conversation.dart';
+import 'package:klaro/models/app_user.dart';
 import 'package:klaro/services/gemini_service.dart';
 import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/screens/performance_summary_screen.dart';
@@ -41,11 +42,20 @@ class _AIConversationScreenState extends State<AIConversationScreen> {
   bool _isConversationComplete = false;
   double _aiScore = 0;
   String _aiSummary = '';
+  AppUser? _user;
 
   @override
   void initState() {
     super.initState();
+    _loadUser();
     _startConversation();
+  }
+
+  Future<void> _loadUser() async {
+    final user = await _localStorage.getUser();
+    if (mounted) {
+      setState(() => _user = user);
+    }
   }
 
   @override
@@ -113,12 +123,13 @@ class _AIConversationScreenState extends State<AIConversationScreen> {
         final conversation = AIConversation(
           lessonId: widget.lesson.id,
           lessonTitle: widget.lesson.title,
+          subject: widget.lesson.subject,
           score: _aiScore,
           summary: _aiSummary,
           date: DateTime.now(),
           messages: _messages,
         );
-        await _localStorage.saveAIConversation(conversation);
+        await _localStorage.saveAIConversation(conversation, userId: _user?.uid);
 
         setState(() => _isConversationComplete = true);
       }

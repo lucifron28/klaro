@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:klaro/models/learned_concept.dart';
 import 'package:klaro/models/lesson.dart';
+import 'package:klaro/models/app_user.dart';
 import 'package:klaro/screens/quiz_screen.dart';
+import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/theme.dart';
 import 'package:klaro/widgets/translatable_text.dart';
 
@@ -10,7 +12,7 @@ import 'package:klaro/widgets/translatable_text.dart';
 /// ============================================================
 /// Reviews words and concepts the student explored before the quiz.
 
-class LearningRecapScreen extends StatelessWidget {
+class LearningRecapScreen extends StatefulWidget {
   final Lesson lesson;
   final List<LearnedConcept> learnedConcepts;
 
@@ -21,9 +23,30 @@ class LearningRecapScreen extends StatelessWidget {
   });
 
   @override
+  State<LearningRecapScreen> createState() => _LearningRecapScreenState();
+}
+
+class _LearningRecapScreenState extends State<LearningRecapScreen> {
+  final LocalStorageService _localStorage = LocalStorageService();
+  AppUser? _user;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUser();
+  }
+
+  Future<void> _loadUser() async {
+    final user = await _localStorage.getUser();
+    if (mounted) {
+      setState(() => _user = user);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final concepts = [...learnedConcepts]
-      ..sort((a, b) => a.selectedAt.compareTo(b.selectedAt));
+    final concepts = [...widget.learnedConcepts]
+      ..sort((a, b) => b.selectedAt.compareTo(a.selectedAt)); // Recent first
 
     return Scaffold(
       backgroundColor: KlaroTheme.surfaceLight,
@@ -40,7 +63,7 @@ class LearningRecapScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  lesson.title,
+                  widget.lesson.title,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
@@ -86,11 +109,11 @@ class LearningRecapScreen extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {
+                onPressed: _user == null ? null : () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => QuizScreen(lesson: lesson),
+                      builder: (_) => QuizScreen(lesson: widget.lesson),
                     ),
                   );
                 },

@@ -129,7 +129,7 @@ class SubjectModulesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 5),
-                  Row(
+                  Wrap(
                     children: [
                       Text(
                         '${module.lessons.length} ',

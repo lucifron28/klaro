@@ -38,7 +38,6 @@ class TranslatableText extends StatefulWidget {
 class _TranslatableTextState extends State<TranslatableText> {
   final LocalStorageService _localStorage = LocalStorageService();
   String? _translatedText;
-  bool _isLoading = true;
 
   @override
   void initState() {
@@ -75,7 +74,6 @@ class _TranslatableTextState extends State<TranslatableText> {
       if (mounted) {
         setState(() {
           _translatedText = translated;
-          _isLoading = false;
         });
       }
     } catch (e) {
@@ -83,7 +81,6 @@ class _TranslatableTextState extends State<TranslatableText> {
       if (mounted) {
         setState(() {
           _translatedText = widget.text;
-          _isLoading = false;
         });
       }
     }

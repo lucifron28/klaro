@@ -22,7 +22,7 @@ class StudentHomeScreen extends StatefulWidget {
   final int initialTab;
 
   const StudentHomeScreen({
-    super.key, 
+    super.key,
     required this.user,
     this.initialTab = 0,
   });
@@ -47,10 +47,10 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   Future<void> _loadTranslations() async {
     final localStorage = LocalStorageService();
     final languageCode = await localStorage.getLanguagePreference() ?? 'en';
-    
+
     final subjects = AppTranslations.translate('Subjects', languageCode);
     final progress = AppTranslations.translate('My Progress', languageCode);
-    
+
     if (mounted) {
       setState(() {
         _currentLanguageCode = languageCode;
@@ -64,11 +64,14 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: KlaroTheme.surfaceLight,
-      body: _currentIndex == 0 
-          ? _buildSubjectsTab() 
+      body: _currentIndex == 0
+          ? _buildSubjectsTab()
           : MyProgressScreen(user: widget.user),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedFontSize: 11,
+        unselectedFontSize: 11,
         onTap: (index) => setState(() => _currentIndex = index),
         items: [
           BottomNavigationBarItem(
@@ -93,17 +96,25 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Row(
               children: [
+                Image.asset(
+                  'assets/images/Klaro-logo.png',
+                  width: 52,
+                  height: 52,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           TranslatableText(
                             'Kumusta',
                             languageCode: _currentLanguageCode,
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 23,
                               fontWeight: FontWeight.w800,
                               color: KlaroTheme.textDark,
                             ),
@@ -111,7 +122,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                           Text(
                             ', ${widget.user.name}!',
                             style: TextStyle(
-                              fontSize: 24,
+                              fontSize: 23,
                               fontWeight: FontWeight.w800,
                               color: KlaroTheme.textDark,
                             ),
@@ -135,7 +146,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                     final languageChanged = await Navigator.push<bool>(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => StudentSettingsScreen(user: widget.user),
+                        builder: (_) =>
+                            StudentSettingsScreen(user: widget.user),
                       ),
                     );
 
@@ -143,7 +155,8 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       await _loadTranslations();
                     }
                   },
-                  icon: Icon(Icons.settings_outlined, color: KlaroTheme.textMuted),
+                  icon: Icon(Icons.settings_outlined,
+                      color: KlaroTheme.textMuted),
                   tooltip: 'Settings',
                 ),
                 IconButton(
@@ -244,17 +257,16 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      Flexible(
-                        child: TranslatableText(
-                          subject.title,
-                          languageCode: _currentLanguageCode,
-                          style: TextStyle(
-                            fontSize: 17,
-                            fontWeight: FontWeight.w800,
-                            color: KlaroTheme.textDark,
-                          ),
+                      TranslatableText(
+                        subject.title,
+                        languageCode: _currentLanguageCode,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: KlaroTheme.textDark,
                         ),
                       ),
                       Text(
@@ -278,7 +290,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Row(
+                  Wrap(
                     children: [
                       Text(
                         '${subject.modules.length} ',

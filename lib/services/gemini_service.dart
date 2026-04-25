@@ -15,6 +15,7 @@ class GeminiServiceException implements Exception {
 }
 
 class GeminiService {
+  /// Create a model instance with custom generation config.
   GenerativeModel _modelWith({
     double temperature = 0.2,
     int maxOutputTokens = 4096,
@@ -28,6 +29,7 @@ class GeminiService {
     );
   }
 
+  /// Core method: send a prompt and get text back.
   Future<String> _generateText(
     String prompt, {
     double temperature = 0.2,

@@ -40,6 +40,16 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
             children: [
               const SizedBox(height: 40),
 
+              Center(
+                child: Image.asset(
+                  'assets/images/Klaro-logo.png',
+                  width: 140,
+                  height: 140,
+                  fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(height: 20),
+
               // Header
               Text(
                 'Choose Your Language',
@@ -161,7 +171,7 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
       if (mounted) {
         // Navigate to role-based dashboard
         final screen = widget.user.isTeacher
-            ? TeacherDashboardScreen()
+            ? TeacherDashboardScreen(user: widget.user)
             : StudentHomeScreen(user: widget.user);
 
         Navigator.pushReplacement(

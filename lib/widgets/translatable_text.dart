@@ -15,6 +15,7 @@ import 'package:klaro/utils/translations.dart';
 
 class TranslatableText extends StatefulWidget {
   final String text;
+  final String? languageCode;
   final TextStyle? style;
   final TextAlign? textAlign;
   final int? maxLines;
@@ -23,6 +24,7 @@ class TranslatableText extends StatefulWidget {
   const TranslatableText(
     this.text, {
     super.key,
+    this.languageCode,
     this.style,
     this.textAlign,
     this.maxLines,
@@ -47,8 +49,9 @@ class _TranslatableTextState extends State<TranslatableText> {
   @override
   void didUpdateWidget(TranslatableText oldWidget) {
     super.didUpdateWidget(oldWidget);
-    // Reload translation if the text changed
-    if (oldWidget.text != widget.text) {
+    // Reload translation if the source text or active language changed.
+    if (oldWidget.text != widget.text ||
+        oldWidget.languageCode != widget.languageCode) {
       _loadTranslation();
     }
   }
@@ -62,8 +65,10 @@ class _TranslatableTextState extends State<TranslatableText> {
 
   Future<void> _loadTranslation() async {
     try {
-      // Get preferred language from local storage
-      final languageCode = await _localStorage.getLanguagePreference() ?? 'en';
+      final languageCode =
+          widget.languageCode ??
+          await _localStorage.getLanguagePreference() ??
+          'en';
       
       // Get hardcoded translation
       final translated = AppTranslations.translate(widget.text, languageCode);

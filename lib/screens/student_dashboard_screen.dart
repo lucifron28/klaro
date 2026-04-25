@@ -212,6 +212,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       orElse: () => AIConversation(
         lessonId: '',
         lessonTitle: '',
+        subject: '',
         score: 0,
         summary: 'Not completed',
         date: DateTime.now(),

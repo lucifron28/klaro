@@ -36,7 +36,7 @@ class OnboardingFlowManager {
     } else {
       // Returning user: go directly to dashboard
       final screen = user.isTeacher
-          ? TeacherDashboardScreen()
+          ? TeacherDashboardScreen(user: user)
           : StudentHomeScreen(user: user);
 
       Navigator.pushReplacement(
@@ -70,7 +70,7 @@ class OnboardingFlowManager {
 
     // Navigate to role-based dashboard
     final screen = user.isTeacher
-        ? TeacherDashboardScreen()
+        ? TeacherDashboardScreen(user: user)
         : StudentHomeScreen(user: updatedUser);
 
     Navigator.pushReplacement(

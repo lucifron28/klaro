@@ -213,7 +213,7 @@ class PerformanceSummaryScreen extends StatelessWidget {
                       Icon(Icons.psychology, color: KlaroTheme.lightBlue, size: 20),
                       SizedBox(width: 8),
                       Text(
-                        'AI Tutor Summary',
+                        'AI Assessment Summary',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,

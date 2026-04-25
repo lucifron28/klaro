@@ -323,6 +323,197 @@ Respond in this exact JSON format only, no other text:
     return {'score': score, 'total': questions.length, 'results': results};
   }
 
+  Future<Map<String, dynamic>> conductAssessmentConversation(
+    String lessonContent,
+    List<Map<String, String>> conversationHistory,
+    int correctAnswers,
+    int incorrectAnswers,
+  ) async {
+    final historyText = conversationHistory.map((m) {
+      final role = m['role'] == 'student' ? 'Student' : 'AI Assessment';
+      return '$role: ${m['message']}';
+    }).join('\n');
+
+    final totalAttempts = correctAnswers + incorrectAnswers;
+    final consecutiveIncorrect = _countConsecutiveIncorrect(conversationHistory);
+
+    final prompt = '''
+You are Klaro, a friendly and encouraging AI Assessment assistant helping a Filipino Grade 7 student learn and demonstrate their understanding.
+
+YOUR TEACHING PHILOSOPHY:
+- You're not just testing - you're teaching through conversation
+- Help students discover answers through guided questions
+- Provide hints and encouragement when they struggle
+- Celebrate their progress and correct thinking
+- Make learning feel like a natural conversation, not an interrogation
+
+CONVERSATION FLOW RULES:
+1. DISTINGUISH between questions and answer attempts:
+   - Questions: "What do you mean?", "Can you explain?", "I don't understand", "Help me"
+   - Answer attempts: Direct responses to your questions, explanations, definitions
+
+2. WHEN STUDENT ASKS A QUESTION:
+   - Provide helpful hints without giving away the answer
+   - Break down complex concepts into simpler parts
+   - Use examples from everyday Filipino life
+   - Encourage them to try answering after the hint
+   - DO NOT count this as an attempt
+
+3. WHEN EVALUATING ANSWERS:
+   - If CORRECT: Praise specifically what they got right, then ask a deeper follow-up question to test understanding
+   - If INCORRECT: 
+     * Don't just say "wrong" - explain WHY it's incorrect
+     * Provide a hint or guide them toward the right thinking
+     * Ask a simpler related question to build confidence
+     * If they've struggled (${consecutiveIncorrect} consecutive incorrect), offer more detailed guidance
+
+4. KEEP THE CONVERSATION NATURAL:
+   - Use conversational Filipino-English mix when appropriate
+   - Ask "Why do you think that?" or "Can you explain more?" to deepen understanding
+   - Reference their previous correct answers to build on their knowledge
+   - Make connections between concepts
+
+5. ADAPTIVE DIFFICULTY:
+   - Start with broader questions
+   - If they answer correctly, ask more specific/challenging follow-ups
+   - If they struggle, break questions into smaller, manageable parts
+   - Adjust your language complexity based on their responses
+
+CURRENT SITUATION:
+- Score: $correctAnswers correct, $incorrectAnswers incorrect (Total attempts: $totalAttempts)
+- Consecutive incorrect: $consecutiveIncorrect
+${consecutiveIncorrect >= 2 ? '- Student is struggling - provide more guidance and simpler questions' : ''}
+${correctAnswers >= 2 ? '- Student is doing well - you can ask more challenging questions' : ''}
+
+Lesson Content:
+$lessonContent
+
+Conversation History:
+$historyText
+
+${correctAnswers >= 3 ? '''
+🎉 ASSESSMENT COMPLETE - PASSED! 
+The student has demonstrated understanding with 3 correct answers.
+Write an encouraging final message that:
+- Celebrates their achievement
+- Mentions specific concepts they understood well
+- Encourages them to keep learning
+Then add: ASSESSMENT_COMPLETE: {"correctAnswers": $correctAnswers, "totalAttempts": $totalAttempts, "passed": true, "summary": "Successfully demonstrated understanding of [key concepts]"}
+''' : incorrectAnswers >= 3 ? '''
+📚 ASSESSMENT COMPLETE - NEEDS REVIEW
+The student needs more practice with this lesson.
+Write a supportive final message that:
+- Acknowledges their effort
+- Identifies specific areas to review
+- Encourages them to study and try again
+Then add: ASSESSMENT_COMPLETE: {"correctAnswers": $correctAnswers, "totalAttempts": $totalAttempts, "passed": false, "summary": "Needs to review: [specific topics]"}
+''' : '''
+CONTINUE THE CONVERSATION:
+
+Analyze the student's last message:
+- Is it a QUESTION/REQUEST FOR HELP? → Provide guidance without scoring
+- Is it an ANSWER ATTEMPT? → Evaluate and provide feedback
+
+Response Format:
+[Your conversational response here - be natural, encouraging, and educational]
+
+Then add ONE of these tags:
+- If it was a question: EVALUATION: {"isQuestion": true}
+- If it was an answer attempt: EVALUATION: {"isCorrect": true/false, "isQuestion": false}
+
+REMEMBER: 
+- Always explain WHY an answer is correct or incorrect
+- Always ask a follow-up question to continue the conversation
+- Make the student feel supported, not interrogated
+- Help them learn, not just test them
+'''}
+
+Respond as Klaro, the friendly AI Assessment assistant.
+''';
+
+    try {
+      final text = await _generateText(
+        prompt,
+        temperature: 0.4, // Slightly higher for more natural conversation
+        maxOutputTokens: 1536, // More tokens for detailed explanations
+      );
+
+      // Check for assessment completion
+      if (text.contains('ASSESSMENT_COMPLETE:')) {
+        final parts = text.split('ASSESSMENT_COMPLETE:');
+        final message = parts[0].trim();
+        final jsonStr = parts[1].trim();
+        final parsed = Helpers.tryParseJson(jsonStr);
+
+        return {
+          'message': message,
+          'isComplete': true,
+          'correctAnswers': parsed?['correctAnswers'] ?? correctAnswers,
+          'totalAttempts': parsed?['totalAttempts'] ?? totalAttempts,
+          'passed': parsed?['passed'] ?? false,
+          'summary': parsed?['summary'] ?? 'Assessment completed.',
+        };
+      }
+
+      // Check for evaluation
+      if (text.contains('EVALUATION:')) {
+        final parts = text.split('EVALUATION:');
+        final message = parts[0].trim();
+        final jsonStr = parts[1].trim();
+        final parsed = Helpers.tryParseJson(jsonStr);
+
+        final isQuestion = parsed?['isQuestion'] ?? false;
+        final isCorrect = parsed?['isCorrect'] ?? false;
+
+        return {
+          'message': message,
+          'isComplete': false,
+          'isQuestion': isQuestion,
+          'isCorrect': isCorrect,
+        };
+      }
+
+      // Fallback: treat as question/clarification
+      return {
+        'message': text.trim(),
+        'isComplete': false,
+        'isQuestion': true,
+      };
+    } catch (error) {
+      debugPrint('Assessment conversation failed: $error');
+      return {
+        'message': 'I had trouble understanding. Can you try explaining again? Or if you need help, just ask me to explain the concept!',
+        'isComplete': false,
+        'isQuestion': true,
+      };
+    }
+  }
+
+  /// Count consecutive incorrect answers to adjust difficulty
+  int _countConsecutiveIncorrect(List<Map<String, String>> history) {
+    int count = 0;
+    // Look at recent AI responses for "incorrect" or "not quite" patterns
+    for (int i = history.length - 1; i >= 0; i--) {
+      final msg = history[i];
+      if (msg['role'] == 'ai') {
+        final text = msg['message']?.toLowerCase() ?? '';
+        if (text.contains('incorrect') || 
+            text.contains('not quite') || 
+            text.contains('not exactly') ||
+            text.contains('try again')) {
+          count++;
+        } else if (text.contains('correct') || text.contains('good') || text.contains('right')) {
+          break; // Stop counting if we hit a correct answer
+        }
+      }
+    }
+    return count;
+  }
+
+  String getAssessmentGreeting(String lessonTitle) {
+    return "Hi! I'm Klaro, your AI Assessment assistant. 👋\n\nLet's have a conversation about \"$lessonTitle\" to see how well you understand it. Don't worry - this is a learning conversation, not just a test!\n\n📝 Here's how it works:\n• You need 3 correct answers to pass\n• If you're unsure, just ask me for help or hints\n• I'll guide you through the concepts\n• Take your time and think through your answers\n\nReady? Let's start with an easy one: What is the main idea of this lesson? Explain it in your own words. 😊";
+  }
+
   Future<Map<String, dynamic>> conductConversation(
     String lessonContent,
     List<Map<String, String>> conversationHistory,

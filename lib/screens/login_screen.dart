@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       // Navigate to role-based dashboard for returning users
       final screen = user.isTeacher
-          ? TeacherDashboardScreen()
+          ? TeacherDashboardScreen(user: user)
           : StudentHomeScreen(user: user);
 
       Navigator.pushReplacement(
@@ -112,35 +112,23 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     children: [
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: 180,
+                        height: 180,
                         decoration: BoxDecoration(
-                          color: KlaroTheme.primaryBlue,
-                          borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: KlaroTheme.primaryBlue.withOpacity(0.3),
-                              blurRadius: 20,
-                              offset: Offset(0, 8),
+                              color: KlaroTheme.primaryBlue.withOpacity(0.18),
+                              blurRadius: 24,
+                              offset: Offset(0, 10),
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.menu_book_rounded,
-                          color: Colors.white,
-                          size: 40,
+                        child: Image.asset(
+                          'assets/images/Klaro-logo.png',
+                          fit: BoxFit.contain,
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Text(
-                        AppConstants.appName,
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w800,
-                          color: KlaroTheme.primaryBlue,
-                        ),
-                      ),
-                      SizedBox(height: 4),
+                      SizedBox(height: 12),
                       Text(
                         AppConstants.appTagline,
                         style: TextStyle(

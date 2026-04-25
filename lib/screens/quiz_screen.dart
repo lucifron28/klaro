@@ -7,6 +7,7 @@ import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/screens/ai_conversation_screen.dart';
 import 'package:klaro/widgets/quiz_card.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
 /// Quiz Screen
@@ -71,7 +72,7 @@ class _QuizScreenState extends State<QuizScreen> {
     if (unanswered != -1) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please answer all questions before submitting.'),
+          content: TranslatableText('Please answer all questions before submitting.'),
           backgroundColor: KlaroTheme.warning,
         ),
       );
@@ -116,7 +117,7 @@ class _QuizScreenState extends State<QuizScreen> {
       setState(() => _isSubmitting = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to evaluate quiz. Please try again.')),
+          SnackBar(content: TranslatableText('Failed to evaluate quiz. Please try again.')),
         );
       }
     }
@@ -127,7 +128,7 @@ class _QuizScreenState extends State<QuizScreen> {
     return Scaffold(
       backgroundColor: KlaroTheme.surfaceLight,
       appBar: AppBar(
-        title: Text('Comprehension Quiz'),
+        title: TranslatableText('Comprehension Quiz'),
       ),
       body: _isLoading
           ? _buildLoadingState()
@@ -144,7 +145,7 @@ class _QuizScreenState extends State<QuizScreen> {
         children: [
           CircularProgressIndicator(color: KlaroTheme.primaryBlue),
           SizedBox(height: 20),
-          Text(
+          TranslatableText(
             'Generating quiz questions...',
             style: TextStyle(
               fontSize: 16,
@@ -152,12 +153,24 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
           ),
           SizedBox(height: 8),
-          Text(
-            'Based on: ${widget.lesson.title}',
-            style: TextStyle(
-              fontSize: 13,
-              color: KlaroTheme.textMuted,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TranslatableText(
+                'Based on: ',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: KlaroTheme.textMuted,
+                ),
+              ),
+              Text(
+                widget.lesson.title,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: KlaroTheme.textMuted,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -178,7 +191,7 @@ class _QuizScreenState extends State<QuizScreen> {
           SizedBox(height: 24),
           ElevatedButton(
             onPressed: _generateQuiz,
-            child: Text('Try Again'),
+            child: TranslatableText('Try Again'),
           ),
         ],
       ),
@@ -219,7 +232,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                 ),
                 SizedBox(height: 4),
-                Text(
+                TranslatableText(
                   _score >= (_total * 0.7)
                       ? 'Great job! You understood the lesson well.'
                       : 'Keep going! Review the lesson and try again.',
@@ -281,7 +294,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       );
                     },
                     icon: Icon(Icons.chat_bubble_rounded),
-                    label: Text('Talk to Klaro AI'),
+                    label: TranslatableText('Talk to Klaro AI'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: KlaroTheme.primaryBlue,
                       padding: EdgeInsets.symmetric(vertical: 16),
@@ -311,7 +324,7 @@ class _QuizScreenState extends State<QuizScreen> {
                               color: KlaroTheme.textDark,
                             ),
                           )
-                        : Text('Submit Answers'),
+                        : TranslatableText('Submit Answers'),
                   ),
           ),
         ),

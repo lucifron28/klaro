@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:klaro/models/app_user.dart';
 import 'package:klaro/services/auth_service.dart';
+import 'package:klaro/screens/language_selector_screen.dart';
 import 'package:klaro/screens/student_home_screen.dart';
 import 'package:klaro/screens/teacher_dashboard_screen.dart';
 import 'package:klaro/utils/constants.dart';
@@ -67,14 +68,29 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _navigateToHome(AppUser user) {
-    final screen = user.isTeacher
-        ? TeacherDashboardScreen()
-        : StudentHomeScreen(user: user);
+    // DEVELOPMENT MODE: Always show language selector for testing
+    // TODO: Remove this and use user.needsOnboarding for production
+    const bool alwaysShowLanguageSelector = true;
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => screen),
-    );
+    if (alwaysShowLanguageSelector || user.needsOnboarding) {
+      // Navigate to Language Selector
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => LanguageSelectorScreen(user: user),
+        ),
+      );
+    } else {
+      // Navigate to role-based dashboard for returning users
+      final screen = user.isTeacher
+          ? TeacherDashboardScreen()
+          : StudentHomeScreen(user: user);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => screen),
+      );
+    }
   }
 
   @override

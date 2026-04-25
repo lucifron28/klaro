@@ -106,11 +106,27 @@ class GeminiService {
   Future<Map<String, String>> simplifyWord(
     String word, {
     String? context,
+    String targetLanguage = 'tl', // Default to Tagalog for backward compatibility
   }) async {
+    // Get language name from code
+    final languageNames = {
+      'en': 'English',
+      'tl': 'Tagalog',
+      'ceb': 'Cebuano',
+      'ilo': 'Ilocano',
+      'hil': 'Hiligaynon',
+      'war': 'Waray',
+      'pam': 'Kapampangan',
+      'bik': 'Bikol',
+      'pag': 'Pangasinan',
+    };
+
+    final languageName = languageNames[targetLanguage] ?? 'Tagalog';
+
     final prompt = '''
 You are a helpful tutor for Filipino Grade 7 students.
 Explain this word in very simple terms that a 12-13-year-old can understand.
-Also provide a Tagalog or Taglish translation/explanation.
+Also provide a $languageName translation/explanation.
 Keep each answer to one short sentence.
 
 Word: $word
@@ -119,7 +135,7 @@ ${context != null ? 'Context: "$context"' : ''}
 Respond in this exact JSON format only, no other text:
 {
   "explanation": "simple explanation here",
-  "tagalog": "Tagalog/Taglish explanation here"
+  "tagalog": "$languageName explanation here"
 }
 ''';
 
@@ -385,5 +401,48 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
 
   String getInitialGreeting(String lessonTitle) {
     return "Hi there! I'm Klaro, your AI tutor. Let's talk about \"$lessonTitle\" to make sure you really understand it. Ready? Tell me the main idea of this lesson in your own words.";
+  }
+
+  /// Translate static UI text to target language
+  Future<String> translateText(String text, String targetLanguage) async {
+    // Get language name from code
+    final languageNames = {
+      'en': 'English',
+      'tl': 'Tagalog',
+      'ceb': 'Cebuano',
+      'ilo': 'Ilocano',
+      'hil': 'Hiligaynon',
+      'war': 'Waray',
+      'pam': 'Kapampangan',
+      'bik': 'Bikol',
+      'pan': 'Pangasinan',
+    };
+
+    final languageName = languageNames[targetLanguage] ?? targetLanguage;
+
+    final prompt = '''
+You are a professional translator for Filipino educational content.
+Translate the following English text to $languageName.
+
+Rules:
+- Maintain the original meaning and tone
+- Use natural, conversational language appropriate for Grade 7 students
+- Keep technical terms in English if commonly used that way
+- Preserve any placeholders like {name} or {count}
+- Do NOT add explanations or additional text
+
+Text to translate: "$text"
+
+Respond with ONLY the translated text, no explanations or additional text.
+''';
+
+    try {
+      final translation = await _generateText(prompt, maxOutputTokens: 512);
+      return translation.trim();
+    } catch (error) {
+      debugPrint('Translation failed: $error');
+      // Fallback to original text
+      return text;
+    }
   }
 }

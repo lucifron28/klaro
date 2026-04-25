@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
 /// Word Popup (Bottom Sheet)
 /// ============================================================
-/// Shows the simplified explanation and Tagalog translation
-/// when a student taps on a word in the lesson text.
+/// Shows the simplified explanation and translation in the user's
+/// preferred language when a student taps on a word in the lesson text.
 
-class WordPopup extends StatelessWidget {
+class WordPopup extends StatefulWidget {
   final String word;
   final String explanation;
-  final String tagalog;
+  final String translation;
   final bool isLoading;
 
   const WordPopup({
     super.key,
     required this.word,
     required this.explanation,
-    required this.tagalog,
+    required this.translation,
     this.isLoading = false,
   });
 
@@ -38,10 +40,56 @@ class WordPopup extends StatelessWidget {
       builder: (context) => WordPopup(
         word: word,
         explanation: explanation,
-        tagalog: tagalog,
+        translation: tagalog,
         isLoading: isLoading,
       ),
     );
+  }
+
+  @override
+  State<WordPopup> createState() => _WordPopupState();
+}
+
+class _WordPopupState extends State<WordPopup> {
+  String _languageName = 'Translation';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLanguageName();
+  }
+
+  @override
+  void didUpdateWidget(WordPopup oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reload language name if widget is updated
+    _loadLanguageName();
+  }
+
+  Future<void> _loadLanguageName() async {
+    final localStorage = LocalStorageService();
+    final languageCode = await localStorage.getLanguagePreference() ?? 'en';
+    
+    // Map language codes to display names
+    final languageNames = {
+      'en': 'English',
+      'tl': 'Tagalog',
+      'ceb': 'Cebuano',
+      'war': 'Waray',
+      'ilo': 'Ilocano',
+      'hil': 'Hiligaynon',
+      'pam': 'Kapampangan',
+      'bik': 'Bikol',
+      'pag': 'Pangasinan',
+    };
+    
+    if (mounted) {
+      setState(() {
+        _languageName = languageNames[languageCode] ?? 'Translation';
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -88,7 +136,7 @@ class WordPopup extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    word,
+                    widget.word,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
@@ -103,13 +151,13 @@ class WordPopup extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            if (isLoading) ...[
+            if (widget.isLoading || _isLoading) ...[
               Center(
                 child: Column(
                   children: [
                     CircularProgressIndicator(color: KlaroTheme.primaryBlue),
                     SizedBox(height: 12),
-                    Text(
+                    TranslatableText(
                       'Simplifying...',
                       style: TextStyle(color: KlaroTheme.textMuted),
                     ),
@@ -117,21 +165,22 @@ class WordPopup extends StatelessWidget {
                 ),
               ),
             ] else ...[
-              // Simple Explanation
+              // Simple Explanation (in English - not translated)
               _buildSection(
                 icon: Icons.lightbulb_outline,
                 iconColor: KlaroTheme.accentYellow,
-                title: 'Simple Explanation',
-                content: explanation,
+                titleKey: 'Simple Explanation',
+                content: widget.explanation,
               ),
               SizedBox(height: 16),
 
-              // Tagalog Translation
+              // Translation in preferred language
               _buildSection(
                 icon: Icons.translate,
                 iconColor: KlaroTheme.lightBlue,
-                title: 'Tagalog / Taglish',
-                content: tagalog,
+                titleKey: 'Translation',
+                content: widget.translation,
+                showLanguageName: true,
               ),
               SizedBox(height: 24),
 
@@ -144,7 +193,7 @@ class WordPopup extends StatelessWidget {
                     backgroundColor: KlaroTheme.primaryBlue,
                     padding: EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: Text('Got it!', style: TextStyle(fontSize: 16)),
+                  child: TranslatableText('Got it!', style: TextStyle(fontSize: 16)),
                 ),
               ),
             ],
@@ -157,8 +206,9 @@ class WordPopup extends StatelessWidget {
   Widget _buildSection({
     required IconData icon,
     required Color iconColor,
-    required String title,
+    required String titleKey,
     required String content,
+    bool showLanguageName = false,
   }) {
     return Container(
       padding: EdgeInsets.all(16),
@@ -173,15 +223,26 @@ class WordPopup extends StatelessWidget {
             children: [
               Icon(icon, size: 18, color: iconColor),
               SizedBox(width: 8),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: KlaroTheme.textMuted,
-                  letterSpacing: 0.5,
+              if (showLanguageName)
+                Text(
+                  _languageName,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: KlaroTheme.textMuted,
+                    letterSpacing: 0.5,
+                  ),
+                )
+              else
+                TranslatableText(
+                  titleKey,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: KlaroTheme.textMuted,
+                    letterSpacing: 0.5,
+                  ),
                 ),
-              ),
             ],
           ),
           SizedBox(height: 8),

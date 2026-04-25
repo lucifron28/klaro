@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/screens/login_screen.dart';
@@ -21,10 +22,13 @@ void main() async {
 
   // Firebase is optional for the local hackathon demo. Without
   // google-services.json, initialization fails before the first frame.
+  bool firebaseInitialized = false;
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    firebaseInitialized = true;
+    debugPrint('✅ Firebase initialized successfully');
   } catch (error) {
     debugPrint('Firebase initialization skipped: $error');
   }

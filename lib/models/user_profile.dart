@@ -1,72 +1,68 @@
 /// ============================================================
-/// App User Model
+/// User Profile Model (Firestore)
 /// ============================================================
+/// Represents user profile data stored in Cloud Firestore.
+/// Collection: users/{uid}
 
-enum UserRole { student, teacher }
-
-class AppUser {
+class UserProfile {
   final String uid;
-  final String name;
   final String email;
-  final UserRole role;
+  final String role; // "teacher" or "student"
   final bool isFirstLogin;
   final String preferredLanguage;
-  final DateTime? createdAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  AppUser({
+  UserProfile({
     required this.uid,
-    required this.name,
     required this.email,
     required this.role,
-    this.isFirstLogin = true,
-    this.preferredLanguage = 'en',
-    this.createdAt,
+    required this.isFirstLogin,
+    required this.preferredLanguage,
+    required this.createdAt,
+    required this.updatedAt,
   });
-
-  bool get isStudent => role == UserRole.student;
-  bool get isTeacher => role == UserRole.teacher;
-  bool get needsOnboarding => isFirstLogin;
 
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
-      'name': name,
       'email': email,
-      'role': role == UserRole.student ? 'student' : 'teacher',
+      'role': role,
       'isFirstLogin': isFirstLogin,
       'preferredLanguage': preferredLanguage,
-      'createdAt': createdAt?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 
-  factory AppUser.fromMap(Map<dynamic, dynamic> map) {
-    return AppUser(
+  factory UserProfile.fromMap(Map<String, dynamic> map) {
+    return UserProfile(
       uid: map['uid'] ?? '',
-      name: map['name'] ?? '',
       email: map['email'] ?? '',
-      role: map['role'] == 'teacher' ? UserRole.teacher : UserRole.student,
+      role: map['role'] ?? 'student',
       isFirstLogin: map['isFirstLogin'] ?? true,
       preferredLanguage: map['preferredLanguage'] ?? 'en',
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'])
-          : null,
+          : DateTime.now(),
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.parse(map['updatedAt'])
+          : DateTime.now(),
     );
   }
 
-  // Create a copy with updated fields
-  AppUser copyWith({
-    String? name,
+  UserProfile copyWith({
     bool? isFirstLogin,
     String? preferredLanguage,
   }) {
-    return AppUser(
+    return UserProfile(
       uid: uid,
-      name: name ?? this.name,
       email: email,
       role: role,
       isFirstLogin: isFirstLogin ?? this.isFirstLogin,
       preferredLanguage: preferredLanguage ?? this.preferredLanguage,
       createdAt: createdAt,
+      updatedAt: DateTime.now(),
     );
   }
 }

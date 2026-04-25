@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:klaro/models/curriculum.dart';
 import 'package:klaro/screens/module_lessons_screen.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 class SubjectModulesScreen extends StatelessWidget {
   final CurriculumSubject subject;
@@ -27,7 +28,7 @@ class SubjectModulesScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 18),
-          Text(
+          TranslatableText(
             'Modules',
             style: TextStyle(
               fontSize: 18,
@@ -128,12 +129,23 @@ class SubjectModulesScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 5),
-                  Text(
-                    '${module.lessons.length} lessons',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: KlaroTheme.textMuted,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        '${module.lessons.length} ',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: KlaroTheme.textMuted,
+                        ),
+                      ),
+                      TranslatableText(
+                        'lessons',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: KlaroTheme.textMuted,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

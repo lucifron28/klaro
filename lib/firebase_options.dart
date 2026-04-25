@@ -5,26 +5,18 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'Firebase web options are not configured for Klaro yet.',
-      );
+      return web;
     }
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'Firebase iOS options are not configured for Klaro yet.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'Firebase macOS options are not configured for Klaro yet.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'Firebase Windows options are not configured for Klaro yet.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'Firebase Linux options are not configured for Klaro yet.',
@@ -43,4 +35,43 @@ class DefaultFirebaseOptions {
     projectId: 'klaro-851a6',
     storageBucket: 'klaro-851a6.firebasestorage.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCYVvdmr2OzJWuMti2_s7q5WIR1kPQDoEM',
+    appId: '1:510975278553:web:e3ccd81f109e87a5b7adc8',
+    messagingSenderId: '510975278553',
+    projectId: 'klaro-851a6',
+    authDomain: 'klaro-851a6.firebaseapp.com',
+    storageBucket: 'klaro-851a6.firebasestorage.app',
+    measurementId: 'G-K2BS0LBFK0',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCvSrTg3GxblGs5yYw7ga_0nCBUES5kqJE',
+    appId: '1:510975278553:ios:2a48645c2267c896b7adc8',
+    messagingSenderId: '510975278553',
+    projectId: 'klaro-851a6',
+    storageBucket: 'klaro-851a6.firebasestorage.app',
+    iosBundleId: 'com.example.klaro',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyCvSrTg3GxblGs5yYw7ga_0nCBUES5kqJE',
+    appId: '1:510975278553:ios:2a48645c2267c896b7adc8',
+    messagingSenderId: '510975278553',
+    projectId: 'klaro-851a6',
+    storageBucket: 'klaro-851a6.firebasestorage.app',
+    iosBundleId: 'com.example.klaro',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCYVvdmr2OzJWuMti2_s7q5WIR1kPQDoEM',
+    appId: '1:510975278553:web:dd0bb3690c881a6fb7adc8',
+    messagingSenderId: '510975278553',
+    projectId: 'klaro-851a6',
+    authDomain: 'klaro-851a6.firebaseapp.com',
+    storageBucket: 'klaro-851a6.firebasestorage.app',
+    measurementId: 'G-Y4KHGN2MYD',
+  );
+
 }

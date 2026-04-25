@@ -3,6 +3,7 @@ import 'package:klaro/models/learned_concept.dart';
 import 'package:klaro/models/lesson.dart';
 import 'package:klaro/screens/quiz_screen.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
 /// Learning Recap Screen
@@ -27,7 +28,7 @@ class LearningRecapScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: KlaroTheme.surfaceLight,
       appBar: AppBar(
-        title: Text('Learning Recap'),
+        title: TranslatableText('Learning Recap'),
       ),
       body: Column(
         children: [
@@ -47,7 +48,7 @@ class LearningRecapScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 6),
-                Text(
+                TranslatableText(
                   concepts.isEmpty
                       ? 'Review the concepts you explored below before the quiz.'
                       : 'Review your personalized learning recap before starting the quiz.',
@@ -94,7 +95,7 @@ class LearningRecapScreen extends StatelessWidget {
                   );
                 },
                 icon: Icon(Icons.quiz_rounded),
-                label: Text('Start Quiz'),
+                label: TranslatableText('Start Quiz'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KlaroTheme.accentYellow,
                   foregroundColor: KlaroTheme.textDark,
@@ -126,7 +127,7 @@ class LearningRecapScreen extends StatelessWidget {
           Icon(Icons.touch_app_rounded, color: KlaroTheme.primaryBlue),
           SizedBox(width: 12),
           Expanded(
-            child: Text(
+            child: TranslatableText(
               'Your learning recap will appear here after you tap words you want to learn more about while reading.',
               style: TextStyle(
                 fontSize: 14,

@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:klaro/models/app_user.dart';
+import 'package:klaro/services/firestore_service.dart';
 import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/constants.dart';
 
@@ -8,10 +10,11 @@ import 'package:klaro/utils/constants.dart';
 /// Auth Service
 /// ============================================================
 /// Handles Firebase Authentication and user session management.
-/// For the hackathon demo, we use hardcoded test accounts.
+/// Enhanced with Firestore integration for user profiles.
 
 class AuthService {
   final LocalStorageService _localStorage = LocalStorageService();
+  final FirestoreService _firestoreService = FirestoreService();
 
   FirebaseAuth? get _auth {
     try {
@@ -29,8 +32,9 @@ class AuthService {
   Stream<User?> get authStateChanges =>
       _auth?.authStateChanges() ?? const Stream<User?>.empty();
 
-  /// Sign in with email and password
+  /// Sign in with email and password (enhanced with Firestore)
   Future<AppUser?> signIn(String email, String password) async {
+    // Check for demo user first
     final demoUser = _demoUserForCredentials(email, password);
     if (demoUser != null) {
       await _localStorage.saveUser(demoUser);
@@ -49,20 +53,47 @@ class AuthService {
       );
 
       if (credential.user != null) {
-        // Determine role based on email (hackathon shortcut)
-        final role =
-            email.contains('teacher') ? UserRole.teacher : UserRole.student;
+        // Fetch user profile from Firestore
+        final profile =
+            await _firestoreService.getUserProfile(credential.user!.uid);
 
-        final appUser = AppUser(
-          uid: credential.user!.uid,
-          name: _getNameFromEmail(email),
-          email: email,
-          role: role,
-        );
+        if (profile != null) {
+          // Create AppUser from Firestore profile
+          final appUser = AppUser(
+            uid: profile.uid,
+            name: _getNameFromEmail(profile.email),
+            email: profile.email,
+            role: profile.role == 'teacher'
+                ? UserRole.teacher
+                : UserRole.student,
+            isFirstLogin: profile.isFirstLogin,
+            preferredLanguage: profile.preferredLanguage,
+            createdAt: profile.createdAt,
+          );
 
-        // Save user locally
-        await _localStorage.saveUser(appUser);
-        return appUser;
+          // Save user locally
+          await _localStorage.saveUser(appUser);
+          return appUser;
+        } else {
+          // Profile doesn't exist, create one
+          final role = email.contains('teacher')
+              ? UserRole.teacher
+              : UserRole.student;
+
+          final appUser = AppUser(
+            uid: credential.user!.uid,
+            name: _getNameFromEmail(email),
+            email: email,
+            role: role,
+            isFirstLogin: true,
+            preferredLanguage: 'en',
+            createdAt: DateTime.now(),
+          );
+
+          await _firestoreService.createUserProfile(appUser);
+          await _localStorage.saveUser(appUser);
+          return appUser;
+        }
       }
       return null;
     } on FirebaseAuthException catch (e) {
@@ -90,8 +121,15 @@ class AuthService {
           name: name,
           email: email,
           role: role,
+          isFirstLogin: true,
+          preferredLanguage: 'en',
+          createdAt: DateTime.now(),
         );
 
+        // Create Firestore profile
+        await _firestoreService.createUserProfile(appUser);
+
+        // Save locally
         await _localStorage.saveUser(appUser);
         return appUser;
       }
@@ -112,6 +150,17 @@ class AuthService {
     return _localStorage.getUser();
   }
 
+  /// Check if user needs onboarding
+  Future<bool> needsOnboarding(String uid) async {
+    try {
+      final profile = await _firestoreService.getUserProfile(uid);
+      return profile?.isFirstLogin ?? true;
+    } catch (e) {
+      debugPrint('Error checking onboarding status: $e');
+      return true; // Default to showing onboarding if error
+    }
+  }
+
   /// Extract a display name from email (hackathon shortcut)
   String _getNameFromEmail(String email) {
     final localPart = email.split('@').first;
@@ -130,6 +179,8 @@ class AuthService {
         name: 'Student',
         email: AppConstants.testStudentEmail,
         role: UserRole.student,
+        isFirstLogin: true, // DEVELOPMENT: Show language selector
+        preferredLanguage: 'en',
       );
     }
 
@@ -140,6 +191,8 @@ class AuthService {
         name: 'Teacher',
         email: AppConstants.testTeacherEmail,
         role: UserRole.teacher,
+        isFirstLogin: true, // DEVELOPMENT: Show language selector
+        preferredLanguage: 'en',
       );
     }
 
@@ -161,8 +214,15 @@ class AuthService {
         return 'An account already exists with this email.';
       case 'weak-password':
         return 'Password is too weak. Use at least 6 characters.';
+      case 'network-request-failed':
+        return 'Network error. Please check your internet connection and try again.';
+      case 'operation-not-allowed':
+        return 'Email/password sign-in is not enabled. Please contact support.';
+      case 'invalid-credential':
+        return 'Invalid credentials. Please check your email and password.';
+      // Removed 'too-many-requests' to allow development testing
       default:
-        return 'Login failed. Please try again.';
+        return 'Login failed: ${e.message ?? "Unknown error"}. Please try again.';
     }
   }
 }

@@ -60,10 +60,10 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
 
     try {
       final seeder = DemoDataSeeder();
-      
+
       // Check if already added
       final isAdded = await seeder.isDemoStudentAdded();
-      
+
       if (isAdded) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +75,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
         }
       } else {
         await seeder.addDemoStudentToTeacher();
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -83,7 +83,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
               backgroundColor: KlaroTheme.success,
             ),
           );
-          
+
           // Reload dashboard
           _loadDashboardData();
         }
@@ -109,17 +109,21 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
 
     try {
       // Load teacher's students
-      final students = await _firestoreService.getTeacherStudents(widget.user.uid);
-      
-      debugPrint('📊 Loaded ${students.length} students for teacher ${widget.user.uid}');
-      
+      final students =
+          await _firestoreService.getTeacherStudents(widget.user.uid);
+
+      debugPrint(
+          '📊 Loaded ${students.length} students for teacher ${widget.user.uid}');
+
       // Load progress for recent students (limit to 5)
       final recentProgress = <StudentProgressSummary>[];
       for (final student in students.take(5)) {
         debugPrint('📈 Loading progress for student: ${student.studentId}');
-        final progress = await _firestoreService.getStudentProgressSummary(student.studentId);
+        final progress = await _firestoreService
+            .getStudentProgressSummary(student.studentId);
         if (progress != null) {
-          debugPrint('✅ Progress loaded: ${progress.studentName} - ${progress.overallProgress.toStringAsFixed(1)}%');
+          debugPrint(
+              '✅ Progress loaded: ${progress.studentName} - ${progress.overallProgress.toStringAsFixed(1)}%');
           recentProgress.add(progress);
         } else {
           debugPrint('⚠️ No progress data for: ${student.studentName}');
@@ -145,7 +149,8 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
           _recentStudents = recentProgress;
           _isLoading = false;
         });
-        debugPrint('✅ Dashboard loaded with ${_recentStudents.length} students');
+        debugPrint(
+            '✅ Dashboard loaded with ${_recentStudents.length} students');
       }
     } catch (e) {
       debugPrint('❌ Error loading dashboard: $e');
@@ -160,6 +165,14 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
     return Scaffold(
       backgroundColor: KlaroTheme.surfaceLight,
       appBar: AppBar(
+        leadingWidth: 64,
+        leading: Padding(
+          padding: EdgeInsets.only(left: 16),
+          child: Image.asset(
+            'assets/images/Klaro-logo.png',
+            fit: BoxFit.contain,
+          ),
+        ),
         title: TranslatableText('Teacher Dashboard'),
         automaticallyImplyLeading: false,
         actions: [
@@ -297,7 +310,8 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                   if (_recentStudents.isEmpty)
                     _buildEmptyStudentsState()
                   else
-                    ..._recentStudents.map((student) => _buildStudentCard(student)),
+                    ..._recentStudents
+                        .map((student) => _buildStudentCard(student)),
 
                   SizedBox(height: 24),
 
@@ -400,12 +414,14 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
   }
 
   Widget _buildStudentCard(StudentProgressSummary student) {
-    final statusColor = student.needsAttention ? KlaroTheme.warning : KlaroTheme.success;
+    final statusColor =
+        student.needsAttention ? KlaroTheme.warning : KlaroTheme.success;
 
     return GestureDetector(
       onTap: () async {
         // Find the TeacherStudent object
-        final students = await _firestoreService.getTeacherStudents(widget.user.uid);
+        final students =
+            await _firestoreService.getTeacherStudents(widget.user.uid);
         final teacherStudent = students.firstWhere(
           (s) => s.studentId == student.studentId,
           orElse: () => TeacherStudent(
@@ -450,7 +466,11 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
               ),
               child: Center(
                 child: Text(
-                  student.studentName.split(' ').map((n) => n[0]).take(2).join(),
+                  student.studentName
+                      .split(' ')
+                      .map((n) => n[0])
+                      .take(2)
+                      .join(),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -479,12 +499,14 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                     children: [
                       TranslatableText(
                         'Quiz: ${student.averageQuizScore.toStringAsFixed(0)}%',
-                        style: TextStyle(fontSize: 12, color: KlaroTheme.textMuted),
+                        style: TextStyle(
+                            fontSize: 12, color: KlaroTheme.textMuted),
                       ),
                       SizedBox(width: 12),
                       TranslatableText(
                         'AI: ${student.averageAIScore.toStringAsFixed(0)}%',
-                        style: TextStyle(fontSize: 12, color: KlaroTheme.textMuted),
+                        style: TextStyle(
+                            fontSize: 12, color: KlaroTheme.textMuted),
                       ),
                     ],
                   ),
@@ -509,7 +531,9 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      student.needsAttention ? Icons.warning_rounded : Icons.check_circle_rounded,
+                      student.needsAttention
+                          ? Icons.warning_rounded
+                          : Icons.check_circle_rounded,
                       size: 12,
                       color: statusColor,
                     ),

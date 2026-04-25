@@ -18,8 +18,7 @@ class LanguageSelectorScreen extends StatefulWidget {
   const LanguageSelectorScreen({super.key, required this.user});
 
   @override
-  State<LanguageSelectorScreen> createState() =>
-      _LanguageSelectorScreenState();
+  State<LanguageSelectorScreen> createState() => _LanguageSelectorScreenState();
 }
 
 class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
@@ -38,17 +37,16 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const SizedBox(height: 40),
-
-              Center(
+              Align(
+                alignment: Alignment.centerLeft,
                 child: Image.asset(
                   'assets/images/Klaro-logo.png',
-                  width: 140,
-                  height: 140,
+                  width: 84,
+                  height: 84,
                   fit: BoxFit.contain,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 28),
 
               // Header
               Text(
@@ -117,8 +115,9 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
                             language.displayName,
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight:
-                                  isSelected ? FontWeight.w700 : FontWeight.w600,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w600,
                               color: isSelected
                                   ? Colors.white
                                   : KlaroTheme.textDark,

@@ -1,76 +1,65 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'package:firebase_ai/firebase_ai.dart';
 import 'package:klaro/models/quiz_question.dart';
 import 'package:klaro/utils/constants.dart';
 import 'package:klaro/utils/helpers.dart';
 
 /// ============================================================
-/// Gemini Service
+/// Gemini Service (Firebase AI Logic SDK)
 /// ============================================================
-/// Handles all AI interactions: word simplification, quiz generation,
-/// quiz evaluation, and conversational AI assessment.
+/// Handles all AI interactions using the Firebase AI Logic SDK.
+/// No API key needed in the codebase — Firebase manages it server-side.
+///
+/// Migration notes:
+/// - Replaced manual HTTP calls with FirebaseAI.googleAI()
+/// - Removed geminiApiKey dependency from constants.dart
+/// - All prompts and parsing logic remain unchanged
 
 class GeminiService {
-  static final Uri _generateContentUri = Uri.parse(
-    'https://generativelanguage.googleapis.com/v1beta/models/'
-    '${AppConstants.geminiModel}:generateContent',
-  );
+  late final GenerativeModel _model;
 
+  GeminiService() {
+    _model = FirebaseAI.googleAI().generativeModel(
+      model: AppConstants.geminiModel,
+      generationConfig: GenerationConfig(
+        temperature: 0.2,
+        maxOutputTokens: 4096,
+      ),
+    );
+  }
+
+  /// Create a model instance with custom generation config.
+  GenerativeModel _modelWith({
+    double temperature = 0.2,
+    int maxOutputTokens = 4096,
+  }) {
+    return FirebaseAI.googleAI().generativeModel(
+      model: AppConstants.geminiModel,
+      generationConfig: GenerationConfig(
+        temperature: temperature,
+        maxOutputTokens: maxOutputTokens,
+      ),
+    );
+  }
+
+  /// Core method: send a prompt and get text back.
   Future<String> _generateText(
     String prompt, {
     double temperature = 0.2,
     int maxOutputTokens = 4096,
   }) async {
-    if (AppConstants.geminiApiKey.isEmpty ||
-        AppConstants.geminiApiKey == 'YOUR_GEMINI_API_KEY') {
-      throw StateError('Gemini API key is not configured.');
-    }
-
-    final response = await http.post(
-      _generateContentUri,
-      headers: {
-        'Content-Type': 'application/json',
-        'X-goog-api-key': AppConstants.geminiApiKey,
-      },
-      body: jsonEncode({
-        'contents': [
-          {
-            'parts': [
-              {'text': prompt},
-            ],
-          },
-        ],
-        'generationConfig': {
-          'temperature': temperature,
-          'maxOutputTokens': maxOutputTokens,
-        },
-      }),
+    final model = _modelWith(
+      temperature: temperature,
+      maxOutputTokens: maxOutputTokens,
     );
 
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    final response = await model.generateContent([Content.text(prompt)]);
+    final text = response.text;
 
-    if (response.statusCode < 200 || response.statusCode >= 300) {
-      final message =
-          body['error'] is Map ? body['error']['message']?.toString() : null;
-      throw StateError(message ?? 'Gemini request failed.');
+    if (text == null || text.trim().isEmpty) {
+      throw StateError('Gemini returned no text.');
     }
 
-    final candidates = body['candidates'];
-    if (candidates is! List || candidates.isEmpty) {
-      throw StateError('Gemini returned no candidates.');
-    }
-
-    final content = candidates.first['content'];
-    final parts = content is Map ? content['parts'] : null;
-    if (parts is! List) {
-      throw StateError('Gemini returned no text parts.');
-    }
-
-    return parts
-        .whereType<Map>()
-        .map((part) => part['text']?.toString() ?? '')
-        .join()
-        .trim();
+    return text.trim();
   }
 
   // ── Word Simplification ───────────────────────────────────

@@ -53,22 +53,35 @@ class AppTranslations {
       'Try Again': 'Try Again',
       'Great job! You understood the lesson well.': 'Great job! You understood the lesson well.',
       'Keep going! Review the lesson and try again.': 'Keep going! Review the lesson and try again.',
-      'Talk to Klaro AI': 'Talk to Klaro AI',
+      'Talk to Klaro AI': 'Start Assessment',
       'Submit Answers': 'Submit Answers',
       
       // AI Conversation
-      'Klaro AI Tutor': 'Klaro AI Tutor',
+      'Klaro AI Tutor': 'Klaro AI Assessment',
       'Conversation Complete!': 'Conversation Complete!',
       'AI Score: ': 'AI Score: ',
       'View Performance Summary': 'View Performance Summary',
       'Type your answer...': 'Type your answer...',
+      
+      // AI Assessment
+      'Klaro AI Assessment': 'Klaro AI Assessment',
+      'Start Assessment': 'Start Assessment',
+      'Assessment Passed!': 'Assessment Passed!',
+      'Keep Learning!': 'Keep Learning!',
+      'View My Results': 'View My Results',
+      'Review Lesson': 'Review Lesson',
+      'Retake Assessment': 'Retake Assessment',
+      'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!': 
+        'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!',
+      'Don\'t worry! Learning takes practice. Review the lesson again and you\'ll do better next time.':
+        'Don\'t worry! Learning takes practice. Review the lesson again and you\'ll do better next time.',
       
       // Performance Summary
       'Performance Summary': 'Performance Summary',
       'Overall Score': 'Overall Score',
       'Grade: ': 'Grade: ',
       'Feedback': 'Feedback',
-      'AI Tutor Summary': 'AI Tutor Summary',
+      'AI Tutor Summary': 'AI Assessment Summary',
       'Back to Lessons': 'Back to Lessons',
       'Review Conversation': 'Review Conversation',
       'Quiz Score': 'Quiz Score',
@@ -134,18 +147,32 @@ class AppTranslations {
       'Try Again': 'Subukan Muli',
       'Great job! You understood the lesson well.': 'Magaling! Naintindihan mo nang mabuti ang aralin.',
       'Keep going! Review the lesson and try again.': 'Magpatuloy! Suriin ang aralin at subukan muli.',
-      'Talk to Klaro AI': 'Makipag-usap sa Klaro AI',
+      'Talk to Klaro AI': 'Simulan ang Assessment',
       'Submit Answers': 'Isumite ang mga Sagot',
-      'Klaro AI Tutor': 'Klaro AI Tutor',
+      'Klaro AI Tutor': 'Klaro AI Assessment',
       'Conversation Complete!': 'Kumpleto na ang Pag-uusap!',
       'AI Score: ': 'Marka ng AI: ',
       'View Performance Summary': 'Tingnan ang Buod ng Pagganap',
       'Type your answer...': 'I-type ang iyong sagot...',
+      
+      // AI Assessment
+      'Klaro AI Assessment': 'Klaro AI Assessment',
+      'Start Assessment': 'Simulan ang Assessment',
+      'Assessment Passed!': 'Pumasa sa Assessment!',
+      'Keep Learning!': 'Magpatuloy sa Pag-aaral!',
+      'View My Results': 'Tingnan ang Aking Resulta',
+      'Review Lesson': 'Suriin ang Aralin',
+      'Retake Assessment': 'Ulitin ang Assessment',
+      'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!': 
+        'Magaling! Ipinakita mo ang mabuting pag-unawa sa araling ito. Magpatuloy sa magandang gawa!',
+      'Don\'t worry! Learning takes practice. Review the lesson again and you\'ll do better next time.':
+        'Huwag mag-alala! Ang pag-aaral ay nangangailangan ng pagsasanay. Suriin muli ang aralin at gagaling ka sa susunod.',
+      
       'Performance Summary': 'Buod ng Pagganap',
       'Overall Score': 'Kabuuang Marka',
       'Grade: ': 'Grado: ',
       'Feedback': 'Puna',
-      'AI Tutor Summary': 'Buod ng AI Tutor',
+      'AI Tutor Summary': 'Buod ng AI Assessment',
       'Back to Lessons': 'Bumalik sa mga Aralin',
       'Review Conversation': 'Suriin ang Pag-uusap',
       'Quiz Score': 'Marka sa Pagsusulit',

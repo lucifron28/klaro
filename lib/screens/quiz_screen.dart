@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:klaro/models/lesson.dart';
 import 'package:klaro/models/quiz_question.dart';
 import 'package:klaro/models/quiz_response.dart';
+import 'package:klaro/models/app_user.dart';
 import 'package:klaro/services/gemini_service.dart';
 import 'package:klaro/services/local_storage_service.dart';
-import 'package:klaro/screens/ai_conversation_screen.dart';
+import 'package:klaro/services/firestore_service.dart';
+import 'package:klaro/screens/ai_assessment_screen.dart';
 import 'package:klaro/widgets/quiz_card.dart';
 import 'package:klaro/utils/theme.dart';
 import 'package:klaro/widgets/translatable_text.dart';
@@ -13,7 +15,7 @@ import 'package:klaro/widgets/translatable_text.dart';
 /// Quiz Screen
 /// ============================================================
 /// Generates and displays comprehension quiz questions using Gemini.
-/// Shows results and links to the AI conversation assessment.
+/// Shows results and links to the AI Assessment.
 
 class QuizScreen extends StatefulWidget {
   final Lesson lesson;
@@ -27,6 +29,7 @@ class QuizScreen extends StatefulWidget {
 class _QuizScreenState extends State<QuizScreen> {
   final GeminiService _geminiService = GeminiService();
   final LocalStorageService _localStorage = LocalStorageService();
+  final FirestoreService _firestoreService = FirestoreService();
 
   List<QuizQuestion> _questions = [];
   List<String> _studentAnswers = [];
@@ -36,11 +39,20 @@ class _QuizScreenState extends State<QuizScreen> {
   int _score = 0;
   int _total = 0;
   String? _errorMessage;
+  AppUser? _user;
 
   @override
   void initState() {
     super.initState();
+    _loadUser();
     _generateQuiz();
+  }
+
+  Future<void> _loadUser() async {
+    final user = await _localStorage.getUser();
+    if (mounted) {
+      setState(() => _user = user);
+    }
   }
 
   Future<void> _generateQuiz() async {
@@ -103,11 +115,21 @@ class _QuizScreenState extends State<QuizScreen> {
       final quizResponse = QuizResponse(
         lessonId: widget.lesson.id,
         lessonTitle: widget.lesson.title,
+        subject: widget.lesson.subject,
         score: _score,
         total: _total,
         date: DateTime.now(),
       );
-      await _localStorage.saveQuizResponse(quizResponse);
+      await _localStorage.saveQuizResponse(quizResponse, userId: _user?.uid);
+
+      // Save to Firestore if available and user is loaded
+      if (_user != null) {
+        try {
+          await _firestoreService.saveQuizResult(_user!.uid, quizResponse);
+        } catch (e) {
+          debugPrint('Failed to save quiz to Firestore: $e');
+        }
+      }
 
       setState(() {
         _showResults = true;
@@ -285,16 +307,14 @@ class _QuizScreenState extends State<QuizScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => AIConversationScreen(
+                          builder: (_) => AIAssessmentScreen(
                             lesson: widget.lesson,
-                            quizScore: _score,
-                            quizTotal: _total,
                           ),
                         ),
                       );
                     },
-                    icon: Icon(Icons.chat_bubble_rounded),
-                    label: TranslatableText('Talk to Klaro AI'),
+                    icon: Icon(Icons.assessment_outlined),
+                    label: TranslatableText('Start Assessment'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: KlaroTheme.primaryBlue,
                       padding: EdgeInsets.symmetric(vertical: 16),

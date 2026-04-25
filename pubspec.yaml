@@ -1,6 +1,6 @@
 name: klaro
 description: "Klaro - A Filipino educational app that helps students understand lessons through word simplification, translation, quizzes, and AI-powered conversational assessment."
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:

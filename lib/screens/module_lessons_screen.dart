@@ -3,6 +3,7 @@ import 'package:klaro/models/curriculum.dart';
 import 'package:klaro/models/lesson.dart';
 import 'package:klaro/screens/lesson_reading_screen.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 class ModuleLessonsScreen extends StatelessWidget {
   final CurriculumModule module;
@@ -35,12 +36,23 @@ class ModuleLessonsScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 6),
-                Text(
-                  '${module.subjectTitle} ${module.gradeLevel.split(' ').last} - ${module.lessons.length} lessons',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: KlaroTheme.textMuted,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      '${module.subjectTitle} ${module.gradeLevel.split(' ').last} - ${module.lessons.length} ',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: KlaroTheme.textMuted,
+                      ),
+                    ),
+                    TranslatableText(
+                      'lessons',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: KlaroTheme.textMuted,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -124,7 +136,7 @@ class ModuleLessonsScreen extends StatelessWidget {
                       color: KlaroTheme.textDark,
                     ),
                   ),
-                  Text(
+                  TranslatableText(
                     'Tap to read lesson',
                     style: TextStyle(
                       fontSize: 12,

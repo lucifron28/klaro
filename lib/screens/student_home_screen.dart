@@ -6,7 +6,10 @@ import 'package:klaro/screens/login_screen.dart';
 import 'package:klaro/screens/student_dashboard_screen.dart';
 import 'package:klaro/screens/subject_modules_screen.dart';
 import 'package:klaro/services/auth_service.dart';
+import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/utils/translations.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
 /// Student Home Screen
@@ -24,6 +27,29 @@ class StudentHomeScreen extends StatefulWidget {
 
 class _StudentHomeScreenState extends State<StudentHomeScreen> {
   int _currentIndex = 0;
+  String _subjectsLabel = 'Subjects';
+  String _progressLabel = 'My Progress';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTranslations();
+  }
+
+  Future<void> _loadTranslations() async {
+    final localStorage = LocalStorageService();
+    final languageCode = await localStorage.getLanguagePreference() ?? 'en';
+    
+    final subjects = AppTranslations.translate('Subjects', languageCode);
+    final progress = AppTranslations.translate('My Progress', languageCode);
+    
+    if (mounted) {
+      setState(() {
+        _subjectsLabel = subjects;
+        _progressLabel = progress;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +62,11 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.menu_book_rounded),
-            label: 'Subjects',
+            label: _subjectsLabel,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart_rounded),
-            label: 'My Progress',
+            label: _progressLabel,
           ),
         ],
       ),
@@ -60,16 +86,28 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Kumusta, ${widget.user.name}!',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w800,
-                          color: KlaroTheme.textDark,
-                        ),
+                      Row(
+                        children: [
+                          TranslatableText(
+                            'Kumusta',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              color: KlaroTheme.textDark,
+                            ),
+                          ),
+                          Text(
+                            ', ${widget.user.name}!',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              color: KlaroTheme.textDark,
+                            ),
+                          ),
+                        ],
                       ),
                       SizedBox(height: 4),
-                      Text(
+                      TranslatableText(
                         'Choose a Grade 7 subject to start.',
                         style: TextStyle(
                           fontSize: 14,
@@ -97,7 +135,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
           SizedBox(height: 24),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
+            child: TranslatableText(
               'Grade 7 Subjects',
               style: TextStyle(
                 fontSize: 18,
@@ -194,13 +232,41 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                     ),
                   ),
                   SizedBox(height: 8),
-                  Text(
-                    '${subject.modules.length} modules - ${subject.lessonCount} lessons',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: color,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        '${subject.modules.length} ',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
+                      ),
+                      TranslatableText(
+                        'modules',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
+                      ),
+                      Text(
+                        ' - ${subject.lessonCount} ',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
+                      ),
+                      TranslatableText(
+                        'lessons',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

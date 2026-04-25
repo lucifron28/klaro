@@ -20,6 +20,8 @@ class LocalStorageService {
     await Hive.openBox(AppConstants.conversationsBox);
     await Hive.openBox(AppConstants.userBox);
     await Hive.openBox(AppConstants.cacheBox);
+    await Hive.openBox('translation_cache');
+    await Hive.openBox('language_preference');
   }
 
   // ── User ──────────────────────────────────────────────────
@@ -180,5 +182,29 @@ class LocalStorageService {
     await Hive.box(AppConstants.scoresBox).clear();
     await Hive.box(AppConstants.conversationsBox).clear();
     await Hive.box(AppConstants.cacheBox).clear();
+  }
+
+  // ── Language Preference ───────────────────────────────────
+
+  Future<void> saveLanguagePreference(String languageCode) async {
+    final box = Hive.box('language_preference');
+    await box.put('preferred_language', languageCode);
+  }
+
+  Future<String?> getLanguagePreference() async {
+    final box = Hive.box('language_preference');
+    return box.get('preferred_language') as String?;
+  }
+
+  // ── Seeder Status ─────────────────────────────────────────
+
+  Future<bool> getSeederStatus() async {
+    final box = Hive.box('language_preference');
+    return box.get('seeder_completed', defaultValue: false) as bool;
+  }
+
+  Future<void> markSeederComplete() async {
+    final box = Hive.box('language_preference');
+    await box.put('seeder_completed', true);
   }
 }

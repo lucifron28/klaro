@@ -3,6 +3,7 @@ import 'package:klaro/data/sample_students.dart';
 import 'package:klaro/screens/login_screen.dart';
 import 'package:klaro/services/auth_service.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
 /// Teacher Dashboard Screen
@@ -25,7 +26,7 @@ class TeacherDashboardScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: KlaroTheme.surfaceLight,
       appBar: AppBar(
-        title: Text('Teacher Dashboard'),
+        title: TranslatableText('Teacher Dashboard'),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -47,7 +48,7 @@ class TeacherDashboardScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header
-            Text(
+            TranslatableText(
               'Class Overview',
               style: TextStyle(
                 fontSize: 24,
@@ -56,7 +57,7 @@ class TeacherDashboardScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 4),
-            Text(
+            TranslatableText(
               'The Water Cycle - Grade 8 Science',
               style: TextStyle(
                 fontSize: 14,
@@ -101,7 +102,7 @@ class TeacherDashboardScreen extends StatelessWidget {
             // Student list header
             Row(
               children: [
-                Text(
+                TranslatableText(
                   'Student Performance',
                   style: TextStyle(
                     fontSize: 18,
@@ -121,7 +122,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                     children: [
                       Icon(Icons.bolt, size: 12, color: KlaroTheme.warning),
                       SizedBox(width: 4),
-                      Text(
+                      TranslatableText(
                         'Demo Data',
                         style: TextStyle(
                           fontSize: 11,
@@ -159,7 +160,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                       Icon(Icons.info_outline,
                           size: 16, color: KlaroTheme.primaryBlue),
                       SizedBox(width: 8),
-                      Text(
+                      TranslatableText(
                         'About This Dashboard',
                         style: TextStyle(
                           fontSize: 14,
@@ -170,7 +171,7 @@ class TeacherDashboardScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 8),
-                  Text(
+                  TranslatableText(
                     'This dashboard shows hardcoded demo data for the hackathon presentation. '
                     'In the full version, teachers will be able to upload lessons, '
                     'view real-time student progress, and generate class reports.',
@@ -203,7 +204,7 @@ class TeacherDashboardScreen extends StatelessWidget {
         children: [
           Icon(icon, color: color, size: 22),
           SizedBox(height: 8),
-          Text(
+          TranslatableText(
             value,
             style: TextStyle(
               fontSize: 20,
@@ -212,7 +213,7 @@ class TeacherDashboardScreen extends StatelessWidget {
             ),
           ),
           SizedBox(height: 2),
-          Text(
+          TranslatableText(
             label,
             style: TextStyle(
               fontSize: 11,
@@ -289,13 +290,13 @@ class TeacherDashboardScreen extends StatelessWidget {
                 SizedBox(height: 4),
                 Row(
                   children: [
-                    Text(
+                    TranslatableText(
                       'Quiz: ${student.quizScore}/${student.quizTotal}',
                       style:
                           TextStyle(fontSize: 12, color: KlaroTheme.textMuted),
                     ),
                     SizedBox(width: 12),
-                    Text(
+                    TranslatableText(
                       'AI: ${student.aiScore}/5',
                       style:
                           TextStyle(fontSize: 12, color: KlaroTheme.textMuted),

@@ -7,6 +7,7 @@ import 'package:klaro/screens/learning_recap_screen.dart';
 import 'package:klaro/widgets/word_popup.dart';
 import 'package:klaro/utils/helpers.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
 /// Lesson Reading Screen
@@ -90,7 +91,7 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
               child: ElevatedButton.icon(
                 onPressed: _openLearningRecap,
                 icon: Icon(Icons.fact_check_rounded),
-                label: Text('Review Learning Recap'),
+                label: TranslatableText('Review Learning Recap'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: KlaroTheme.accentYellow,
                   foregroundColor: KlaroTheme.textDark,
@@ -194,8 +195,12 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
       _selectedWord = word;
     });
 
-    // Check local cache first
-    final cached = _localStorage.getCachedWordExplanation(word);
+    // Get user's preferred language
+    final languageCode = await _localStorage.getLanguagePreference() ?? 'tl';
+
+    // Check local cache first (with language-specific key)
+    final cacheKey = '${languageCode}_$word';
+    final cached = _localStorage.getCachedWordExplanation(cacheKey);
     if (cached != null && _hasUsableExplanation(cached)) {
       await _recordLearnedConcept(word, cached);
       _showWordPopup(word, cached['explanation']!, cached['tagalog']!);
@@ -213,12 +218,16 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
       );
     }
 
-    // Call Gemini API
+    // Call Gemini API with user's preferred language
     try {
-      final result = await _geminiService.simplifyWord(word, context: context);
+      final result = await _geminiService.simplifyWord(
+        word,
+        context: context,
+        targetLanguage: languageCode,
+      );
 
-      // Cache the result
-      await _localStorage.cacheWordExplanation(word, result);
+      // Cache the result with language-specific key
+      await _localStorage.cacheWordExplanation(cacheKey, result);
       await _recordLearnedConcept(word, result);
 
       // Close loading popup and show result

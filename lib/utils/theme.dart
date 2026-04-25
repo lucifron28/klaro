@@ -25,6 +25,7 @@ class KlaroTheme {
   static const Color success = Color(0xFF22C55E);
   static const Color error = Color(0xFFEF4444);
   static const Color warning = Color(0xFFF59E0B);
+  static const Color borderLight = Color(0xFFE5E7EB);
 
   // ── Theme Data ────────────────────────────────────────────
   static ThemeData get lightTheme {

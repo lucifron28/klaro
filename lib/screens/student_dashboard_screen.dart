@@ -4,6 +4,7 @@ import 'package:klaro/models/ai_conversation.dart';
 import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/helpers.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
 /// Student Dashboard Screen
@@ -61,7 +62,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             color: KlaroTheme.textMuted.withOpacity(0.3),
           ),
           SizedBox(height: 16),
-          Text(
+          TranslatableText(
             'No progress yet',
             style: TextStyle(
               fontSize: 18,
@@ -70,7 +71,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             ),
           ),
           SizedBox(height: 8),
-          Text(
+          TranslatableText(
             'Complete a lesson and quiz to see your progress here.',
             style: TextStyle(
               fontSize: 14,
@@ -89,7 +90,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          TranslatableText(
             'My Progress',
             style: TextStyle(
               fontSize: 24,
@@ -98,7 +99,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             ),
           ),
           SizedBox(height: 4),
-          Text(
+          TranslatableText(
             '${_quizResponses.length} lesson(s) completed',
             style: TextStyle(
               fontSize: 14,
@@ -112,7 +113,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           SizedBox(height: 24),
 
           // Lesson history
-          Text(
+          TranslatableText(
             'Lesson History',
             style: TextStyle(
               fontSize: 18,
@@ -192,7 +193,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             ),
           ),
           SizedBox(height: 2),
-          Text(
+          TranslatableText(
             label,
             style: TextStyle(
               fontSize: 11,

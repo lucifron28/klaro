@@ -15,9 +15,8 @@ dependencies:
   firebase_auth: ^5.3.4
   cloud_firestore: ^5.6.0
 
-  # AI & Translation
-  google_generative_ai: ^0.4.6
-  http: ^1.2.2
+  # AI (Firebase AI Logic SDK)
+  firebase_ai: ^2.3.0
 
   # Local Storage
   hive: ^2.2.3
@@ -47,5 +46,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env
     - assets/images/

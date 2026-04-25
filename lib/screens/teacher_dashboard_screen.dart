@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:klaro/data/sample_students.dart';
-import 'package:klaro/data/sample_lessons.dart';
 import 'package:klaro/screens/login_screen.dart';
 import 'package:klaro/services/auth_service.dart';
 import 'package:klaro/utils/theme.dart';
@@ -17,9 +16,11 @@ class TeacherDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final students = SampleStudents.students;
-    final avgScore = students.map((s) => s.overallPercent).reduce((a, b) => a + b) ~/
-        students.length;
-    final completedCount = students.where((s) => s.status != 'Needs Review').length;
+    final avgScore =
+        students.map((s) => s.overallPercent).reduce((a, b) => a + b) ~/
+            students.length;
+    final completedCount =
+        students.where((s) => s.status != 'Needs Review').length;
 
     return Scaffold(
       backgroundColor: KlaroTheme.surfaceLight,
@@ -30,6 +31,7 @@ class TeacherDashboardScreen extends StatelessWidget {
           IconButton(
             onPressed: () async {
               await AuthService().signOut();
+              if (!context.mounted) return;
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (_) => LoginScreen()),
@@ -154,7 +156,8 @@ class TeacherDashboardScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.info_outline, size: 16, color: KlaroTheme.primaryBlue),
+                      Icon(Icons.info_outline,
+                          size: 16, color: KlaroTheme.primaryBlue),
                       SizedBox(width: 8),
                       Text(
                         'About This Dashboard',
@@ -187,7 +190,8 @@ class TeacherDashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Container(
       padding: EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -287,12 +291,14 @@ class TeacherDashboardScreen extends StatelessWidget {
                   children: [
                     Text(
                       'Quiz: ${student.quizScore}/${student.quizTotal}',
-                      style: TextStyle(fontSize: 12, color: KlaroTheme.textMuted),
+                      style:
+                          TextStyle(fontSize: 12, color: KlaroTheme.textMuted),
                     ),
                     SizedBox(width: 12),
                     Text(
                       'AI: ${student.aiScore}/5',
-                      style: TextStyle(fontSize: 12, color: KlaroTheme.textMuted),
+                      style:
+                          TextStyle(fontSize: 12, color: KlaroTheme.textMuted),
                     ),
                   ],
                 ),

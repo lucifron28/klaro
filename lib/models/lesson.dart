@@ -7,6 +7,9 @@ class Lesson {
   final String title;
   final String subject;
   final String gradeLevel;
+  final String? moduleId;
+  final String? moduleTitle;
+  final String? quarter;
   final String content;
   final List<String> keyTerms;
   final DateTime? dateCompleted;
@@ -16,6 +19,9 @@ class Lesson {
     required this.title,
     required this.subject,
     required this.gradeLevel,
+    this.moduleId,
+    this.moduleTitle,
+    this.quarter,
     required this.content,
     this.keyTerms = const [],
     this.dateCompleted,
@@ -27,6 +33,9 @@ class Lesson {
       'title': title,
       'subject': subject,
       'gradeLevel': gradeLevel,
+      'moduleId': moduleId,
+      'moduleTitle': moduleTitle,
+      'quarter': quarter,
       'content': content,
       'keyTerms': keyTerms,
       'dateCompleted': dateCompleted?.toIso8601String(),
@@ -39,6 +48,9 @@ class Lesson {
       title: map['title'] ?? '',
       subject: map['subject'] ?? '',
       gradeLevel: map['gradeLevel'] ?? '',
+      moduleId: map['moduleId'],
+      moduleTitle: map['moduleTitle'],
+      quarter: map['quarter'],
       content: map['content'] ?? '',
       keyTerms: List<String>.from(map['keyTerms'] ?? []),
       dateCompleted: map['dateCompleted'] != null
@@ -52,6 +64,9 @@ class Lesson {
     String? title,
     String? subject,
     String? gradeLevel,
+    String? moduleId,
+    String? moduleTitle,
+    String? quarter,
     String? content,
     List<String>? keyTerms,
     DateTime? dateCompleted,
@@ -61,6 +76,9 @@ class Lesson {
       title: title ?? this.title,
       subject: subject ?? this.subject,
       gradeLevel: gradeLevel ?? this.gradeLevel,
+      moduleId: moduleId ?? this.moduleId,
+      moduleTitle: moduleTitle ?? this.moduleTitle,
+      quarter: quarter ?? this.quarter,
       content: content ?? this.content,
       keyTerms: keyTerms ?? this.keyTerms,
       dateCompleted: dateCompleted ?? this.dateCompleted,

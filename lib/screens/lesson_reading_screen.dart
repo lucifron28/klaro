@@ -52,56 +52,9 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
       backgroundColor: KlaroTheme.surfaceLight,
       appBar: AppBar(
         title: Text(widget.lesson.title),
-        actions: [
-          Container(
-            margin: EdgeInsets.only(right: 12),
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: KlaroTheme.primaryBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.touch_app, size: 14, color: KlaroTheme.primaryBlue),
-                SizedBox(width: 4),
-                Text(
-                  'Tap words',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: KlaroTheme.primaryBlue,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
       body: Column(
         children: [
-          // Instruction banner
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            color: KlaroTheme.lightBlue.withOpacity(0.15),
-            child: Row(
-              children: [
-                Icon(Icons.info_outline,
-                    size: 16, color: KlaroTheme.primaryBlue),
-                SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    'Tap any word you don\'t understand to see a simple explanation and Tagalog translation.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: KlaroTheme.primaryBlue,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
 
           // Lesson content
           Expanded(
@@ -224,10 +177,7 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
                 fontSize: 16,
                 height: 1.8,
                 color: KlaroTheme.textDark,
-                fontWeight: isKeyTerm ? FontWeight.w600 : FontWeight.w400,
-                decoration: isKeyTerm ? TextDecoration.underline : null,
-                decorationColor: KlaroTheme.primaryBlue.withOpacity(0.4),
-                decorationStyle: TextDecorationStyle.dotted,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
@@ -276,12 +226,19 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
         Navigator.pop(this.context); // Close loading popup
         _showWordPopup(word, result['explanation']!, result['tagalog']!);
       }
-    } catch (e) {
+    } catch (error) {
       if (mounted) {
-        Navigator.pop(this.context); // Close loading popup
+        debugPrint('Word explanation failed for "$word": $error');
+        if (Navigator.canPop(this.context)) {
+          Navigator.pop(this.context); // Close loading popup
+        }
+
+        final message = error is GeminiServiceException
+            ? error.message
+            : 'Unable to explain "$word". Please try again.';
+
         ScaffoldMessenger.of(this.context).showSnackBar(
-          SnackBar(
-              content: Text('Unable to explain "$word". Please try again.')),
+          SnackBar(content: Text(message)),
         );
       }
     }

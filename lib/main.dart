@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:klaro/services/env_service.dart';
 import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/screens/login_screen.dart';
 import 'package:klaro/utils/theme.dart';
 import 'package:klaro/utils/constants.dart';
+import 'firebase_options.dart';
 
 /// ============================================================
 /// Klaro - Main Entry Point
@@ -18,12 +18,13 @@ import 'package:klaro/utils/constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await EnvService.load();
 
   // Firebase is optional for the local hackathon demo. Without
   // google-services.json, initialization fails before the first frame.
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (error) {
     debugPrint('Firebase initialization skipped: $error');
   }

@@ -1,6 +1,6 @@
 # Klaro
 
-Klaro is a Flutter Android app for Filipino students. It helps students read a lesson, tap unfamiliar words for simple explanations and Tagalog/Taglish support, review the words they explored, take an AI-generated quiz, and then talk to an AI tutor for a final understanding check.
+Klaro is a Flutter Android app for Filipino Grade 7 learners. Students browse the DepEd K-12 curriculum by subject, module, and lesson, read a lesson, tap unfamiliar words for simple explanations and Tagalog/Taglish support, review selected words in a learning recap, take a quiz, and talk to Klaro AI for a final understanding check.
 
 Built for InnOlympics 2026, Track A: Pangarap sa Pagkatuto.
 
@@ -10,46 +10,34 @@ The app currently supports:
 
 - Student quick demo login and Firebase email/password login.
 - Teacher quick demo login with a demo class dashboard.
+- Grade 7 curriculum browsing as `Subject -> Module -> Lesson`.
+- Science 7, English 7, and Mathematics 7 module lists from the supplied DepEd LRMDS curriculum outline.
 - Interactive reading with tappable words.
-- Gemini-powered word simplification and Tagalog/Taglish explanation.
+- Firebase AI Logic powered word simplification and Tagalog/Taglish explanation.
 - Learned words/concepts logging per lesson.
 - Learning recap before quiz.
-- Gemini-generated quiz questions.
-- Gemini-based quiz answer evaluation.
-- Klaro AI conversation after the quiz.
+- Firebase AI Logic powered quiz generation, quiz evaluation, and AI conversation.
 - Local progress storage with Hive.
-- Firebase Android configuration through `android/app/google-services.json`.
+- Firebase Android configuration through `android/app/google-services.json` and `lib/firebase_options.dart`.
 
-The app is Android-first right now. iOS, web, desktop, and production backend behavior are not fully configured.
+The app is Android-first right now. iOS, web, desktop, real teacher lesson management, and production backend behavior are not fully configured.
 
 ## Developer Quick Start
-
-Use this when setting up a fresh machine.
 
 ```powershell
 cd C:\Users\Ron\InnOlympics\klaro
 flutter pub get
-```
-
-Create a local `.env` file in the project root:
-
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-Make sure Firebase Android config exists:
-
-```text
-android/app/google-services.json
-```
-
-Then run:
-
-```powershell
 flutter run
 ```
 
-For a debug APK:
+If `flutter` is not on PATH:
+
+```powershell
+C:\Users\Ron\develop\flutter\bin\flutter.bat pub get
+C:\Users\Ron\develop\flutter\bin\flutter.bat run
+```
+
+Build a debug APK:
 
 ```powershell
 flutter build apk --debug
@@ -61,83 +49,42 @@ Output:
 build/app/outputs/flutter-apk/app-debug.apk
 ```
 
-## Required Local Files
+## Firebase Setup
 
-These are required for a full working local build, but should be handled carefully.
-
-### `.env`
-
-Project root:
-
-```text
-.env
-```
-
-Expected content:
-
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-`.env` is ignored by Git through `.gitignore`. Use [.env.example](./.env.example) as the template.
-
-Important: because Flutter bundles assets into the APK, this only keeps the key out of source control. It is not production-grade secret protection. For production, Gemini calls should go through a backend or Cloud Function.
-
-### `google-services.json`
-
-Android Firebase config must be here:
+Required files:
 
 ```text
 android/app/google-services.json
+lib/firebase_options.dart
 ```
 
-The current Android package/application id is:
+Current Android package/application id:
 
 ```text
 com.example.klaro
 ```
 
-The Firebase Android app must use that package name unless `applicationId` is changed in [android/app/build.gradle.kts](./android/app/build.gradle.kts).
+Both Firebase files must point to the same Firebase project. The current local files point to project `klaro-851a6`.
 
-## Common Commands
+Firebase AI Logic must be enabled for the same project:
 
-Analyze Dart code:
-
-```powershell
-flutter analyze
+```text
+https://console.firebase.google.com/project/klaro-851a6/genai
 ```
 
-If `flutter` is not on PATH on this machine, use:
+The app initializes Firebase with:
 
-```powershell
-C:\Users\Ron\develop\flutter\bin\flutter.bat analyze
+```dart
+await Firebase.initializeApp(
+  options: DefaultFirebaseOptions.currentPlatform,
+);
 ```
 
-Format changed Dart files:
+## Environment Files
 
-```powershell
-dart format lib test
-```
+No `.env` file is required for the current Firebase AI Logic setup. The app does not read a separate Gemini API key from Dart code.
 
-Build Android debug APK:
-
-```powershell
-flutter build apk --debug
-```
-
-Run on connected Android device:
-
-```powershell
-flutter devices
-flutter run
-```
-
-Clean generated build output:
-
-```powershell
-flutter clean
-flutter pub get
-```
+`.env.example` is only a note for teammates. Do not put Gemini API keys in Dart files.
 
 ## Tech Stack
 
@@ -147,59 +94,83 @@ flutter pub get
 | UI | Material 3, Google Fonts |
 | Authentication | Firebase Auth plus local demo fallback |
 | Android Firebase config | Google Services Gradle plugin |
-| AI provider | Google Gemini REST API |
-| Gemini model | `gemini-flash-latest` |
-| AI networking | `http` package |
+| AI provider | Firebase AI Logic SDK |
+| AI SDK | `firebase_ai` |
+| Gemini model | `gemini-2.5-flash-lite` in `AppConstants.geminiModel` |
 | Local persistence | Hive / Hive Flutter |
-| Demo lesson data | Hardcoded Dart data |
+| Curriculum data | Hardcoded Dart data in `SampleLessons` |
 | Demo teacher data | Hardcoded Dart data |
 
-Note: `google_generative_ai` is still listed in `pubspec.yaml`, but the active Gemini integration uses REST through [lib/services/gemini_service.dart](./lib/services/gemini_service.dart).
+## Curriculum Structure
 
-## Main User Flows
+The curriculum is modeled as:
 
-### Student Flow
+```text
+CurriculumSubject
+  -> CurriculumModule
+    -> Lesson
+```
+
+Current subjects:
+
+| Subject | Modules | Lessons |
+| --- | ---: | ---: |
+| Science 7 | 4 | 31 |
+| English 7 | 4 | 32 |
+| Mathematics 7 | 4 | 33 |
+
+Module mapping:
+
+| Subject | Quarter | Module |
+| --- | --- | --- |
+| Science | Quarter 1 | Matter |
+| Science | Quarter 2 | Living Things and Their Environment |
+| Science | Quarter 3 | Force, Motion and Energy |
+| Science | Quarter 4 | Earth and Space |
+| English | Quarter 1 | Reading Comprehension, Vocabulary, Grammar |
+| English | Quarter 2 | Listening Comprehension |
+| English | Quarter 3 | Oral Language and Fluency |
+| English | Quarter 4 | Writing and Composition |
+| Mathematics | Quarter 1 | Numbers and Number Sense |
+| Mathematics | Quarter 2 | Measurement and Algebra |
+| Mathematics | Quarter 3 | Geometry |
+| Mathematics | Quarter 4 | Statistics and Probability |
+
+The app includes every lesson title from the supplied curriculum list. Lesson bodies are currently generated starter text from the curriculum metadata, not full official DepEd module content.
+
+## Main Student Flow
 
 1. Open app.
 2. Tap `Student` quick demo login or sign in with Firebase.
-3. Choose a lesson from the lessons list.
-4. Read the lesson.
-5. Tap unfamiliar words.
-6. Klaro opens a bottom sheet with:
-   - Simple explanation
-   - Tagalog/Taglish explanation
-7. Each successfully explained word is saved as a learned concept for that lesson.
-8. Tap `Review Learning Recap`.
-9. Review:
-   - Lesson concept chips from `lesson.keyTerms`
-   - Words the student tapped while reading
-   - Explanation and Tagalog/Taglish text for each word
-10. Tap `Start Quiz`.
-11. Answer the Gemini-generated quiz.
-12. Submit answers.
-13. Continue to `Talk to Klaro AI`.
-14. Complete the AI tutor conversation.
-15. View the performance summary.
-
-### Teacher Flow
-
-1. Open app.
-2. Tap `Teacher` quick demo login.
-3. View the class dashboard.
-
-Teacher mode currently uses hardcoded demo student data in [lib/data/sample_students.dart](./lib/data/sample_students.dart). It does not yet read real class data from Firestore.
+3. Choose a Grade 7 subject.
+4. Choose a quarter module.
+5. Choose a lesson.
+6. Read the lesson.
+7. Tap unfamiliar words.
+8. Klaro opens a bottom sheet with a simple explanation and Tagalog/Taglish explanation.
+9. Each successfully explained word is saved as a learned concept for that lesson.
+10. Tap `Review Learning Recap`.
+11. Review selected words and lesson concepts.
+12. Tap `Start Quiz`.
+13. Answer the AI-generated quiz.
+14. Submit answers.
+15. Continue to `Talk to Klaro AI`.
+16. Complete the AI tutor conversation.
+17. View the performance summary.
 
 ## Project Structure
 
 ```text
 lib/
   main.dart
+  firebase_options.dart
   data/
     sample_lessons.dart
     sample_students.dart
   models/
     ai_conversation.dart
     app_user.dart
+    curriculum.dart
     learned_concept.dart
     lesson.dart
     quiz_question.dart
@@ -209,17 +180,17 @@ lib/
     learning_recap_screen.dart
     lesson_reading_screen.dart
     login_screen.dart
+    module_lessons_screen.dart
     performance_summary_screen.dart
     quiz_screen.dart
     student_dashboard_screen.dart
     student_home_screen.dart
+    subject_modules_screen.dart
     teacher_dashboard_screen.dart
   services/
     auth_service.dart
-    env_service.dart
     gemini_service.dart
     local_storage_service.dart
-    translation_service.dart
   utils/
     constants.dart
     helpers.dart
@@ -233,76 +204,41 @@ lib/
 
 ## Important Files
 
-### App entry point
+### `lib/data/sample_lessons.dart`
 
-[lib/main.dart](./lib/main.dart)
+Owns the current Grade 7 curriculum seed data.
 
-Responsibilities:
+- `SampleLessons.subjects`: full subject/module/lesson hierarchy.
+- `SampleLessons.lessons`: flattened lesson list for lookup and progress use.
+- `getSubjectById`, `getModuleById`, `getLessonById`: lookup helpers.
 
-- Initializes Flutter bindings.
-- Loads `.env` through `EnvService`.
-- Tries to initialize Firebase.
-- Initializes Hive boxes.
-- Starts `KlaroApp`.
+### `lib/models/curriculum.dart`
 
-Firebase init is wrapped in `try/catch` so the app can still render in local demo mode if Firebase is not configured.
+Defines:
 
-### Environment loading
+- `CurriculumSubject`
+- `CurriculumModule`
 
-[lib/services/env_service.dart](./lib/services/env_service.dart)
+`CurriculumSubject` contains modules. `CurriculumModule` contains lessons.
 
-Responsibilities:
+### `lib/models/lesson.dart`
 
-- Loads `.env` from Flutter assets.
-- Parses `KEY=VALUE` lines.
-- Exposes values through `EnvService.get(key)`.
+Defines individual lesson records. Current fields include:
 
-The `.env` asset is declared in [pubspec.yaml](./pubspec.yaml).
+- `id`
+- `title`
+- `subject`
+- `gradeLevel`
+- `moduleId`
+- `moduleTitle`
+- `quarter`
+- `content`
+- `keyTerms`
+- `dateCompleted`
 
-### Constants
+### `lib/services/gemini_service.dart`
 
-[lib/utils/constants.dart](./lib/utils/constants.dart)
-
-Responsibilities:
-
-- App name/tagline/version.
-- Hive box names.
-- Demo login credentials.
-- Gemini model name.
-- Gemini API key lookup.
-
-API key behavior:
-
-1. First uses `--dart-define=GEMINI_API_KEY=...` if provided.
-2. Otherwise uses `GEMINI_API_KEY` from `.env`.
-
-There must be no hardcoded API key in this file.
-
-### Authentication
-
-[lib/services/auth_service.dart](./lib/services/auth_service.dart)
-
-Behavior:
-
-- Quick demo credentials bypass Firebase and create a local `AppUser`.
-- Non-demo credentials use Firebase Auth.
-- Role is determined by email:
-  - Email containing `teacher` becomes teacher.
-  - Everything else becomes student.
-- Current user data is saved in Hive.
-
-Demo accounts:
-
-```text
-student1@test.com / password123
-teacher1@test.com / password123
-```
-
-### Gemini service
-
-[lib/services/gemini_service.dart](./lib/services/gemini_service.dart)
-
-This service owns all Gemini interactions:
+Owns all Firebase AI Logic calls:
 
 - `simplifyWord`
 - `generateQuizQuestions`
@@ -310,29 +246,33 @@ This service owns all Gemini interactions:
 - `conductConversation`
 - `getInitialGreeting`
 
-It calls:
+It uses:
 
-```text
-https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent
+```dart
+FirebaseAI.googleAI().generativeModel(
+  model: AppConstants.geminiModel,
+)
 ```
 
-Headers:
+Firebase AI errors are logged with `debugPrint` and converted into clearer app messages.
 
-```text
-Content-Type: application/json
-X-goog-api-key: <GEMINI_API_KEY>
-```
+### `lib/screens/student_home_screen.dart`
 
-The service expects JSON for structured calls and falls back where appropriate:
+Shows the Grade 7 subject list and links to module browsing.
 
-- Word simplification throws if Gemini returns incomplete JSON.
-- Quiz generation falls back to hardcoded questions.
-- Quiz evaluation falls back to basic answer matching.
-- AI conversation returns a retry-style response if the API call fails.
+### `lib/screens/subject_modules_screen.dart`
 
-### Local storage
+Shows the selected subject's quarter modules.
 
-[lib/services/local_storage_service.dart](./lib/services/local_storage_service.dart)
+### `lib/screens/module_lessons_screen.dart`
+
+Shows lessons inside one module and opens `LessonReadingScreen`.
+
+### `lib/screens/lesson_reading_screen.dart`
+
+Renders tappable lesson text, checks the word cache, calls `GeminiService.simplifyWord`, saves learned concepts, and opens the learning recap.
+
+### `lib/services/local_storage_service.dart`
 
 Hive boxes:
 
@@ -342,7 +282,7 @@ Hive boxes:
 | `scores` | `AppConstants.scoresBox` | Quiz responses |
 | `conversations` | `AppConstants.conversationsBox` | AI conversation records |
 | `user` | `AppConstants.userBox` | Current signed-in user |
-| `word_cache` | `AppConstants.cacheBox` | Cached Gemini word explanations |
+| `word_cache` | `AppConstants.cacheBox` | Cached AI word explanations |
 
 Important keys:
 
@@ -354,197 +294,38 @@ quiz_<lessonId>
 ai_<lessonId>
 ```
 
-Learned concepts are saved per lesson as a list of `LearnedConcept`.
-
-### Lesson data
-
-[lib/data/sample_lessons.dart](./lib/data/sample_lessons.dart)
-
-Current lessons:
-
-- The Water Cycle
-- Photosynthesis
-
-Each lesson has:
-
-- `id`
-- `title`
-- `subject`
-- `gradeLevel`
-- `content`
-- `keyTerms`
-
-Add demo lessons here until Firestore lesson management exists.
-
-## Screen Responsibilities
-
-| Screen | Responsibility |
-| --- | --- |
-| `LoginScreen` | Email/password login plus Student/Teacher quick login buttons |
-| `StudentHomeScreen` | Student lesson list and progress tab navigation |
-| `LessonReadingScreen` | Interactive lesson reader, word tapping, learned concept logging |
-| `LearningRecapScreen` | Review selected words and lesson concepts before quiz |
-| `QuizScreen` | Generate/display/evaluate quiz questions |
-| `AIConversationScreen` | Tutor-style AI conversation after quiz |
-| `PerformanceSummaryScreen` | Combined quiz and AI assessment summary |
-| `StudentDashboardScreen` | Local student progress dashboard |
-| `TeacherDashboardScreen` | Demo teacher/class overview |
-
-## Data Models
-
-| Model | Purpose |
-| --- | --- |
-| `AppUser` | Local representation of student/teacher user |
-| `Lesson` | Lesson metadata and content |
-| `LearnedConcept` | Word selected during reading plus explanation and Tagalog/Taglish text |
-| `QuizQuestion` | Generated quiz question, answer, feedback state |
-| `QuizResponse` | Saved quiz score record |
-| `AIConversation` | Saved AI conversation assessment |
-
-## Reading and Recap Flow Details
-
-The current reading flow is:
-
-```text
-LessonReadingScreen
-  -> user taps word
-  -> check Hive word_cache
-  -> if cached and usable, show cached explanation
-  -> otherwise call Gemini simplifyWord
-  -> cache result in word_cache
-  -> save LearnedConcept under learned_<lessonId>
-  -> show WordPopup
-  -> Review Learning Recap
-  -> LearningRecapScreen
-  -> Start Quiz
-  -> QuizScreen
-```
-
-A cached explanation is ignored if it looks like an old failed response, for example:
-
-- Empty explanation
-- Starts with `Unable to explain`
-- Starts with `{`
-- Contains `"explanation"`
-
-That prevents old partial JSON responses from being reused.
-
-## Firebase / Android Setup
-
-Firebase is wired through Kotlin Gradle files.
-
-[android/settings.gradle.kts](./android/settings.gradle.kts):
-
-```kotlin
-id("com.google.gms.google-services") version "4.4.4" apply false
-```
-
-[android/app/build.gradle.kts](./android/app/build.gradle.kts):
-
-```kotlin
-id("com.google.gms.google-services")
-```
-
-Android package:
-
-```text
-com.example.klaro
-```
-
-Main manifest:
-
-[android/app/src/main/AndroidManifest.xml](./android/app/src/main/AndroidManifest.xml)
-
-Includes:
-
-```xml
-<uses-permission android:name="android.permission.INTERNET"/>
-```
-
-This is required for Gemini API calls on Android builds.
-
-## Environment Variables
-
-Current variables:
-
-| Name | Required | Used by |
-| --- | --- | --- |
-| `GEMINI_API_KEY` | Yes for AI features | `GeminiService` |
-
-Example:
-
-```env
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-Alternative override:
-
-```powershell
-flutter run --dart-define=GEMINI_API_KEY=your_gemini_api_key_here
-```
-
-`--dart-define` takes priority over `.env`.
-
 ## Testing Checklist
 
-Use this before handing the app to another teammate.
-
-1. Confirm `.env` exists and has `GEMINI_API_KEY`.
-2. Confirm `android/app/google-services.json` exists.
-3. Run `flutter pub get`.
-4. Run `flutter analyze`.
-5. Run `flutter build apk --debug`.
-6. Install/run on Android phone.
-7. Test Student quick login.
-8. Open The Water Cycle lesson.
-9. Tap `Evaporation` or another word.
-10. Confirm the word popup has:
-    - Simple explanation
-    - Tagalog/Taglish explanation
-11. Tap `Review Learning Recap`.
-12. Confirm selected words appear in the recap.
-13. Tap `Start Quiz`.
-14. Confirm quiz questions generate.
-15. Submit quiz and continue to AI conversation.
-16. Test Teacher quick login and dashboard.
+1. Confirm `android/app/google-services.json` exists.
+2. Confirm `lib/firebase_options.dart` exists.
+3. Confirm both Firebase files use the same project.
+4. Enable Firebase AI Logic for the project.
+5. Run `flutter pub get`.
+6. Run `flutter build apk --debug`.
+7. Run on Android phone.
+8. Test Student quick login.
+9. Open `Science 7 -> Quarter 1 Matter -> Scientific Ways of Acquiring Knowledge and Solving Problems`.
+10. Tap a word and confirm the explanation popup works.
+11. Tap `Review Learning Recap` and confirm selected words appear.
+12. Start and submit a quiz.
+13. Continue to AI conversation.
+14. Test Teacher quick login and dashboard.
 
 ## Troubleshooting
 
-### Black screen on launch
+### Tapping words says Firebase AI Logic is not enabled
 
-Usually caused by startup work failing before the first frame.
+Enable Firebase AI Logic for the project:
 
-Check:
-
-- `android/app/google-services.json` exists.
-- Firebase package name matches `com.example.klaro`.
-- `Firebase.initializeApp()` errors in logs.
-- `.env` exists because it is declared as an asset.
-
-Useful command:
-
-```powershell
-adb logcat -d -v time -t 1000
+```text
+https://console.firebase.google.com/project/klaro-851a6/genai
 ```
 
-### Gemini says API key is not configured
+Wait a few minutes after enabling, then restart the app.
 
-Check:
+### Firebase AI says quota exceeded with `limit: 0`
 
-- `.env` exists in project root.
-- It contains `GEMINI_API_KEY=...`.
-- `pubspec.yaml` includes `.env` under `flutter.assets`.
-- The app was rebuilt after editing `.env`.
-
-### Gemini works in curl but not in app
-
-Check:
-
-- Android app has `INTERNET` permission in the main manifest.
-- Model is `gemini-flash-latest` in `AppConstants.geminiModel`.
-- Phone has internet.
-- The API key in `.env` is the same key used in curl.
-- The debug APK was rebuilt and reinstalled.
+That means the Firebase project has no quota for the selected Gemini model, not that the app already used too much. Klaro currently uses `gemini-2.5-flash-lite`.
 
 ### Firebase login fails
 
@@ -555,29 +336,17 @@ Check:
 - `android/app/google-services.json` belongs to the same Firebase project.
 - Android package in Firebase is `com.example.klaro`.
 
-Student/Teacher quick login should still work even if Firebase is unavailable.
-
-### Build fails because `.env` is missing
-
-Create `.env` from `.env.example`:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Then edit `.env` and set the real API key.
+Student/Teacher quick login should still work even if Firebase login is unavailable.
 
 ### `flutter` is not recognized
 
-Use the explicit Flutter path on this machine:
+Use:
 
 ```powershell
 C:\Users\Ron\develop\flutter\bin\flutter.bat --version
 ```
 
-Or add Flutter to PATH.
-
-### Gradle says JAVA_HOME is missing
+### Gradle says `JAVA_HOME` is missing
 
 Use Android Studio's bundled JBR:
 
@@ -590,39 +359,19 @@ Then rebuild.
 
 ## Development Notes
 
-- Keep UI changes consistent with [lib/utils/theme.dart](./lib/utils/theme.dart).
-- Store local-only data through [LocalStorageService](./lib/services/local_storage_service.dart).
-- Keep all Gemini prompt and response parsing logic inside [GeminiService](./lib/services/gemini_service.dart).
-- Add new lesson demo data in [sample_lessons.dart](./lib/data/sample_lessons.dart).
-- Do not hardcode API keys in Dart files.
-- Do not commit `.env`.
-- Avoid deleting existing Hive data unless deliberately testing first-run behavior.
+- Keep UI changes consistent with `lib/utils/theme.dart`.
+- Store local-only data through `LocalStorageService`.
+- Keep AI prompt and response parsing logic inside `GeminiService`.
+- Add or update curriculum seed data in `lib/data/sample_lessons.dart`.
+- Keep the hierarchy as `Subject -> Module -> Lesson`.
+- Do not hardcode separate Gemini API keys in Dart files.
+- Avoid deleting Hive data unless deliberately testing first-run behavior.
 
 ## Known Gaps / Future Work
 
+- Full official DepEd lesson body content is not imported yet; current lessons use generated starter text from the curriculum metadata.
 - Real teacher-created lessons are not implemented yet.
 - Firestore is installed but not yet used for lesson/class data.
 - Teacher dashboard uses demo data.
-- API key is still bundled into the APK via `.env`; production needs a backend proxy.
 - Release signing is not configured; release currently uses debug signing.
-- `google_generative_ai` dependency appears unused after the REST migration and can be removed later after confirming no imports depend on it.
-- Existing analyzer output includes warnings/infos such as deprecated `withOpacity` usage and dangling doc comments.
-
-## Color Palette
-
-| Color | Hex | Usage |
-| --- | --- | --- |
-| Primary Blue | `#1E4BB3` | Headers, primary actions, key text |
-| Light Blue | `#85D7FF` | Highlights, secondary accents |
-| Accent Yellow | `#FFD863` | Main call-to-action buttons |
-| White | `#FFFFFF` | Cards and surfaces |
-| Surface Light | `#F5F8FC` | Page background |
-| Text Dark | `#1A1A2E` | Main text |
-| Text Muted | `#6B7280` | Secondary text |
-| Success | `#22C55E` | Positive status |
-| Error | `#EF4444` | Error state |
-| Warning | `#F59E0B` | Warning state |
-
-## Handoff Summary
-
-For teammates: start with `.env`, Firebase config, and `flutter pub get`. The main app behavior is local-first with Firebase Auth and Gemini API calls layered on top. Most feature work will happen in `screens/`, `services/`, and `models/`; keep cross-feature logic in services so the screens stay focused on UI and navigation.
+- Existing analyzer output may include older style warnings such as deprecated `withOpacity` usage.

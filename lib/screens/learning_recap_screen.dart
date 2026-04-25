@@ -49,8 +49,8 @@ class LearningRecapScreen extends StatelessWidget {
                 SizedBox(height: 6),
                 Text(
                   concepts.isEmpty
-                      ? 'No tapped words yet. Review the key concepts below before the quiz.'
-                      : 'You explored ${concepts.length} word${concepts.length == 1 ? '' : 's'} while reading.',
+                      ? 'Review the concepts you explored below before the quiz.'
+                      : 'Review your personalized learning recap before starting the quiz.',
                   style: TextStyle(
                     fontSize: 14,
                     color: KlaroTheme.textMuted,
@@ -63,8 +63,6 @@ class LearningRecapScreen extends StatelessWidget {
             child: ListView(
               padding: EdgeInsets.all(20),
               children: [
-                _buildKeyTermsSection(),
-                SizedBox(height: 20),
                 if (concepts.isEmpty)
                   _buildEmptyState()
                 else
@@ -114,46 +112,6 @@ class LearningRecapScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildKeyTermsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Lesson Concepts',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: KlaroTheme.textDark,
-          ),
-        ),
-        SizedBox(height: 10),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: lesson.keyTerms.map((term) {
-            return Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: KlaroTheme.primaryBlue.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: KlaroTheme.primaryBlue.withOpacity(0.16),
-                ),
-              ),
-              child: Text(
-                term,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: KlaroTheme.primaryBlue,
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
 
   Widget _buildEmptyState() {
     return Container(
@@ -169,7 +127,7 @@ class LearningRecapScreen extends StatelessWidget {
           SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Next time, tap unfamiliar words while reading so Klaro can build a personalized recap.',
+              'Your learning recap will appear here after you tap words you want to learn more about while reading.',
               style: TextStyle(
                 fontSize: 14,
                 height: 1.4,

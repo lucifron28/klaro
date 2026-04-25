@@ -9,9 +9,13 @@ class AppTranslations {
     'en': {
       // Common
       'Kumusta': 'Hello',
-      
+      'Dialect': 'Dialect',
+      'App Dialect': 'App Dialect',
+      'Select Dialect': 'Select Dialect',
+
       // Student Home Screen
-      'Choose a Grade 7 subject to start.': 'Choose a Grade 7 subject to start.',
+      'Choose a Grade 7 subject to start.':
+          'Choose a Grade 7 subject to start.',
       'Grade 7 Subjects': 'Grade 7 Subjects',
       'Subjects': 'Subjects',
       'My Progress': 'My Progress',
@@ -26,16 +30,17 @@ class AppTranslations {
           'Reading, listening, speaking, viewing, and writing skills.',
       'Numbers, measurement, algebra, geometry, and statistics.':
           'Numbers, measurement, algebra, geometry, and statistics.',
-      
+
       // Student Dashboard
       'No progress yet': 'No progress yet',
-      'Complete a lesson and quiz to see your progress here.': 'Complete a lesson and quiz to see your progress here.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Complete a lesson and quiz to see your progress here.',
       'lesson(s) completed': 'lesson(s) completed',
       'Lesson History': 'Lesson History',
       'Avg Quiz': 'Avg Quiz',
       'Avg AI Score': 'Avg AI Score',
       'Lessons': 'Lessons',
-      
+
       // Teacher Dashboard
       'Teacher Dashboard': 'Teacher Dashboard',
       'Class Overview': 'Class Overview',
@@ -46,32 +51,34 @@ class AppTranslations {
       'Student Performance': 'Student Performance',
       'Demo Data': 'Demo Data',
       'About This Dashboard': 'About This Dashboard',
-      'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.': 
-        'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.',
+      'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
+          'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
-      
+
       // Module Lessons
       'Modules': 'Modules',
       'Tap to read lesson': 'Tap to read lesson',
-      
+
       // Quiz Screen
       'Comprehension Quiz': 'Comprehension Quiz',
       'Generating quiz questions...': 'Generating quiz questions...',
       'Based on: ': 'Based on: ',
       'Try Again': 'Try Again',
-      'Great job! You understood the lesson well.': 'Great job! You understood the lesson well.',
-      'Keep going! Review the lesson and try again.': 'Keep going! Review the lesson and try again.',
+      'Great job! You understood the lesson well.':
+          'Great job! You understood the lesson well.',
+      'Keep going! Review the lesson and try again.':
+          'Keep going! Review the lesson and try again.',
       'Talk to Klaro AI': 'Start Assessment',
       'Submit Answers': 'Submit Answers',
-      
+
       // AI Conversation
       'Klaro AI Tutor': 'Klaro AI Assessment',
       'Conversation Complete!': 'Conversation Complete!',
       'AI Score: ': 'AI Score: ',
       'View Performance Summary': 'View Performance Summary',
       'Type your answer...': 'Type your answer...',
-      
+
       // AI Assessment
       'Klaro AI Assessment': 'Klaro AI Assessment',
       'Start Assessment': 'Start Assessment',
@@ -80,11 +87,11 @@ class AppTranslations {
       'View My Results': 'View My Results',
       'Review Lesson': 'Review Lesson',
       'Retake Assessment': 'Retake Assessment',
-      'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!': 
-        'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!',
+      'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!':
+          'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!',
       'Don\'t worry! Learning takes practice. Review the lesson again and you\'ll do better next time.':
-        'Don\'t worry! Learning takes practice. Review the lesson again and you\'ll do better next time.',
-      
+          'Don\'t worry! Learning takes practice. Review the lesson again and you\'ll do better next time.',
+
       // Performance Summary
       'Performance Summary': 'Performance Summary',
       'Overall Score': 'Overall Score',
@@ -95,34 +102,41 @@ class AppTranslations {
       'Review Conversation': 'Review Conversation',
       'Quiz Score': 'Quiz Score',
       'AI Assessment': 'AI Assessment',
-      
+
       // Learning Recap
       'Learning Recap': 'Learning Recap',
-      'Review the concepts you explored below before the quiz.': 'Review the concepts you explored below before the quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Review your personalized learning recap before starting the quiz.',
-      'Your learning recap will appear here after you tap words you want to learn more about while reading.': 
-        'Your learning recap will appear here after you tap words you want to learn more about while reading.',
+      'Review the concepts you explored below before the quiz.':
+          'Review the concepts you explored below before the quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Review your personalized learning recap before starting the quiz.',
+      'Your learning recap will appear here after you tap words you want to learn more about while reading.':
+          'Your learning recap will appear here after you tap words you want to learn more about while reading.',
       'Start Quiz': 'Start Quiz',
       'Review Learning Recap': 'Review Learning Recap',
-      
+
       // Login Screen
       'Sign In': 'Sign In',
-      'Enter your email and password to continue.': 'Enter your email and password to continue.',
+      'Enter your email and password to continue.':
+          'Enter your email and password to continue.',
       'Quick Demo Login': 'Quick Demo Login',
       'Student': 'Student',
       'Teacher': 'Teacher',
-      
+
       // Word Popup
       'Simplifying...': 'Simplifying...',
       'Simple Explanation': 'Simple Explanation',
       'Translation': 'Translation',
       'Got it!': 'Got it!',
     },
-    
+
     // Tagalog
     'tl': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pumili ng Grade 7 na paksa upang magsimula.',
+      'Dialect': 'Diyalekto',
+      'App Dialect': 'Diyalekto ng App',
+      'Select Dialect': 'Pumili ng Diyalekto',
+      'Choose a Grade 7 subject to start.':
+          'Pumili ng Grade 7 na paksa upang magsimula.',
       'Grade 7 Subjects': 'Mga Paksa ng Grade 7',
       'Subjects': 'Mga Paksa',
       'My Progress': 'Aking Pag-unlad',
@@ -138,7 +152,8 @@ class AppTranslations {
       'Numbers, measurement, algebra, geometry, and statistics.':
           'Mga numero, pagsukat, algebra, heometriya, at estadistika.',
       'No progress yet': 'Walang pag-unlad pa',
-      'Complete a lesson and quiz to see your progress here.': 'Kumpletuhin ang aralin at pagsusulit upang makita ang iyong pag-unlad dito.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kumpletuhin ang aralin at pagsusulit upang makita ang iyong pag-unlad dito.',
       'lesson(s) completed': 'natapos na aralin',
       'Lesson History': 'Kasaysayan ng Aralin',
       'Avg Quiz': 'Avg na Pagsusulit',
@@ -154,7 +169,7 @@ class AppTranslations {
       'Demo Data': 'Demo na Datos',
       'About This Dashboard': 'Tungkol sa Dashboard na Ito',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'Ang dashboard na ito ay nagpapakita ng hardcoded demo data para sa hackathon presentation. Sa buong bersyon, makakagawa ang mga guro ng mga aralin, makikita ang real-time na pag-unlad ng estudyante, at makakagawa ng mga ulat ng klase.',
+          'Ang dashboard na ito ay nagpapakita ng hardcoded demo data para sa hackathon presentation. Sa buong bersyon, makakagawa ang mga guro ng mga aralin, makikita ang real-time na pag-unlad ng estudyante, at makakagawa ng mga ulat ng klase.',
       'Quiz: ': 'Pagsusulit: ',
       'AI: ': 'AI: ',
       'Modules': 'Mga Modyul',
@@ -163,8 +178,10 @@ class AppTranslations {
       'Generating quiz questions...': 'Gumagawa ng mga tanong sa pagsusulit...',
       'Based on: ': 'Batay sa: ',
       'Try Again': 'Subukan Muli',
-      'Great job! You understood the lesson well.': 'Magaling! Naintindihan mo nang mabuti ang aralin.',
-      'Keep going! Review the lesson and try again.': 'Magpatuloy! Suriin ang aralin at subukan muli.',
+      'Great job! You understood the lesson well.':
+          'Magaling! Naintindihan mo nang mabuti ang aralin.',
+      'Keep going! Review the lesson and try again.':
+          'Magpatuloy! Suriin ang aralin at subukan muli.',
       'Talk to Klaro AI': 'Simulan ang Assessment',
       'Submit Answers': 'Isumite ang mga Sagot',
       'Klaro AI Tutor': 'Klaro AI Assessment',
@@ -172,7 +189,7 @@ class AppTranslations {
       'AI Score: ': 'Marka ng AI: ',
       'View Performance Summary': 'Tingnan ang Buod ng Pagganap',
       'Type your answer...': 'I-type ang iyong sagot...',
-      
+
       // AI Assessment
       'Klaro AI Assessment': 'Klaro AI Assessment',
       'Start Assessment': 'Simulan ang Assessment',
@@ -181,11 +198,11 @@ class AppTranslations {
       'View My Results': 'Tingnan ang Aking Resulta',
       'Review Lesson': 'Suriin ang Aralin',
       'Retake Assessment': 'Ulitin ang Assessment',
-      'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!': 
-        'Magaling! Ipinakita mo ang mabuting pag-unawa sa araling ito. Magpatuloy sa magandang gawa!',
+      'Great job! You\'ve demonstrated a good understanding of this lesson. Keep up the excellent work!':
+          'Magaling! Ipinakita mo ang mabuting pag-unawa sa araling ito. Magpatuloy sa magandang gawa!',
       'Don\'t worry! Learning takes practice. Review the lesson again and you\'ll do better next time.':
-        'Huwag mag-alala! Ang pag-aaral ay nangangailangan ng pagsasanay. Suriin muli ang aralin at gagaling ka sa susunod.',
-      
+          'Huwag mag-alala! Ang pag-aaral ay nangangailangan ng pagsasanay. Suriin muli ang aralin at gagaling ka sa susunod.',
+
       'Performance Summary': 'Buod ng Pagganap',
       'Overall Score': 'Kabuuang Marka',
       'Grade: ': 'Grado: ',
@@ -196,36 +213,44 @@ class AppTranslations {
       'Quiz Score': 'Marka sa Pagsusulit',
       'AI Assessment': 'Pagsusuri ng AI',
       'Learning Recap': 'Buod ng Pag-aaral',
-      'Review the concepts you explored below before the quiz.': 'Suriin ang mga konsepto na iyong tinalakay bago ang pagsusulit.',
-      'Review your personalized learning recap before starting the quiz.': 'Suriin ang iyong personalized na buod ng pag-aaral bago magsimula ng pagsusulit.',
+      'Review the concepts you explored below before the quiz.':
+          'Suriin ang mga konsepto na iyong tinalakay bago ang pagsusulit.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Suriin ang iyong personalized na buod ng pag-aaral bago magsimula ng pagsusulit.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'Ang iyong buod ng pag-aaral ay lalabas dito pagkatapos mong pindutin ang mga salitang nais mong matutunan habang nagbabasa.',
+          'Ang iyong buod ng pag-aaral ay lalabas dito pagkatapos mong pindutin ang mga salitang nais mong matutunan habang nagbabasa.',
       'Start Quiz': 'Simulan ang Pagsusulit',
       'Review Learning Recap': 'Suriin ang Buod ng Pag-aaral',
       'Sign In': 'Mag-sign In',
-      'Enter your email and password to continue.': 'Ilagay ang iyong email at password upang magpatuloy.',
+      'Enter your email and password to continue.':
+          'Ilagay ang iyong email at password upang magpatuloy.',
       'Quick Demo Login': 'Mabilis na Demo Login',
       'Student': 'Estudyante',
       'Teacher': 'Guro',
-      
+
       // Word Popup
       'Simplifying...': 'Pinasimple...',
       'Simple Explanation': 'Simpleng Paliwanag',
       'Translation': 'Salin',
       'Got it!': 'Naintindihan ko!',
     },
-    
+
     // Cebuano
     'ceb': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pilia ang Grade 7 nga subject aron magsugod.',
+      'Dialect': 'Diyalekto',
+      'App Dialect': 'Diyalekto sa App',
+      'Select Dialect': 'Pilia ang Diyalekto',
+      'Choose a Grade 7 subject to start.':
+          'Pilia ang Grade 7 nga subject aron magsugod.',
       'Grade 7 Subjects': 'Mga Subject sa Grade 7',
       'Subjects': 'Mga Subject',
       'My Progress': 'Akong Pag-uswag',
       'modules': 'mga module',
       'lessons': 'mga leksyon',
       'No progress yet': 'Walay pag-uswag pa',
-      'Complete a lesson and quiz to see your progress here.': 'Kompleto ang leksyon ug quiz aron makita ang imong pag-uswag dinhi.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kompleto ang leksyon ug quiz aron makita ang imong pag-uswag dinhi.',
       'lesson(s) completed': 'nahuman nga leksyon',
       'Lesson History': 'Kasaysayan sa Leksyon',
       'Avg Quiz': 'Avg nga Quiz',
@@ -233,7 +258,8 @@ class AppTranslations {
       'Lessons': 'Mga Leksyon',
       'Teacher Dashboard': 'Dashboard sa Maestra',
       'Class Overview': 'Kinatibuk-ang Ideya sa Klase',
-      'The Water Cycle - Grade 8 Science': 'Ang Siklo sa Tubig - Grade 8 Siyensya',
+      'The Water Cycle - Grade 8 Science':
+          'Ang Siklo sa Tubig - Grade 8 Siyensya',
       'Students': 'Mga Estudyante',
       'Avg Score': 'Avg nga Marka',
       'Completed': 'Nahuman',
@@ -241,7 +267,7 @@ class AppTranslations {
       'Demo Data': 'Demo nga Datos',
       'About This Dashboard': 'Mahitungod sa Dashboard',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'Kini nga dashboard nagpakita ug hardcoded demo data para sa hackathon presentation. Sa bug-os nga bersyon, makahimo ang mga maestra ug mga leksyon, makita ang real-time nga pag-uswag sa estudyante, ug makahimo ug mga taho sa klase.',
+          'Kini nga dashboard nagpakita ug hardcoded demo data para sa hackathon presentation. Sa bug-os nga bersyon, makahimo ang mga maestra ug mga leksyon, makita ang real-time nga pag-uswag sa estudyante, ug makahimo ug mga taho sa klase.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
       'Modules': 'Mga Module',
@@ -250,8 +276,10 @@ class AppTranslations {
       'Generating quiz questions...': 'Naghimo ug mga pangutana sa quiz...',
       'Based on: ': 'Base sa: ',
       'Try Again': 'Sulayi Pag-usab',
-      'Great job! You understood the lesson well.': 'Maayo kaayo! Nakasabot ka sa leksyon.',
-      'Keep going! Review the lesson and try again.': 'Padayon! Repasaha ang leksyon ug sulayi pag-usab.',
+      'Great job! You understood the lesson well.':
+          'Maayo kaayo! Nakasabot ka sa leksyon.',
+      'Keep going! Review the lesson and try again.':
+          'Padayon! Repasaha ang leksyon ug sulayi pag-usab.',
       'Talk to Klaro AI': 'Pakigsulti sa Klaro AI',
       'Submit Answers': 'Isumite ang mga Tubag',
       'Klaro AI Tutor': 'Klaro AI Tutor',
@@ -269,36 +297,44 @@ class AppTranslations {
       'Quiz Score': 'Marka sa Quiz',
       'AI Assessment': 'Pagsusi sa AI',
       'Learning Recap': 'Sumaryo sa Pagkat-on',
-      'Review the concepts you explored below before the quiz.': 'Repasaha ang mga konsepto nga imong gisusi sa ubos sa dili pa ang quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Repasaha ang imong personalized nga sumaryo sa pagkat-on sa dili pa magsugod sa quiz.',
+      'Review the concepts you explored below before the quiz.':
+          'Repasaha ang mga konsepto nga imong gisusi sa ubos sa dili pa ang quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Repasaha ang imong personalized nga sumaryo sa pagkat-on sa dili pa magsugod sa quiz.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'Ang imong sumaryo sa pagkat-on mopakita dinhi human nimo i-tap ang mga pulong nga gusto nimong mahibal-an samtang nagbasa.',
+          'Ang imong sumaryo sa pagkat-on mopakita dinhi human nimo i-tap ang mga pulong nga gusto nimong mahibal-an samtang nagbasa.',
       'Start Quiz': 'Sugdi ang Quiz',
       'Review Learning Recap': 'Repasaha ang Sumaryo sa Pagkat-on',
       'Sign In': 'Mag-sign In',
-      'Enter your email and password to continue.': 'Isulod ang imong email ug password aron magpadayon.',
+      'Enter your email and password to continue.':
+          'Isulod ang imong email ug password aron magpadayon.',
       'Quick Demo Login': 'Paspas nga Demo Login',
       'Student': 'Estudyante',
       'Teacher': 'Maestra',
-      
+
       // Word Popup
       'Simplifying...': 'Gipasimple...',
       'Simple Explanation': 'Yano nga Pagsaysay',
       'Translation': 'Hubad',
       'Got it!': 'Nakasabot ko!',
     },
-    
+
     // Waray
     'war': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pilia an Grade 7 nga subject para magsugad.',
+      'Dialect': 'Diyalekto',
+      'App Dialect': 'Diyalekto han App',
+      'Select Dialect': 'Pilia an Diyalekto',
+      'Choose a Grade 7 subject to start.':
+          'Pilia an Grade 7 nga subject para magsugad.',
       'Grade 7 Subjects': 'Mga Subject han Grade 7',
       'Subjects': 'Mga Subject',
       'My Progress': 'Akon Pag-uswag',
       'modules': 'mga module',
       'lessons': 'mga leksyon',
       'No progress yet': 'Waray pa pag-uswag',
-      'Complete a lesson and quiz to see your progress here.': 'Kumpletoha an leksyon ngan quiz para makita an imo pag-uswag dinhi.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kumpletoha an leksyon ngan quiz para makita an imo pag-uswag dinhi.',
       'lesson(s) completed': 'nahuman nga leksyon',
       'Lesson History': 'Kasaysayan han Leksyon',
       'Avg Quiz': 'Avg nga Quiz',
@@ -306,7 +342,8 @@ class AppTranslations {
       'Lessons': 'Mga Leksyon',
       'Teacher Dashboard': 'Dashboard han Maestra',
       'Class Overview': 'Kinatibuk-an nga Ideya han Klase',
-      'The Water Cycle - Grade 8 Science': 'An Siklo han Tubig - Grade 8 Siyensya',
+      'The Water Cycle - Grade 8 Science':
+          'An Siklo han Tubig - Grade 8 Siyensya',
       'Students': 'Mga Estudyante',
       'Avg Score': 'Avg nga Marka',
       'Completed': 'Nahuman',
@@ -314,7 +351,7 @@ class AppTranslations {
       'Demo Data': 'Demo nga Datos',
       'About This Dashboard': 'Mahitungod hini nga Dashboard',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'Ini nga dashboard nagpapakita hin hardcoded demo data para han hackathon presentation. Ha bug-os nga bersyon, makakahimo an mga maestra hin mga leksyon, makikita an real-time nga pag-uswag han estudyante, ngan makakahimo hin mga taho han klase.',
+          'Ini nga dashboard nagpapakita hin hardcoded demo data para han hackathon presentation. Ha bug-os nga bersyon, makakahimo an mga maestra hin mga leksyon, makikita an real-time nga pag-uswag han estudyante, ngan makakahimo hin mga taho han klase.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
       'Modules': 'Mga Module',
@@ -323,8 +360,10 @@ class AppTranslations {
       'Generating quiz questions...': 'Naghihimo hin mga pangutana han quiz...',
       'Based on: ': 'Base ha: ',
       'Try Again': 'Sulayi Liwat',
-      'Great job! You understood the lesson well.': 'Maupay hin duro! Nakasabot ka han leksyon.',
-      'Keep going! Review the lesson and try again.': 'Padayon! Repasaha an leksyon ngan sulayi liwat.',
+      'Great job! You understood the lesson well.':
+          'Maupay hin duro! Nakasabot ka han leksyon.',
+      'Keep going! Review the lesson and try again.':
+          'Padayon! Repasaha an leksyon ngan sulayi liwat.',
       'Talk to Klaro AI': 'Makigsiring ha Klaro AI',
       'Submit Answers': 'Isumite an mga Tubag',
       'Klaro AI Tutor': 'Klaro AI Tutor',
@@ -342,36 +381,44 @@ class AppTranslations {
       'Quiz Score': 'Marka han Quiz',
       'AI Assessment': 'Pagsusi han AI',
       'Learning Recap': 'Sumaryo han Pagkat-on',
-      'Review the concepts you explored below before the quiz.': 'Repasaha an mga konsepto nga imo ginsusi ha ubos ha diri pa an quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Repasaha an imo personalized nga sumaryo han pagkat-on ha diri pa magsugad han quiz.',
+      'Review the concepts you explored below before the quiz.':
+          'Repasaha an mga konsepto nga imo ginsusi ha ubos ha diri pa an quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Repasaha an imo personalized nga sumaryo han pagkat-on ha diri pa magsugad han quiz.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'An imo sumaryo han pagkat-on magpapakita dinhi pagkatapos nimo i-tap an mga pulong nga gusto mo mahibal-an samtang nagbabasa.',
+          'An imo sumaryo han pagkat-on magpapakita dinhi pagkatapos nimo i-tap an mga pulong nga gusto mo mahibal-an samtang nagbabasa.',
       'Start Quiz': 'Sugdi an Quiz',
       'Review Learning Recap': 'Repasaha an Sumaryo han Pagkat-on',
       'Sign In': 'Mag-sign In',
-      'Enter your email and password to continue.': 'Isulod an imo email ngan password para magpadayon.',
+      'Enter your email and password to continue.':
+          'Isulod an imo email ngan password para magpadayon.',
       'Quick Demo Login': 'Madali nga Demo Login',
       'Student': 'Estudyante',
       'Teacher': 'Maestra',
-      
+
       // Word Popup
       'Simplifying...': 'Ginpapasimple...',
       'Simple Explanation': 'Yano nga Pagsaysay',
       'Translation': 'Hubad',
       'Got it!': 'Nakasabot ako!',
     },
-    
+
     // Ilocano
     'ilo': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pilien ti Grade 7 a suheto tapno mangrugi.',
+      'Dialect': 'Dialekto',
+      'App Dialect': 'Dialekto ti App',
+      'Select Dialect': 'Pilien ti Dialekto',
+      'Choose a Grade 7 subject to start.':
+          'Pilien ti Grade 7 a suheto tapno mangrugi.',
       'Grade 7 Subjects': 'Dagiti Suheto ti Grade 7',
       'Subjects': 'Dagiti Suheto',
       'My Progress': 'Ti Panagrang-ayko',
       'modules': 'dagiti module',
       'lessons': 'dagiti liksion',
       'No progress yet': 'Awan pay ti panagrang-ay',
-      'Complete a lesson and quiz to see your progress here.': 'Kompleto ti liksion ken quiz tapno makita ti panagrang-aymo ditoy.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kompleto ti liksion ken quiz tapno makita ti panagrang-aymo ditoy.',
       'lesson(s) completed': 'nalpas a liksion',
       'Lesson History': 'Pakasaritaan ti Liksion',
       'Avg Quiz': 'Avg a Quiz',
@@ -379,7 +426,8 @@ class AppTranslations {
       'Lessons': 'Dagiti Liksion',
       'Teacher Dashboard': 'Dashboard ti Maestro',
       'Class Overview': 'Pakabuklan ti Klase',
-      'The Water Cycle - Grade 8 Science': 'Ti Siklo ti Danum - Grade 8 Siensia',
+      'The Water Cycle - Grade 8 Science':
+          'Ti Siklo ti Danum - Grade 8 Siensia',
       'Students': 'Dagiti Estudiante',
       'Avg Score': 'Avg a Marka',
       'Completed': 'Nalpas',
@@ -387,17 +435,20 @@ class AppTranslations {
       'Demo Data': 'Demo a Datos',
       'About This Dashboard': 'Maipapan iti Daytoy a Dashboard',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'Daytoy a dashboard ket mangipakita iti hardcoded demo data para iti hackathon presentation. Iti naan-anay a bersion, mabalin dagiti maestro nga ag-upload iti dagiti liksion, makita ti real-time a panagrang-ay dagiti estudiante, ken mangaramid iti dagiti report ti klase.',
+          'Daytoy a dashboard ket mangipakita iti hardcoded demo data para iti hackathon presentation. Iti naan-anay a bersion, mabalin dagiti maestro nga ag-upload iti dagiti liksion, makita ti real-time a panagrang-ay dagiti estudiante, ken mangaramid iti dagiti report ti klase.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
       'Modules': 'Dagiti Module',
       'Tap to read lesson': 'I-tap tapno basaen ti liksion',
       'Comprehension Quiz': 'Quiz ti Pannakaawat',
-      'Generating quiz questions...': 'Mangar-aramid iti dagiti saludsod ti quiz...',
+      'Generating quiz questions...':
+          'Mangar-aramid iti dagiti saludsod ti quiz...',
       'Based on: ': 'Naibatay iti: ',
       'Try Again': 'Padasen Manen',
-      'Great job! You understood the lesson well.': 'Nagsayaat! Naawatam a nasayaat ti liksion.',
-      'Keep going! Review the lesson and try again.': 'Ituloy! Repasuen ti liksion ken padasen manen.',
+      'Great job! You understood the lesson well.':
+          'Nagsayaat! Naawatam a nasayaat ti liksion.',
+      'Keep going! Review the lesson and try again.':
+          'Ituloy! Repasuen ti liksion ken padasen manen.',
       'Talk to Klaro AI': 'Makisarita iti Klaro AI',
       'Submit Answers': 'Isumite dagiti Sungbat',
       'Klaro AI Tutor': 'Klaro AI Tutor',
@@ -415,36 +466,44 @@ class AppTranslations {
       'Quiz Score': 'Marka ti Quiz',
       'AI Assessment': 'Panagtasa ti AI',
       'Learning Recap': 'Pakagupgopan ti Panagsursuro',
-      'Review the concepts you explored below before the quiz.': 'Repasuen dagiti konsepto nga inaramidmo iti baba sakbay ti quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Repasuen ti personalized a pakagupgopan ti panagsursuro sakbay a mangrugi ti quiz.',
+      'Review the concepts you explored below before the quiz.':
+          'Repasuen dagiti konsepto nga inaramidmo iti baba sakbay ti quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Repasuen ti personalized a pakagupgopan ti panagsursuro sakbay a mangrugi ti quiz.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'Ti pakagupgopan ti panagsursuro ket agparang ditoy kalpasan nga i-tap dagiti balikas a kayatmo nga ad-adalen bayat ti panagbasa.',
+          'Ti pakagupgopan ti panagsursuro ket agparang ditoy kalpasan nga i-tap dagiti balikas a kayatmo nga ad-adalen bayat ti panagbasa.',
       'Start Quiz': 'Rugian ti Quiz',
       'Review Learning Recap': 'Repasuen ti Pakagupgopan ti Panagsursuro',
       'Sign In': 'Ag-sign In',
-      'Enter your email and password to continue.': 'Ikabil ti email ken password tapno agtuloy.',
+      'Enter your email and password to continue.':
+          'Ikabil ti email ken password tapno agtuloy.',
       'Quick Demo Login': 'Napartak a Demo Login',
       'Student': 'Estudiante',
       'Teacher': 'Maestro',
-      
+
       // Word Popup
       'Simplifying...': 'Agpasimple...',
       'Simple Explanation': 'Nalaka a Panangilawlawag',
       'Translation': 'Patarus',
       'Got it!': 'Naawatan!',
     },
-    
+
     // Hiligaynon
     'hil': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pilia ang Grade 7 nga subject agud magsugod.',
+      'Dialect': 'Diyalekto',
+      'App Dialect': 'Diyalekto sang App',
+      'Select Dialect': 'Pilia ang Diyalekto',
+      'Choose a Grade 7 subject to start.':
+          'Pilia ang Grade 7 nga subject agud magsugod.',
       'Grade 7 Subjects': 'Mga Subject sang Grade 7',
       'Subjects': 'Mga Subject',
       'My Progress': 'Akon Pag-uswag',
       'modules': 'mga module',
       'lessons': 'mga leksyon',
       'No progress yet': 'Wala pa pag-uswag',
-      'Complete a lesson and quiz to see your progress here.': 'Kumpletoha ang leksyon kag quiz agud makita ang imo pag-uswag diri.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kumpletoha ang leksyon kag quiz agud makita ang imo pag-uswag diri.',
       'lesson(s) completed': 'natapos nga leksyon',
       'Lesson History': 'Kasaysayan sang Leksyon',
       'Avg Quiz': 'Avg nga Quiz',
@@ -452,7 +511,8 @@ class AppTranslations {
       'Lessons': 'Mga Leksyon',
       'Teacher Dashboard': 'Dashboard sang Maestro',
       'Class Overview': 'Kinatibuk-an nga Ideya sang Klase',
-      'The Water Cycle - Grade 8 Science': 'Ang Siklo sang Tubig - Grade 8 Siyensya',
+      'The Water Cycle - Grade 8 Science':
+          'Ang Siklo sang Tubig - Grade 8 Siyensya',
       'Students': 'Mga Estudyante',
       'Avg Score': 'Avg nga Marka',
       'Completed': 'Natapos',
@@ -460,17 +520,20 @@ class AppTranslations {
       'Demo Data': 'Demo nga Datos',
       'About This Dashboard': 'Parte sini nga Dashboard',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'Ini nga dashboard nagapakita sang hardcoded demo data para sa hackathon presentation. Sa bug-os nga bersyon, makahimo ang mga maestro sang mga leksyon, makita ang real-time nga pag-uswag sang estudyante, kag makahimo sang mga report sang klase.',
+          'Ini nga dashboard nagapakita sang hardcoded demo data para sa hackathon presentation. Sa bug-os nga bersyon, makahimo ang mga maestro sang mga leksyon, makita ang real-time nga pag-uswag sang estudyante, kag makahimo sang mga report sang klase.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
       'Modules': 'Mga Module',
       'Tap to read lesson': 'I-tap agud basahon ang leksyon',
       'Comprehension Quiz': 'Quiz sang Pagsabot',
-      'Generating quiz questions...': 'Nagahimo sang mga pamangkot sang quiz...',
+      'Generating quiz questions...':
+          'Nagahimo sang mga pamangkot sang quiz...',
       'Based on: ': 'Base sa: ',
       'Try Again': 'Sulayi Liwat',
-      'Great job! You understood the lesson well.': 'Maayo gid! Nakasabot ka sang leksyon.',
-      'Keep going! Review the lesson and try again.': 'Padayon! Repasaha ang leksyon kag sulayi liwat.',
+      'Great job! You understood the lesson well.':
+          'Maayo gid! Nakasabot ka sang leksyon.',
+      'Keep going! Review the lesson and try again.':
+          'Padayon! Repasaha ang leksyon kag sulayi liwat.',
       'Talk to Klaro AI': 'Makighambal sa Klaro AI',
       'Submit Answers': 'Isumite ang mga Sabat',
       'Klaro AI Tutor': 'Klaro AI Tutor',
@@ -488,36 +551,44 @@ class AppTranslations {
       'Quiz Score': 'Marka sang Quiz',
       'AI Assessment': 'Pagsusi sang AI',
       'Learning Recap': 'Sumaryo sang Pagtuon',
-      'Review the concepts you explored below before the quiz.': 'Repasaha ang mga konsepto nga imo gin-usisa sa ubos antes sang quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Repasaha ang imo personalized nga sumaryo sang pagtuon antes magsugod sang quiz.',
+      'Review the concepts you explored below before the quiz.':
+          'Repasaha ang mga konsepto nga imo gin-usisa sa ubos antes sang quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Repasaha ang imo personalized nga sumaryo sang pagtuon antes magsugod sang quiz.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'Ang imo sumaryo sang pagtuon magapakita diri pagkatapos mo i-tap ang mga pulong nga gusto mo mahibaluan samtang nagabasa.',
+          'Ang imo sumaryo sang pagtuon magapakita diri pagkatapos mo i-tap ang mga pulong nga gusto mo mahibaluan samtang nagabasa.',
       'Start Quiz': 'Sugdan ang Quiz',
       'Review Learning Recap': 'Repasaha ang Sumaryo sang Pagtuon',
       'Sign In': 'Mag-sign In',
-      'Enter your email and password to continue.': 'Isulod ang imo email kag password agud magpadayon.',
+      'Enter your email and password to continue.':
+          'Isulod ang imo email kag password agud magpadayon.',
       'Quick Demo Login': 'Madali nga Demo Login',
       'Student': 'Estudyante',
       'Teacher': 'Maestro',
-      
+
       // Word Popup
       'Simplifying...': 'Ginpapasimple...',
       'Simple Explanation': 'Yano nga Pagsaysay',
       'Translation': 'Hubad',
       'Got it!': 'Nakasabot ako!',
     },
-    
+
     // Kapampangan
     'pam': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pilinan me ing Grade 7 a subject ban mag-umpisa.',
+      'Dialect': 'Diyalekto',
+      'App Dialect': 'Diyalekto ning App',
+      'Select Dialect': 'Pilinan ing Diyalekto',
+      'Choose a Grade 7 subject to start.':
+          'Pilinan me ing Grade 7 a subject ban mag-umpisa.',
       'Grade 7 Subjects': 'Deng Subject ning Grade 7',
       'Subjects': 'Deng Subject',
       'My Progress': 'Ing Ku Pag-unlad',
       'modules': 'deng module',
       'lessons': 'deng leksyon',
       'No progress yet': 'Ala pang pag-unlad',
-      'Complete a lesson and quiz to see your progress here.': 'Kumpletunan me ing leksyon at quiz ban mkit ing kekang pag-unlad keni.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kumpletunan me ing leksyon at quiz ban mkit ing kekang pag-unlad keni.',
       'lesson(s) completed': 'meyabus nang leksyon',
       'Lesson History': 'Kasalesayan ning Leksyon',
       'Avg Quiz': 'Avg a Quiz',
@@ -525,7 +596,8 @@ class AppTranslations {
       'Lessons': 'Deng Leksyon',
       'Teacher Dashboard': 'Dashboard ning Maestro',
       'Class Overview': 'Pangkabilugan a Ideya ning Klase',
-      'The Water Cycle - Grade 8 Science': 'Ing Siklo ning Danum - Grade 8 Siensia',
+      'The Water Cycle - Grade 8 Science':
+          'Ing Siklo ning Danum - Grade 8 Siensia',
       'Students': 'Deng Estudiante',
       'Avg Score': 'Avg a Marka',
       'Completed': 'Meyabus',
@@ -533,7 +605,7 @@ class AppTranslations {
       'Demo Data': 'Demo a Datos',
       'About This Dashboard': 'Tungkul king Dashboard a Ini',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'Ing dashboard a ini magpakita yang hardcoded demo data para king hackathon presentation. King kabilugan a bersion, malyari lang mag-upload deng maestro ning deng leksyon, lon ing real-time a pag-unlad ning estudiante, at maglalang ning deng report ning klase.',
+          'Ing dashboard a ini magpakita yang hardcoded demo data para king hackathon presentation. King kabilugan a bersion, malyari lang mag-upload deng maestro ning deng leksyon, lon ing real-time a pag-unlad ning estudiante, at maglalang ning deng report ning klase.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
       'Modules': 'Deng Module',
@@ -542,8 +614,10 @@ class AppTranslations {
       'Generating quiz questions...': 'Maglalang yang deng kutang ning quiz...',
       'Based on: ': 'Batayan na: ',
       'Try Again': 'Subukan Mu Naman',
-      'Great job! You understood the lesson well.': 'Mayap! Inintindian me nang mayap ing leksyon.',
-      'Keep going! Review the lesson and try again.': 'Magpatuloy ka! Suryan me ing leksyon at subukan mu naman.',
+      'Great job! You understood the lesson well.':
+          'Mayap! Inintindian me nang mayap ing leksyon.',
+      'Keep going! Review the lesson and try again.':
+          'Magpatuloy ka! Suryan me ing leksyon at subukan mu naman.',
       'Talk to Klaro AI': 'Makipag-usap king Klaro AI',
       'Submit Answers': 'Isumite me deng Sabat',
       'Klaro AI Tutor': 'Klaro AI Tutor',
@@ -561,36 +635,44 @@ class AppTranslations {
       'Quiz Score': 'Marka ning Quiz',
       'AI Assessment': 'Pagsusuri ning AI',
       'Learning Recap': 'Sumaryo ning Pag-aral',
-      'Review the concepts you explored below before the quiz.': 'Suryan me deng konsepto a sinuri me king lalam bayu ning quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Suryan me ing kekang personalized a sumaryo ning pag-aral bayu mag-umpisa ning quiz.',
+      'Review the concepts you explored below before the quiz.':
+          'Suryan me deng konsepto a sinuri me king lalam bayu ning quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Suryan me ing kekang personalized a sumaryo ning pag-aral bayu mag-umpisa ning quiz.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'Ing kekang sumaryo ning pag-aral lalto ya keni kaibat mong i-tap deng salita a buri meng mabalu kabang magbasa.',
+          'Ing kekang sumaryo ning pag-aral lalto ya keni kaibat mong i-tap deng salita a buri meng mabalu kabang magbasa.',
       'Start Quiz': 'Umpisan me ing Quiz',
       'Review Learning Recap': 'Suryan me ing Sumaryo ning Pag-aral',
       'Sign In': 'Mag-sign In',
-      'Enter your email and password to continue.': 'Ipalub me ing kekang email at password ban magpatuloy.',
+      'Enter your email and password to continue.':
+          'Ipalub me ing kekang email at password ban magpatuloy.',
       'Quick Demo Login': 'Mabilis a Demo Login',
       'Student': 'Estudiante',
       'Teacher': 'Maestro',
-      
+
       // Word Popup
       'Simplifying...': 'Mipapasimple...',
       'Simple Explanation': 'Simpli a Paliwanag',
       'Translation': 'Patarus',
       'Got it!': 'Inintindian ke!',
     },
-    
+
     // Bikol
     'bik': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pumili nin Grade 7 na subject tanganing magsimula.',
+      'Dialect': 'Diyalekto',
+      'App Dialect': 'Diyalekto kan App',
+      'Select Dialect': 'Pumili nin Diyalekto',
+      'Choose a Grade 7 subject to start.':
+          'Pumili nin Grade 7 na subject tanganing magsimula.',
       'Grade 7 Subjects': 'Mga Subject kan Grade 7',
       'Subjects': 'Mga Subject',
       'My Progress': 'Sakuyang Pag-uswag',
       'modules': 'mga module',
       'lessons': 'mga leksyon',
       'No progress yet': 'Mayo pang pag-uswag',
-      'Complete a lesson and quiz to see your progress here.': 'Kompleto an leksyon asin quiz tanganing mahiling an saimong pag-uswag digdi.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kompleto an leksyon asin quiz tanganing mahiling an saimong pag-uswag digdi.',
       'lesson(s) completed': 'natapos na leksyon',
       'Lesson History': 'Kasaysayan kan Leksyon',
       'Avg Quiz': 'Avg na Quiz',
@@ -598,7 +680,8 @@ class AppTranslations {
       'Lessons': 'Mga Leksyon',
       'Teacher Dashboard': 'Dashboard kan Maestro',
       'Class Overview': 'Pangkabilugan na Ideya kan Klase',
-      'The Water Cycle - Grade 8 Science': 'An Siklo kan Tubig - Grade 8 Siyensya',
+      'The Water Cycle - Grade 8 Science':
+          'An Siklo kan Tubig - Grade 8 Siyensya',
       'Students': 'Mga Estudyante',
       'Avg Score': 'Avg na Marka',
       'Completed': 'Natapos',
@@ -606,7 +689,7 @@ class AppTranslations {
       'Demo Data': 'Demo na Datos',
       'About This Dashboard': 'Tungkol sa Dashboard na Ini',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'An dashboard na ini nagpapahiling nin hardcoded demo data para sa hackathon presentation. Sa bug-os na bersyon, makakahimo an mga maestro nin mga leksyon, mahihiling an real-time na pag-uswag kan estudyante, asin makakahimo nin mga report kan klase.',
+          'An dashboard na ini nagpapahiling nin hardcoded demo data para sa hackathon presentation. Sa bug-os na bersyon, makakahimo an mga maestro nin mga leksyon, mahihiling an real-time na pag-uswag kan estudyante, asin makakahimo nin mga report kan klase.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
       'Modules': 'Mga Module',
@@ -615,8 +698,10 @@ class AppTranslations {
       'Generating quiz questions...': 'Naghihimo nin mga hapot kan quiz...',
       'Based on: ': 'Base sa: ',
       'Try Again': 'Probaran Giraray',
-      'Great job! You understood the lesson well.': 'Marhay! Naintindihan mo nang marhay an leksyon.',
-      'Keep going! Review the lesson and try again.': 'Magpadagos! Surion an leksyon asin probaran giraray.',
+      'Great job! You understood the lesson well.':
+          'Marhay! Naintindihan mo nang marhay an leksyon.',
+      'Keep going! Review the lesson and try again.':
+          'Magpadagos! Surion an leksyon asin probaran giraray.',
       'Talk to Klaro AI': 'Makiaram sa Klaro AI',
       'Submit Answers': 'Isumite an mga Simbag',
       'Klaro AI Tutor': 'Klaro AI Tutor',
@@ -634,36 +719,44 @@ class AppTranslations {
       'Quiz Score': 'Marka kan Quiz',
       'AI Assessment': 'Pagsusuri kan AI',
       'Learning Recap': 'Sumaryo kan Pag-aral',
-      'Review the concepts you explored below before the quiz.': 'Surion an mga konsepto na sinuri mo sa ibaba bago an quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Surion an saimong personalized na sumaryo kan pag-aral bago magsimula kan quiz.',
+      'Review the concepts you explored below before the quiz.':
+          'Surion an mga konsepto na sinuri mo sa ibaba bago an quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Surion an saimong personalized na sumaryo kan pag-aral bago magsimula kan quiz.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'An saimong sumaryo kan pag-aral mahihiling digdi pagkatapos mong i-tap an mga tataramon na boot mong maaraman habang nagbabasa.',
+          'An saimong sumaryo kan pag-aral mahihiling digdi pagkatapos mong i-tap an mga tataramon na boot mong maaraman habang nagbabasa.',
       'Start Quiz': 'Simulan an Quiz',
       'Review Learning Recap': 'Surion an Sumaryo kan Pag-aral',
       'Sign In': 'Mag-sign In',
-      'Enter your email and password to continue.': 'Ikaag an saimong email asin password tanganing magpadagos.',
+      'Enter your email and password to continue.':
+          'Ikaag an saimong email asin password tanganing magpadagos.',
       'Quick Demo Login': 'Mabilis na Demo Login',
       'Student': 'Estudyante',
       'Teacher': 'Maestro',
-      
+
       // Word Popup
       'Simplifying...': 'Pinipasimple...',
       'Simple Explanation': 'Simpli na Paliwanag',
       'Translation': 'Patarus',
       'Got it!': 'Naintindihan ko!',
     },
-    
+
     // Pangasinan
     'pag': {
       'Kumusta': 'Kumusta',
-      'Choose a Grade 7 subject to start.': 'Pilien yo ray Grade 7 a subject pian onggapo.',
+      'Dialect': 'Diyalekto',
+      'App Dialect': 'Diyalekto na App',
+      'Select Dialect': 'Pilien yo ray Diyalekto',
+      'Choose a Grade 7 subject to start.':
+          'Pilien yo ray Grade 7 a subject pian onggapo.',
       'Grade 7 Subjects': 'Saray Subject na Grade 7',
       'Subjects': 'Saray Subject',
       'My Progress': 'Pag-unlad ko',
       'modules': 'saray module',
       'lessons': 'saray leksyon',
       'No progress yet': 'Anggapo lay pag-unlad',
-      'Complete a lesson and quiz to see your progress here.': 'Kompleto yo ray leksyon tan quiz pian nenen yo ray pag-unlad yo diye.',
+      'Complete a lesson and quiz to see your progress here.':
+          'Kompleto yo ray leksyon tan quiz pian nenen yo ray pag-unlad yo diye.',
       'lesson(s) completed': 'naleppas a leksyon',
       'Lesson History': 'Kasaysayan na Leksyon',
       'Avg Quiz': 'Avg a Quiz',
@@ -671,7 +764,8 @@ class AppTranslations {
       'Lessons': 'Saray Leksyon',
       'Teacher Dashboard': 'Dashboard na Maestro',
       'Class Overview': 'Pangkabilugan a Ideya na Klase',
-      'The Water Cycle - Grade 8 Science': 'Say Siklo na Danum - Grade 8 Siyensya',
+      'The Water Cycle - Grade 8 Science':
+          'Say Siklo na Danum - Grade 8 Siyensya',
       'Students': 'Saray Estudyante',
       'Avg Score': 'Avg a Marka',
       'Completed': 'Naleppas',
@@ -679,7 +773,7 @@ class AppTranslations {
       'Demo Data': 'Demo a Datos',
       'About This Dashboard': 'Maong ed Daytoy a Dashboard',
       'This dashboard shows hardcoded demo data for the hackathon presentation. In the full version, teachers will be able to upload lessons, view real-time student progress, and generate class reports.':
-        'Daytoy a dashboard et mangipanengneng na hardcoded demo data para ed hackathon presentation. Ed bug-os a bersyon, makapag-upload ray maestro na saray leksyon, manenen ray real-time a pag-unlad na estudyante, tan makapaggawa na saray report na klase.',
+          'Daytoy a dashboard et mangipanengneng na hardcoded demo data para ed hackathon presentation. Ed bug-os a bersyon, makapag-upload ray maestro na saray leksyon, manenen ray real-time a pag-unlad na estudyante, tan makapaggawa na saray report na klase.',
       'Quiz: ': 'Quiz: ',
       'AI: ': 'AI: ',
       'Modules': 'Saray Module',
@@ -688,8 +782,10 @@ class AppTranslations {
       'Generating quiz questions...': 'Manggagawa na saray sakey ed quiz...',
       'Based on: ': 'Batayan to: ',
       'Try Again': 'Subukan Natan',
-      'Great job! You understood the lesson well.': 'Maong! Naintindihan mo lay leksyon.',
-      'Keep going! Review the lesson and try again.': 'Magpatuloy ka! Suryan mo ray leksyon tan subukan mo natan.',
+      'Great job! You understood the lesson well.':
+          'Maong! Naintindihan mo lay leksyon.',
+      'Keep going! Review the lesson and try again.':
+          'Magpatuloy ka! Suryan mo ray leksyon tan subukan mo natan.',
       'Talk to Klaro AI': 'Makipag-usap ed Klaro AI',
       'Submit Answers': 'Isumite yo ray Simbag',
       'Klaro AI Tutor': 'Klaro AI Tutor',
@@ -707,18 +803,21 @@ class AppTranslations {
       'Quiz Score': 'Marka na Quiz',
       'AI Assessment': 'Pagsusuri na AI',
       'Learning Recap': 'Sumaryo na Pag-aral',
-      'Review the concepts you explored below before the quiz.': 'Suryan yo ray saray konsepto a sinuri yo ed baba bago ray quiz.',
-      'Review your personalized learning recap before starting the quiz.': 'Suryan yo ray personalized a sumaryo na pag-aral yo bago onggapo ed quiz.',
+      'Review the concepts you explored below before the quiz.':
+          'Suryan yo ray saray konsepto a sinuri yo ed baba bago ray quiz.',
+      'Review your personalized learning recap before starting the quiz.':
+          'Suryan yo ray personalized a sumaryo na pag-aral yo bago onggapo ed quiz.',
       'Your learning recap will appear here after you tap words you want to learn more about while reading.':
-        'Say sumaryo na pag-aral yo et onlabas diye kanian mo i-tap ray saray salita a balet mo ran amtaen no agbabasa ka.',
+          'Say sumaryo na pag-aral yo et onlabas diye kanian mo i-tap ray saray salita a balet mo ran amtaen no agbabasa ka.',
       'Start Quiz': 'Ongapo ed Quiz',
       'Review Learning Recap': 'Suryan yo ray Sumaryo na Pag-aral',
       'Sign In': 'Mag-sign In',
-      'Enter your email and password to continue.': 'Ikaag yo ray email tan password yo pian magpatuloy.',
+      'Enter your email and password to continue.':
+          'Ikaag yo ray email tan password yo pian magpatuloy.',
       'Quick Demo Login': 'Mabilis a Demo Login',
       'Student': 'Estudyante',
       'Teacher': 'Maestro',
-      
+
       // Word Popup
       'Simplifying...': 'Manpapasimple...',
       'Simple Explanation': 'Simpli a Paliwanag',

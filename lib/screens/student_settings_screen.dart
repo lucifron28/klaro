@@ -32,7 +32,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
   String _currentLanguage = 'en';
   bool _isLoading = true;
 
-  bool get _isDemoUser => widget.user.uid == 'demo-student' || widget.user.uid == 'demo-teacher';
+  bool get _isDemoUser =>
+      widget.user.uid == 'demo-student' || widget.user.uid == 'demo-teacher';
 
   @override
   void initState() {
@@ -42,7 +43,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
 
   Future<void> _loadSettings() async {
     setState(() => _isLoading = true);
-    
+
     try {
       final languageCode = await _localStorage.getLanguagePreference() ?? 'en';
       if (mounted) {
@@ -75,8 +76,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                 _buildProfileCard(),
                 SizedBox(height: 24),
 
-                // Language Section
-                _buildSectionHeader('Language'),
+                // Dialect Section
+                _buildSectionHeader('Dialect'),
                 _buildLanguageCard(),
                 SizedBox(height: 24),
 
@@ -139,7 +140,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
             title: 'Email',
             subtitle: widget.user.email,
             onTap: null, // Email cannot be changed
-            trailing: Icon(Icons.lock_outline, size: 16, color: KlaroTheme.textMuted),
+            trailing:
+                Icon(Icons.lock_outline, size: 16, color: KlaroTheme.textMuted),
           ),
         ],
       ),
@@ -148,7 +150,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
 
   Widget _buildLanguageCard() {
     final languageName = _getLanguageName(_currentLanguage);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -157,7 +159,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
       ),
       child: _buildSettingsTile(
         icon: Icons.language,
-        title: 'App Language',
+        title: 'App Dialect',
         subtitle: languageName,
         onTap: () => _showLanguageDialog(),
       ),
@@ -279,9 +281,10 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
           color: KlaroTheme.textMuted,
         ),
       ),
-      trailing: trailing ?? (onTap != null 
-          ? Icon(Icons.chevron_right, color: KlaroTheme.textMuted)
-          : null),
+      trailing: trailing ??
+          (onTap != null
+              ? Icon(Icons.chevron_right, color: KlaroTheme.textMuted)
+              : null),
       onTap: onTap,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     );
@@ -394,7 +397,7 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: TranslatableText('Select Language'),
+        title: TranslatableText('Select Dialect'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -409,9 +412,9 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                 onChanged: (value) async {
                   if (value != null) {
                     try {
-                      // Save language preference locally
+                      // Save dialect preference locally
                       await _localStorage.saveLanguagePreference(value);
-                      
+
                       // Update in Firestore only for non-demo users
                       if (!_isDemoUser) {
                         await _firestoreService.updateLanguagePreference(
@@ -422,28 +425,30 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
 
                       if (mounted) {
                         setState(() => _currentLanguage = value);
-                        Navigator.pop(context); // Close language dialog
-                        
+                        Navigator.pop(context); // Close dialect dialog
+
                         // Show success message
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Language changed to ${lang['name']}. Returning to home...'),
+                            content: Text(
+                                'Dialect changed to ${lang['name']}. Returning to home...'),
                             backgroundColor: KlaroTheme.success,
                             duration: Duration(seconds: 2),
                           ),
                         );
-                        
+
                         // Wait a moment for the snackbar to show, then pop back to home
                         await Future.delayed(Duration(milliseconds: 500));
                         if (mounted) {
-                          Navigator.pop(this.context, true); // Close settings screen and notify home
+                          Navigator.pop(this.context,
+                              true); // Close settings screen and notify home
                         }
                       }
                     } catch (e) {
                       if (mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Error changing language: $e'),
+                            content: Text('Error changing dialect: $e'),
                             backgroundColor: KlaroTheme.error,
                           ),
                         );
@@ -489,8 +494,11 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                     labelText: 'Current Password',
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(obscureCurrent ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setDialogState(() => obscureCurrent = !obscureCurrent),
+                      icon: Icon(obscureCurrent
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () => setDialogState(
+                          () => obscureCurrent = !obscureCurrent),
                     ),
                   ),
                 ),
@@ -502,8 +510,10 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                     labelText: 'New Password',
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(obscureNew ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setDialogState(() => obscureNew = !obscureNew),
+                      icon: Icon(
+                          obscureNew ? Icons.visibility : Icons.visibility_off),
+                      onPressed: () =>
+                          setDialogState(() => obscureNew = !obscureNew),
                     ),
                   ),
                 ),
@@ -515,8 +525,11 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                     labelText: 'Confirm New Password',
                     border: OutlineInputBorder(),
                     suffixIcon: IconButton(
-                      icon: Icon(obscureConfirm ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setDialogState(() => obscureConfirm = !obscureConfirm),
+                      icon: Icon(obscureConfirm
+                          ? Icons.visibility
+                          : Icons.visibility_off),
+                      onPressed: () => setDialogState(
+                          () => obscureConfirm = !obscureConfirm),
                     ),
                   ),
                 ),
@@ -550,7 +563,9 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
 
                 if (newPass.length < 6) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Password must be at least 6 characters')),
+                    SnackBar(
+                        content:
+                            Text('Password must be at least 6 characters')),
                   );
                   return;
                 }
@@ -560,7 +575,8 @@ class _StudentSettingsScreenState extends State<StudentSettingsScreen> {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Password change not available for demo accounts'),
+                      content: Text(
+                          'Password change not available for demo accounts'),
                       backgroundColor: KlaroTheme.warning,
                     ),
                   );

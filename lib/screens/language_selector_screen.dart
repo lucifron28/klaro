@@ -7,10 +7,9 @@ import 'package:klaro/screens/teacher_dashboard_screen.dart';
 import 'package:klaro/utils/theme.dart';
 
 /// ============================================================
-/// Language Selector Screen
+/// Dialect Selector Screen
 /// ============================================================
-/// Allows users to select their preferred language during onboarding.
-/// Displays all 9 Philippine languages.
+/// Allows users to select their preferred dialect during onboarding.
 
 class LanguageSelectorScreen extends StatefulWidget {
   final AppUser user;
@@ -50,7 +49,7 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
 
               // Header
               Text(
-                'Choose Your Language',
+                'Choose Your Dialect',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
@@ -60,7 +59,7 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Pumili ng iyong wika',
+                'Pumili ng iyong diyalekto',
                 style: TextStyle(
                   fontSize: 16,
                   color: KlaroTheme.textMuted,
@@ -70,7 +69,7 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
               ),
               const SizedBox(height: 40),
 
-              // Language Grid
+              // Dialect Grid
               Expanded(
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -164,7 +163,7 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Save language preference to local storage only
+      // Save dialect preference to local storage only.
       await _localStorage.saveLanguagePreference(_selectedLanguage!.code);
 
       if (mounted) {
@@ -182,7 +181,7 @@ class _LanguageSelectorScreenState extends State<LanguageSelectorScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving language preference: $e'),
+            content: Text('Error saving dialect preference: $e'),
             backgroundColor: KlaroTheme.error,
           ),
         );

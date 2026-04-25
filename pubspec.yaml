@@ -16,7 +16,7 @@ dependencies:
   cloud_firestore: ^5.6.0
 
   # AI (Firebase AI Logic SDK)
-  firebase_ai: ^0.3.0
+  firebase_ai: ^2.3.0
 
   # Local Storage
   hive: ^2.2.3

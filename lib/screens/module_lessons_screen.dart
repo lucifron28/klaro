@@ -36,7 +36,7 @@ class ModuleLessonsScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 6),
-                Row(
+                Wrap(
                   children: [
                     Text(
                       '${module.subjectTitle} ${module.gradeLevel.split(' ').last} - ${module.lessons.length} ',
@@ -138,6 +138,7 @@ class ModuleLessonsScreen extends StatelessWidget {
                   ),
                   TranslatableText(
                     'Tap to read lesson',
+                    maxLines: 2,
                     style: TextStyle(
                       fontSize: 12,
                       color: KlaroTheme.textMuted,

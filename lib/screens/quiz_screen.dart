@@ -84,7 +84,9 @@ class _QuizScreenState extends State<QuizScreen> {
     if (unanswered != -1) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: TranslatableText('Please answer all questions before submitting.'),
+          content: TranslatableText(
+            'Please answer all questions before submitting.',
+          ),
           backgroundColor: KlaroTheme.warning,
         ),
       );
@@ -139,7 +141,11 @@ class _QuizScreenState extends State<QuizScreen> {
       setState(() => _isSubmitting = false);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: TranslatableText('Failed to evaluate quiz. Please try again.')),
+          SnackBar(
+            content: TranslatableText(
+              'Failed to evaluate quiz. Please try again.',
+            ),
+          ),
         );
       }
     }
@@ -175,24 +181,27 @@ class _QuizScreenState extends State<QuizScreen> {
             ),
           ),
           SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TranslatableText(
-                'Based on: ',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: KlaroTheme.textMuted,
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                TranslatableText(
+                  'Based on: ',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: KlaroTheme.textMuted,
+                  ),
                 ),
-              ),
-              Text(
-                widget.lesson.title,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: KlaroTheme.textMuted,
+                Text(
+                  widget.lesson.title,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: KlaroTheme.textMuted,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),

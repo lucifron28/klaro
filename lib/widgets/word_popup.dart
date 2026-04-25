@@ -70,7 +70,7 @@ class _WordPopupState extends State<WordPopup> {
   Future<void> _loadLanguageName() async {
     final localStorage = LocalStorageService();
     final languageCode = await localStorage.getLanguagePreference() ?? 'en';
-    
+
     // Map language codes to display names
     final languageNames = {
       'en': 'English',
@@ -83,7 +83,7 @@ class _WordPopupState extends State<WordPopup> {
       'bik': 'Bikol',
       'pag': 'Pangasinan',
     };
-    
+
     if (mounted) {
       setState(() {
         _languageName = languageNames[languageCode] ?? 'Translation';
@@ -129,18 +129,20 @@ class _WordPopupState extends State<WordPopup> {
             // Word title
             Row(
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: KlaroTheme.primaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    widget.word,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: KlaroTheme.primaryBlue,
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: KlaroTheme.primaryBlue.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      widget.word,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        color: KlaroTheme.primaryBlue,
+                      ),
                     ),
                   ),
                 ),
@@ -193,7 +195,8 @@ class _WordPopupState extends State<WordPopup> {
                     backgroundColor: KlaroTheme.primaryBlue,
                     padding: EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: TranslatableText('Got it!', style: TextStyle(fontSize: 16)),
+                  child: TranslatableText('Got it!',
+                      style: TextStyle(fontSize: 16)),
                 ),
               ),
             ],
@@ -220,29 +223,31 @@ class _WordPopupState extends State<WordPopup> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(icon, size: 18, color: iconColor),
               SizedBox(width: 8),
-              if (showLanguageName)
-                Text(
-                  _languageName,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: KlaroTheme.textMuted,
-                    letterSpacing: 0.5,
-                  ),
-                )
-              else
-                TranslatableText(
-                  titleKey,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: KlaroTheme.textMuted,
-                    letterSpacing: 0.5,
-                  ),
-                ),
+              Expanded(
+                child: showLanguageName
+                    ? Text(
+                        _languageName,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: KlaroTheme.textMuted,
+                          letterSpacing: 0.5,
+                        ),
+                      )
+                    : TranslatableText(
+                        titleKey,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: KlaroTheme.textMuted,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+              ),
             ],
           ),
           SizedBox(height: 8),

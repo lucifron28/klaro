@@ -65,11 +65,10 @@ class _TranslatableTextState extends State<TranslatableText> {
 
   Future<void> _loadTranslation() async {
     try {
-      final languageCode =
-          widget.languageCode ??
+      final languageCode = widget.languageCode ??
           await _localStorage.getLanguagePreference() ??
           'en';
-      
+
       // Get hardcoded translation
       final translated = AppTranslations.translate(widget.text, languageCode);
 
@@ -100,7 +99,8 @@ class _TranslatableTextState extends State<TranslatableText> {
       style: widget.style,
       textAlign: widget.textAlign,
       maxLines: widget.maxLines,
-      overflow: widget.overflow,
+      overflow: widget.overflow ?? TextOverflow.visible,
+      softWrap: true,
     );
   }
 }

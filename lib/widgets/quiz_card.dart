@@ -65,44 +65,54 @@ class _QuizCardState extends State<QuizCard> {
         children: [
           // Question header
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: KlaroTheme.primaryBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  'Q${widget.questionNumber}/${widget.totalQuestions}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: KlaroTheme.primaryBlue,
-                  ),
-                ),
-              ),
-              SizedBox(width: 8),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: widget.question.type == QuestionType.multipleChoice
-                      ? KlaroTheme.lightBlue.withOpacity(0.2)
-                      : KlaroTheme.accentYellow.withOpacity(0.3),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  widget.question.type == QuestionType.multipleChoice
-                      ? 'Multiple Choice'
-                      : 'Short Answer',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: KlaroTheme.textDark,
-                  ),
+              Expanded(
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: KlaroTheme.primaryBlue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        'Q${widget.questionNumber}/${widget.totalQuestions}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: KlaroTheme.primaryBlue,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color:
+                            widget.question.type == QuestionType.multipleChoice
+                                ? KlaroTheme.lightBlue.withOpacity(0.2)
+                                : KlaroTheme.accentYellow.withOpacity(0.3),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        widget.question.type == QuestionType.multipleChoice
+                            ? 'Multiple Choice'
+                            : 'Short Answer',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: KlaroTheme.textDark,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               if (widget.showResult) ...[
-                Spacer(),
+                SizedBox(width: 8),
                 Icon(
                   widget.question.isCorrect == true
                       ? Icons.check_circle
@@ -180,8 +190,8 @@ class _QuizCardState extends State<QuizCard> {
     return Column(
       children: (widget.question.choices ?? []).map((choice) {
         final isSelected = _selectedChoice == choice;
-        final isCorrectAnswer = widget.showResult &&
-            choice == widget.question.correctAnswer;
+        final isCorrectAnswer =
+            widget.showResult && choice == widget.question.correctAnswer;
         final isWrongSelection = widget.showResult &&
             isSelected &&
             widget.question.isCorrect == false;
@@ -213,7 +223,8 @@ class _QuizCardState extends State<QuizCard> {
                         : isSelected
                             ? KlaroTheme.primaryBlue
                             : Colors.grey.shade200,
-                width: isSelected || isCorrectAnswer || isWrongSelection ? 2 : 1,
+                width:
+                    isSelected || isCorrectAnswer || isWrongSelection ? 2 : 1,
               ),
             ),
             child: Row(
@@ -224,7 +235,8 @@ class _QuizCardState extends State<QuizCard> {
                     style: TextStyle(
                       fontSize: 14,
                       color: KlaroTheme.textDark,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w400,
                     ),
                   ),
                 ),

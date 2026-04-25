@@ -17,6 +17,15 @@ class AppTranslations {
       'My Progress': 'My Progress',
       'modules': 'modules',
       'lessons': 'lessons',
+      'Science': 'Science',
+      'English': 'English',
+      'Mathematics': 'Mathematics',
+      'Matter, living systems, energy, Earth, and space.':
+          'Matter, living systems, energy, Earth, and space.',
+      'Reading, listening, speaking, viewing, and writing skills.':
+          'Reading, listening, speaking, viewing, and writing skills.',
+      'Numbers, measurement, algebra, geometry, and statistics.':
+          'Numbers, measurement, algebra, geometry, and statistics.',
       
       // Student Dashboard
       'No progress yet': 'No progress yet',
@@ -119,6 +128,15 @@ class AppTranslations {
       'My Progress': 'Aking Pag-unlad',
       'modules': 'mga modyul',
       'lessons': 'mga aralin',
+      'Science': 'Agham',
+      'English': 'Ingles',
+      'Mathematics': 'Matematika',
+      'Matter, living systems, energy, Earth, and space.':
+          'Materya, mga sistemang buhay, enerhiya, Daigdig, at kalawakan.',
+      'Reading, listening, speaking, viewing, and writing skills.':
+          'Mga kasanayan sa pagbasa, pakikinig, pagsasalita, panonood, at pagsusulat.',
+      'Numbers, measurement, algebra, geometry, and statistics.':
+          'Mga numero, pagsukat, algebra, heometriya, at estadistika.',
       'No progress yet': 'Walang pag-unlad pa',
       'Complete a lesson and quiz to see your progress here.': 'Kumpletuhin ang aralin at pagsusulit upang makita ang iyong pag-unlad dito.',
       'lesson(s) completed': 'natapos na aralin',

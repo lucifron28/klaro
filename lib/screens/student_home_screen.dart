@@ -3,9 +3,9 @@ import 'package:klaro/data/sample_lessons.dart';
 import 'package:klaro/models/app_user.dart';
 import 'package:klaro/models/curriculum.dart';
 import 'package:klaro/screens/login_screen.dart';
-import 'package:klaro/screens/student_dashboard_screen.dart';
 import 'package:klaro/screens/my_progress_screen.dart';
 import 'package:klaro/screens/subject_modules_screen.dart';
+import 'package:klaro/screens/student_settings_screen.dart';
 import 'package:klaro/services/auth_service.dart';
 import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/theme.dart';
@@ -33,6 +33,7 @@ class StudentHomeScreen extends StatefulWidget {
 
 class _StudentHomeScreenState extends State<StudentHomeScreen> {
   late int _currentIndex;
+  String _currentLanguageCode = 'en';
   String _subjectsLabel = 'Subjects';
   String _progressLabel = 'My Progress';
 
@@ -52,6 +53,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     
     if (mounted) {
       setState(() {
+        _currentLanguageCode = languageCode;
         _subjectsLabel = subjects;
         _progressLabel = progress;
       });
@@ -99,6 +101,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                         children: [
                           TranslatableText(
                             'Kumusta',
+                            languageCode: _currentLanguageCode,
                             style: TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.w800,
@@ -118,6 +121,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       SizedBox(height: 4),
                       TranslatableText(
                         'Choose a Grade 7 subject to start.',
+                        languageCode: _currentLanguageCode,
                         style: TextStyle(
                           fontSize: 14,
                           color: KlaroTheme.textMuted,
@@ -125,6 +129,22 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       ),
                     ],
                   ),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    final languageChanged = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => StudentSettingsScreen(user: widget.user),
+                      ),
+                    );
+
+                    if (languageChanged == true && mounted) {
+                      await _loadTranslations();
+                    }
+                  },
+                  icon: Icon(Icons.settings_outlined, color: KlaroTheme.textMuted),
+                  tooltip: 'Settings',
                 ),
                 IconButton(
                   onPressed: () async {
@@ -146,6 +166,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: TranslatableText(
               'Grade 7 Subjects',
+              languageCode: _currentLanguageCode,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -223,17 +244,33 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    '${subject.title} ${subject.gradeLevel.split(' ').last}',
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                      color: KlaroTheme.textDark,
-                    ),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: TranslatableText(
+                          subject.title,
+                          languageCode: _currentLanguageCode,
+                          style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                            color: KlaroTheme.textDark,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        ' ${subject.gradeLevel.split(' ').last}',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: KlaroTheme.textDark,
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 5),
-                  Text(
+                  TranslatableText(
                     subject.description,
+                    languageCode: _currentLanguageCode,
                     style: TextStyle(
                       fontSize: 13,
                       color: KlaroTheme.textMuted,
@@ -253,6 +290,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       ),
                       TranslatableText(
                         'modules',
+                        languageCode: _currentLanguageCode,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -269,6 +307,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                       ),
                       TranslatableText(
                         'lessons',
+                        languageCode: _currentLanguageCode,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,

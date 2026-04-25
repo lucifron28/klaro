@@ -200,6 +200,12 @@ class LocalStorageService {
     await Hive.box(AppConstants.cacheBox).clear();
   }
 
+  /// Clear only progress data (quizzes and AI assessments)
+  Future<void> clearAllProgress() async {
+    await Hive.box(AppConstants.scoresBox).clear();
+    await Hive.box(AppConstants.conversationsBox).clear();
+  }
+
   // ── Language Preference ───────────────────────────────────
 
   Future<void> saveLanguagePreference(String languageCode) async {

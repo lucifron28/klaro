@@ -8,8 +8,8 @@ import 'package:klaro/screens/subject_modules_screen.dart';
 import 'package:klaro/screens/student_settings_screen.dart';
 import 'package:klaro/services/auth_service.dart';
 import 'package:klaro/services/local_storage_service.dart';
+import 'package:klaro/services/translation_service.dart';
 import 'package:klaro/utils/theme.dart';
-import 'package:klaro/utils/translations.dart';
 import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
@@ -36,6 +36,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
   String _currentLanguageCode = 'en';
   String _subjectsLabel = 'Subjects';
   String _progressLabel = 'My Progress';
+  final TranslationService _translationService = TranslationService();
 
   @override
   void initState() {
@@ -48,14 +49,16 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
     final localStorage = LocalStorageService();
     final languageCode = await localStorage.getLanguagePreference() ?? 'en';
 
-    final subjects = AppTranslations.translate('Subjects', languageCode);
-    final progress = AppTranslations.translate('My Progress', languageCode);
+    final labels = await _translationService.translateBatch(
+      const ['Subjects', 'My Progress'],
+      languageCode,
+    );
 
     if (mounted) {
       setState(() {
         _currentLanguageCode = languageCode;
-        _subjectsLabel = subjects;
-        _progressLabel = progress;
+        _subjectsLabel = labels['Subjects'] ?? 'Subjects';
+        _progressLabel = labels['My Progress'] ?? 'My Progress';
       });
     }
   }

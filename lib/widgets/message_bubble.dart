@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:klaro/utils/theme.dart';
 
 /// ============================================================
@@ -79,14 +80,45 @@ class MessageBubble extends StatelessWidget {
               ),
               child: isLoading
                   ? _buildLoadingIndicator()
-                  : Text(
-                      message,
-                      style: TextStyle(
-                        fontSize: 15,
-                        height: 1.5,
-                        color: isStudent ? Colors.white : KlaroTheme.textDark,
-                      ),
-                    ),
+                  : isStudent
+                      ? Text(
+                          message,
+                          style: TextStyle(
+                            fontSize: 15,
+                            height: 1.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : MarkdownBody(
+                          data: message,
+                          styleSheet: MarkdownStyleSheet(
+                            p: TextStyle(
+                              fontSize: 15,
+                              height: 1.5,
+                              color: KlaroTheme.textDark,
+                            ),
+                            strong: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: KlaroTheme.textDark,
+                            ),
+                            em: TextStyle(
+                              fontSize: 15,
+                              fontStyle: FontStyle.italic,
+                              color: KlaroTheme.textDark,
+                            ),
+                            listBullet: TextStyle(
+                              fontSize: 15,
+                              color: KlaroTheme.primaryBlue,
+                            ),
+                            listIndent: 20,
+                            code: TextStyle(
+                              fontSize: 14,
+                              backgroundColor: KlaroTheme.lightBlue.withValues(alpha: 0.1),
+                              color: KlaroTheme.primaryBlue,
+                            ),
+                          ),
+                        ),
             ),
           ),
           if (isStudent) ...[

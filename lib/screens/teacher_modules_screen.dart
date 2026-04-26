@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:klaro/models/module_upload.dart';
 import 'package:klaro/screens/teacher_module_upload_screen.dart';
 import 'package:klaro/services/firestore_service.dart';
+import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/utils/translations.dart';
 import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
@@ -24,14 +26,24 @@ class TeacherModulesScreen extends StatefulWidget {
 
 class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
   final _firestoreService = FirestoreService();
+  final _localStorage = LocalStorageService();
   List<ModuleUpload> _modules = [];
   bool _isLoading = true;
   String _filterSubject = 'All';
+  String _languageCode = 'en';
 
   @override
   void initState() {
     super.initState();
+    _loadLanguage();
     _loadModules();
+  }
+
+  Future<void> _loadLanguage() async {
+    final lang = await _localStorage.getLanguagePreference() ?? 'en';
+    if (mounted) {
+      setState(() => _languageCode = lang);
+    }
   }
 
   Future<void> _loadModules() async {
@@ -96,7 +108,7 @@ class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
                       return Padding(
                         padding: EdgeInsets.only(right: 8),
                         child: FilterChip(
-                          label: Text(subject),
+                          label: TranslatableText(subject),
                           selected: isSelected,
                           onSelected: (selected) {
                             setState(() => _filterSubject = subject);
@@ -140,6 +152,7 @@ class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
           }
         },
         backgroundColor: KlaroTheme.primaryBlue,
+        foregroundColor: Colors.white,
         icon: Icon(Icons.add),
         label: TranslatableText('New Module'),
       ),
@@ -222,7 +235,7 @@ class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
                         color: module.isPublished ? KlaroTheme.success : KlaroTheme.textMuted,
                       ),
                       SizedBox(width: 4),
-                      Text(
+                      TranslatableText(
                         module.isPublished ? 'Published' : 'Draft',
                         style: TextStyle(
                           fontSize: 10,
@@ -389,9 +402,9 @@ class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
     final diff = now.difference(date);
 
     if (diff.inDays == 0) {
-      return 'Today';
+      return AppTranslations.translate('Today', _languageCode);
     } else if (diff.inDays == 1) {
-      return 'Yesterday';
+      return AppTranslations.translate('Yesterday', _languageCode);
     } else if (diff.inDays < 7) {
       return '${diff.inDays} days ago';
     } else {
@@ -404,7 +417,7 @@ class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: TranslatableText('Delete Module'),
-        content: TranslatableText(
+        content: Text(
           'Are you sure you want to delete "${module.title}"? This action cannot be undone.',
         ),
         actions: [
@@ -416,6 +429,7 @@ class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: KlaroTheme.error,
+              foregroundColor: Colors.white,
             ),
             child: TranslatableText('Delete'),
           ),
@@ -429,7 +443,7 @@ class _TeacherModulesScreenState extends State<TeacherModulesScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Module deleted successfully'),
+              content: Text(AppTranslations.translate('Module deleted successfully', _languageCode)),
               backgroundColor: KlaroTheme.success,
             ),
           );

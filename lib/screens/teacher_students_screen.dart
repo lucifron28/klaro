@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:klaro/models/teacher_student.dart';
 import 'package:klaro/screens/teacher_student_detail_screen.dart';
 import 'package:klaro/services/firestore_service.dart';
+import 'package:klaro/services/local_storage_service.dart';
 import 'package:klaro/utils/theme.dart';
+import 'package:klaro/utils/translations.dart';
 import 'package:klaro/widgets/translatable_text.dart';
 
 /// ============================================================
@@ -24,15 +26,26 @@ class TeacherStudentsScreen extends StatefulWidget {
 
 class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
   final _firestoreService = FirestoreService();
+  final _localStorage = LocalStorageService();
   List<TeacherStudent> _students = [];
   Map<String, StudentProgressSummary?> _progressMap = {};
   bool _isLoading = true;
   String _searchQuery = '';
+  String _searchHint = 'Search students...';
 
   @override
   void initState() {
     super.initState();
+    _loadTranslations();
     _loadStudents();
+  }
+
+  Future<void> _loadTranslations() async {
+    final languageCode = await _localStorage.getLanguagePreference() ?? 'en';
+    final translated = AppTranslations.translate('Search students...', languageCode);
+    if (mounted) {
+      setState(() => _searchHint = translated);
+    }
   }
 
   Future<void> _loadStudents() async {
@@ -124,7 +137,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                   padding: EdgeInsets.all(16),
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: 'Search students...',
+                      hintText: _searchHint,
                       prefixIcon: Icon(Icons.search),
                       filled: true,
                       fillColor: Colors.white,
@@ -165,6 +178,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddStudentDialog,
         backgroundColor: KlaroTheme.primaryBlue,
+        foregroundColor: Colors.white,
         icon: Icon(Icons.person_add),
         label: TranslatableText('Add Student'),
       ),
@@ -304,14 +318,22 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                         Icon(Icons.assignment_turned_in, size: 12, color: KlaroTheme.textMuted),
                         SizedBox(width: 4),
                         Text(
-                          '${progress.totalQuizzesTaken} quizzes',
+                          '${progress.totalQuizzesTaken} ',
+                          style: TextStyle(fontSize: 11, color: KlaroTheme.textMuted),
+                        ),
+                        TranslatableText(
+                          'quizzes',
                           style: TextStyle(fontSize: 11, color: KlaroTheme.textMuted),
                         ),
                         SizedBox(width: 12),
                         Icon(Icons.psychology, size: 12, color: KlaroTheme.textMuted),
                         SizedBox(width: 4),
                         Text(
-                          '${progress.totalAIAssessments} AI tests',
+                          '${progress.totalAIAssessments} ',
+                          style: TextStyle(fontSize: 11, color: KlaroTheme.textMuted),
+                        ),
+                        TranslatableText(
+                          'AI tests',
                           style: TextStyle(fontSize: 11, color: KlaroTheme.textMuted),
                         ),
                       ],
@@ -341,7 +363,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                       color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
                     ),
-                    child: Text(
+                    child: TranslatableText(
                       progress.statusLabel,
                       style: TextStyle(
                         fontSize: 10,
@@ -353,13 +375,13 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                 ],
               )
             else
-              Text(
-                'No data',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: KlaroTheme.textMuted,
-                ),
-              ),
+                      TranslatableText(
+                        'No data',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: KlaroTheme.textMuted,
+                        ),
+                      ),
           ],
         ),
       ),
@@ -406,6 +428,15 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
     String selectedGrade = 'Grade 7';
     final sectionController = TextEditingController();
 
+    // Load translations before showing dialog
+    final languageCode = await _localStorage.getLanguagePreference() ?? 'en';
+    final studentNameLabel = AppTranslations.translate('Student Name', languageCode);
+    final studentEmailLabel = AppTranslations.translate('Student Email', languageCode);
+    final gradeLevelLabel = AppTranslations.translate('Grade Level', languageCode);
+    final sectionLabel = AppTranslations.translate('Section (Optional)', languageCode);
+    final fillFieldsMsg = AppTranslations.translate('Please fill in all required fields', languageCode);
+    final successMsg = AppTranslations.translate('Student added successfully!', languageCode);
+
     await showDialog(
       context: context,
       builder: (context) => StatefulBuilder(
@@ -418,7 +449,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(
-                    labelText: 'Student Name',
+                    labelText: studentNameLabel,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -426,7 +457,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                 TextField(
                   controller: emailController,
                   decoration: InputDecoration(
-                    labelText: 'Student Email',
+                    labelText: studentEmailLabel,
                     border: OutlineInputBorder(),
                   ),
                   keyboardType: TextInputType.emailAddress,
@@ -435,7 +466,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                 DropdownButtonFormField<String>(
                   value: selectedGrade,
                   decoration: InputDecoration(
-                    labelText: 'Grade Level',
+                    labelText: gradeLevelLabel,
                     border: OutlineInputBorder(),
                   ),
                   items: ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10']
@@ -452,7 +483,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                 TextField(
                   controller: sectionController,
                   decoration: InputDecoration(
-                    labelText: 'Section (Optional)',
+                    labelText: sectionLabel,
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -468,7 +499,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
               onPressed: () async {
                 if (nameController.text.isEmpty || emailController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please fill in all required fields')),
+                    SnackBar(content: Text(fillFieldsMsg)),
                   );
                   return;
                 }
@@ -489,7 +520,7 @@ class _TeacherStudentsScreenState extends State<TeacherStudentsScreen> {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('Student added successfully!'),
+                        content: Text(successMsg),
                         backgroundColor: KlaroTheme.success,
                       ),
                     );

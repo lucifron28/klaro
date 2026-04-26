@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:klaro/models/teacher_student.dart';
 import 'package:klaro/models/lesson_suggestion.dart';
 import 'package:klaro/services/lesson_suggestion_service.dart';
@@ -247,7 +248,7 @@ class _TeacherStudentDetailScreenState extends State<TeacherStudentDetailScreen>
               color: statusColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(
+            child: TranslatableText(
               progress.statusLabel,
               style: TextStyle(
                 fontSize: 12,
@@ -525,7 +526,7 @@ class _TeacherStudentDetailScreenState extends State<TeacherStudentDetailScreen>
             ],
           ),
           SizedBox(height: 8),
-          Text(
+          TranslatableText(
             'Teaching Strategy:',
             style: TextStyle(
               fontSize: 12,
@@ -534,16 +535,32 @@ class _TeacherStudentDetailScreenState extends State<TeacherStudentDetailScreen>
             ),
           ),
           SizedBox(height: 4),
-          Text(
-            suggestion.teachingStrategy,
-            style: TextStyle(
-              fontSize: 12,
-              color: KlaroTheme.textMuted,
-              height: 1.4,
+          MarkdownBody(
+            data: suggestion.teachingStrategy,
+            styleSheet: MarkdownStyleSheet(
+              p: TextStyle(
+                fontSize: 12,
+                color: KlaroTheme.textMuted,
+                height: 1.4,
+              ),
+              strong: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: KlaroTheme.textDark,
+              ),
+              em: TextStyle(
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+                color: KlaroTheme.textMuted,
+              ),
+              listBullet: TextStyle(
+                fontSize: 12,
+                color: KlaroTheme.primaryBlue,
+              ),
             ),
           ),
           SizedBox(height: 8),
-          Text(
+          TranslatableText(
             'Key Recommendations:',
             style: TextStyle(
               fontSize: 12,
@@ -559,12 +576,24 @@ class _TeacherStudentDetailScreenState extends State<TeacherStudentDetailScreen>
                   children: [
                     Text('• ', style: TextStyle(color: KlaroTheme.primaryBlue)),
                     Expanded(
-                      child: Text(
-                        rec,
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: KlaroTheme.textMuted,
-                          height: 1.3,
+                      child: MarkdownBody(
+                        data: rec,
+                        styleSheet: MarkdownStyleSheet(
+                          p: TextStyle(
+                            fontSize: 11,
+                            color: KlaroTheme.textMuted,
+                            height: 1.3,
+                          ),
+                          strong: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: KlaroTheme.textDark,
+                          ),
+                          em: TextStyle(
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                            color: KlaroTheme.textMuted,
+                          ),
                         ),
                       ),
                     ),

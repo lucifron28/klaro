@@ -139,15 +139,16 @@ enum SupportedLanguage {
   waray('war', 'Waray'),
   kapampangan('pam', 'Kapampangan'),
   bikol('bik', 'Bikol'),
-  pangasinan('pan', 'Pangasinan');
+  pangasinan('pag', 'Pangasinan');
 
   const SupportedLanguage(this.code, this.displayName);
   final String code;
   final String displayName;
 
   static SupportedLanguage fromCode(String code) {
+    final normalizedCode = code == 'pan' ? 'pag' : code;
     return SupportedLanguage.values.firstWhere(
-      (lang) => lang.code == code,
+      (lang) => lang.code == normalizedCode,
       orElse: () => SupportedLanguage.english,
     );
   }

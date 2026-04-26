@@ -115,7 +115,15 @@ The current Firebase AI Logic setup does not require a separate Gemini API key i
 .env.example
 ```
 
-These files are not loaded by the app right now. Do not hardcode Gemini API keys in Dart files. Firebase AI Logic uses the Firebase app configuration.
+`.env.example` includes:
+
+```text
+GOOGLE_TRANSLATE_API_KEY
+```
+
+Use this key name for Google Cloud Translation API work. Do not hardcode translation keys, Gemini keys, or other Google API keys in Dart files. Firebase AI Logic uses the Firebase app configuration.
+
+Implementation note: `.env` is loaded at startup and is listed as a Flutter asset for local development. `TranslationService` uses Google Cloud Translation API first, then falls back to the local static translation map when Cloud Translation is unavailable.
 
 ## Tech Stack
 
@@ -131,6 +139,25 @@ These files are not loaded by the app right now. Do not hardcode Gemini API keys
 | Gemini model | `gemini-3.1-flash-lite-preview` from `AppConstants.geminiModel` |
 | State management | Mostly local `StatefulWidget` state and services |
 | Curriculum source | Local Dart seed data in `lib/data/sample_lessons.dart` |
+
+## Google Technologies Used
+
+Klaro uses these Google technologies:
+
+| Technology | Where it is used |
+| --- | --- |
+| Flutter | Main cross-platform app framework for the Android app. |
+| Dart | Application programming language. |
+| Firebase Core | Initializes the Firebase app through `Firebase.initializeApp`. |
+| Firebase Auth | Email/password authentication for student and teacher accounts. |
+| Cloud Firestore | Stores user profiles, quiz results, AI assessment results, learned concepts, teacher-student records, and teacher-created modules. |
+| Firebase AI Logic | Connects the Flutter app to Gemini models through Firebase. |
+| Gemini | Powers word simplification, dialect explanations, quiz generation, quiz evaluation, AI assessment conversations, UI translation, and teacher lesson suggestions. |
+| Google Cloud Translation API | Runtime provider for UI and learned-concept dialect translation through `TranslationService`. |
+| FlutterFire CLI | Generates Firebase platform configuration such as `lib/firebase_options.dart`. |
+| Firebase CLI | Required by FlutterFire configuration workflows. |
+| Google Services Gradle Plugin | Reads `android/app/google-services.json` for Android Firebase configuration. |
+| Google Fonts | Provides app typography through the `google_fonts` Flutter package. |
 
 ## App Architecture
 
@@ -277,6 +304,8 @@ Translation-related files:
 | `lib/widgets/translatable_text.dart` | Widget for translated UI strings. |
 | `lib/utils/translations.dart` | Static translated labels. |
 | `lib/models/translation_models.dart` | Supported dialect enum and cache models. |
+
+Google Cloud Translation API note: keep the API key in `.env` as `GOOGLE_TRANSLATE_API_KEY`. Screens should use `TranslatableText` or `TranslationService`; do not call the Cloud Translation endpoint directly from UI code.
 
 ## Data Storage
 

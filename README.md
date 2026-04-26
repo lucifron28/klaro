@@ -1,28 +1,35 @@
 # Klaro
 
-Klaro is a Flutter Android app for Filipino Grade 7 learners. Students browse the DepEd K-12 curriculum by subject, module, and lesson, read a lesson, tap unfamiliar words for simple explanations and Tagalog/Taglish support, review selected words in a learning recap, take a quiz, and talk to Klaro AI for a final understanding check.
+Klaro is a Flutter learning app for Filipino Grade 7 students. It organizes the curriculum as `Subject -> Module -> Lesson`, lets students read lessons, tap unfamiliar words for simple AI explanations, review learned words in a recap, take a quiz, and complete an AI assessment conversation.
 
 Built for InnOlympics 2026, Track A: Pangarap sa Pagkatuto.
 
-## Current Status
+## Current Scope
 
-The app currently supports:
+The current app supports:
 
-- Student quick demo login and Firebase email/password login.
-- Teacher quick demo login with a demo class dashboard.
-- Grade 7 curriculum browsing as `Subject -> Module -> Lesson`.
-- Science 7, English 7, and Mathematics 7 module lists from the supplied DepEd LRMDS curriculum outline.
-- Interactive reading with tappable words.
-- Firebase AI Logic powered word simplification and Tagalog/Taglish explanation.
-- Learned words/concepts logging per lesson.
+- Firebase initialization through `lib/firebase_options.dart` and Android `google-services.json`.
+- Firebase Auth email/password login, with local demo fallback accounts.
+- Student and teacher roles.
+- First-login dialect selector and dialect settings.
+- Grade 7 Science, English, and Mathematics curriculum seed data.
+- Curriculum hierarchy: `Subject -> Module -> Lesson`.
+- Realistic seed lesson content generated from the curriculum module and lesson titles.
+- Interactive reading with tappable content words.
+- Firebase AI Logic word explanations in English plus the selected Filipino dialect.
+- Local caching for word explanations and UI translations.
+- Learned word/concept logging per lesson.
 - Learning recap before quiz.
-- Firebase AI Logic powered quiz generation, quiz evaluation, and AI conversation.
-- Local progress storage with Hive.
-- Firebase Android configuration through `android/app/google-services.json` and `lib/firebase_options.dart`.
+- AI-generated quiz questions with fallback questions.
+- AI quiz evaluation with fallback evaluation.
+- AI assessment conversation after the quiz.
+- Local progress storage through Hive.
+- Firestore-backed quiz results, AI assessment results, learned concepts, teacher-student links, and teacher module uploads.
+- Teacher dashboard, student management, module management, and AI lesson suggestions for struggling topics.
 
-The app is Android-first right now. iOS, web, desktop, real teacher lesson management, and production backend behavior are not fully configured.
+The app is Android-first. iOS, web, desktop, and release signing are present in the Flutter project structure but are not the main tested target.
 
-## Developer Quick Start
+## Quick Start
 
 ```powershell
 cd C:\Users\Ron\InnOlympics\klaro
@@ -43,36 +50,53 @@ Build a debug APK:
 flutter build apk --debug
 ```
 
-Output:
+Debug APK output:
 
 ```text
 build/app/outputs/flutter-apk/app-debug.apk
 ```
 
+## Demo Accounts
+
+These accounts are defined in `lib/utils/constants.dart`.
+
+| Role | Email | Password | Notes |
+| --- | --- | --- | --- |
+| Student | `student@test.com` | `password123` | Local demo fallback user id is `demo-student`. |
+| Teacher | `teacher@test.com` | `password123` | Local demo fallback user id is `demo-teacher`. |
+
+The demo credentials are checked before Firebase Auth. This means the demo login can work even if Firebase Auth is unavailable, but AI and Firestore features still need Firebase configured.
+
 ## Firebase Setup
 
-Required files:
+Required generated/config files:
 
 ```text
 android/app/google-services.json
 lib/firebase_options.dart
+firebase.json
 ```
 
-Current Android package/application id:
+Current Firebase project id:
+
+```text
+klaro-851a6
+```
+
+Current Android package id:
 
 ```text
 com.example.klaro
 ```
 
-Both Firebase files must point to the same Firebase project. The current local files point to project `klaro-851a6`.
+Firebase services used by the app:
 
-Firebase AI Logic must be enabled for the same project:
+- Firebase Core
+- Firebase Auth
+- Cloud Firestore
+- Firebase AI Logic
 
-```text
-https://console.firebase.google.com/project/klaro-851a6/genai
-```
-
-The app initializes Firebase with:
+The app initializes Firebase in `lib/main.dart` with:
 
 ```dart
 await Firebase.initializeApp(
@@ -80,38 +104,91 @@ await Firebase.initializeApp(
 );
 ```
 
+Firebase initialization is wrapped in `try/catch` so the local demo can still open when Firebase is missing, but Firebase-dependent features will fail or fall back.
+
 ## Environment Files
 
-No `.env` file is required for the current Firebase AI Logic setup. The app does not read a separate Gemini API key from Dart code.
+The current Firebase AI Logic setup does not require a separate Gemini API key in Dart code.
 
-`.env.example` is only a note for teammates. Do not put Gemini API keys in Dart files.
+```text
+.env
+.env.example
+```
+
+These files are not loaded by the app right now. Do not hardcode Gemini API keys in Dart files. Firebase AI Logic uses the Firebase app configuration.
 
 ## Tech Stack
 
-| Area | Current implementation |
+| Area | Implementation |
 | --- | --- |
 | App framework | Flutter / Dart |
-| UI | Material 3, Google Fonts |
-| Authentication | Firebase Auth plus local demo fallback |
-| Android Firebase config | Google Services Gradle plugin |
-| AI provider | Firebase AI Logic SDK |
-| AI SDK | `firebase_ai` |
-| Gemini model | `gemini-2.5-flash-lite` in `AppConstants.geminiModel` |
-| Local persistence | Hive / Hive Flutter |
-| Curriculum data | Hardcoded Dart data in `SampleLessons` |
-| Demo teacher data | Hardcoded Dart data |
+| UI | Material 3, Google Fonts, Flutter Animate, Shimmer |
+| Auth | Firebase Auth plus local demo fallback |
+| Backend data | Cloud Firestore |
+| Local storage | Hive / Hive Flutter |
+| AI | Firebase AI Logic SDK |
+| AI package | `firebase_ai: ^2.3.0` |
+| Gemini model | `gemini-3.1-flash-lite-preview` from `AppConstants.geminiModel` |
+| State management | Mostly local `StatefulWidget` state and services |
+| Curriculum source | Local Dart seed data in `lib/data/sample_lessons.dart` |
 
-## Curriculum Structure
+## App Architecture
 
-The curriculum is modeled as:
+High-level startup:
+
+```text
+main.dart
+  -> Firebase.initializeApp(DefaultFirebaseOptions.currentPlatform)
+  -> LocalStorageService.init()
+  -> KlaroApp
+  -> LoginScreen
+```
+
+Student flow:
+
+```text
+LoginScreen
+  -> LanguageSelectorScreen on first login
+  -> StudentHomeScreen
+  -> SubjectModulesScreen
+  -> ModuleLessonsScreen
+  -> LessonReadingScreen
+  -> LearningRecapScreen
+  -> QuizScreen
+  -> AIAssessmentScreen
+```
+
+Teacher flow:
+
+```text
+LoginScreen
+  -> LanguageSelectorScreen on first login
+  -> TeacherDashboardScreen
+  -> TeacherStudentsScreen
+  -> TeacherStudentDetailScreen
+  -> TeacherModulesScreen
+  -> TeacherModuleUploadScreen
+```
+
+## Curriculum Model
+
+Klaro models curriculum as:
 
 ```text
 CurriculumSubject
-  -> CurriculumModule
-    -> Lesson
+  -> List<CurriculumModule>
+    -> List<Lesson>
 ```
 
-Current subjects:
+Main model files:
+
+| File | Purpose |
+| --- | --- |
+| `lib/models/curriculum.dart` | `CurriculumSubject` and `CurriculumModule`. |
+| `lib/models/lesson.dart` | Individual lesson records. |
+| `lib/data/sample_lessons.dart` | Grade 7 subject/module/lesson seed data. |
+
+Current seeded curriculum:
 
 | Subject | Modules | Lessons |
 | --- | ---: | ---: |
@@ -119,7 +196,7 @@ Current subjects:
 | English 7 | 4 | 32 |
 | Mathematics 7 | 4 | 33 |
 
-Module mapping:
+Module map:
 
 | Subject | Quarter | Module |
 | --- | --- | --- |
@@ -136,155 +213,88 @@ Module mapping:
 | Mathematics | Quarter 3 | Geometry |
 | Mathematics | Quarter 4 | Statistics and Probability |
 
-The app includes every lesson title from the supplied curriculum list. Lesson bodies are currently generated starter text from the curriculum metadata, not full official DepEd module content.
+The seed includes the supplied DepEd Grade 7 module/lesson titles. Lesson content is realistic app seed content, not a verbatim copy of official DepEd modules or PDFs.
 
-## Main Student Flow
+## AI Features
 
-1. Open app.
-2. Tap `Student` quick demo login or sign in with Firebase.
-3. Choose a Grade 7 subject.
-4. Choose a quarter module.
-5. Choose a lesson.
-6. Read the lesson.
-7. Tap unfamiliar words.
-8. Klaro opens a bottom sheet with a simple explanation and Tagalog/Taglish explanation.
-9. Each successfully explained word is saved as a learned concept for that lesson.
-10. Tap `Review Learning Recap`.
-11. Review selected words and lesson concepts.
-12. Tap `Start Quiz`.
-13. Answer the AI-generated quiz.
-14. Submit answers.
-15. Continue to `Talk to Klaro AI`.
-16. Complete the AI tutor conversation.
-17. View the performance summary.
-
-## Project Structure
+AI calls are centralized in:
 
 ```text
-lib/
-  main.dart
-  firebase_options.dart
-  data/
-    sample_lessons.dart
-    sample_students.dart
-  models/
-    ai_conversation.dart
-    app_user.dart
-    curriculum.dart
-    learned_concept.dart
-    lesson.dart
-    quiz_question.dart
-    quiz_response.dart
-  screens/
-    ai_conversation_screen.dart
-    learning_recap_screen.dart
-    lesson_reading_screen.dart
-    login_screen.dart
-    module_lessons_screen.dart
-    performance_summary_screen.dart
-    quiz_screen.dart
-    student_dashboard_screen.dart
-    student_home_screen.dart
-    subject_modules_screen.dart
-    teacher_dashboard_screen.dart
-  services/
-    auth_service.dart
-    gemini_service.dart
-    local_storage_service.dart
-  utils/
-    constants.dart
-    helpers.dart
-    theme.dart
-  widgets/
-    message_bubble.dart
-    quiz_card.dart
-    score_card.dart
-    word_popup.dart
+lib/services/gemini_service.dart
+lib/services/lesson_suggestion_service.dart
 ```
 
-## Important Files
-
-### `lib/data/sample_lessons.dart`
-
-Owns the current Grade 7 curriculum seed data.
-
-- `SampleLessons.subjects`: full subject/module/lesson hierarchy.
-- `SampleLessons.lessons`: flattened lesson list for lookup and progress use.
-- `getSubjectById`, `getModuleById`, `getLessonById`: lookup helpers.
-
-### `lib/models/curriculum.dart`
-
-Defines:
-
-- `CurriculumSubject`
-- `CurriculumModule`
-
-`CurriculumSubject` contains modules. `CurriculumModule` contains lessons.
-
-### `lib/models/lesson.dart`
-
-Defines individual lesson records. Current fields include:
-
-- `id`
-- `title`
-- `subject`
-- `gradeLevel`
-- `moduleId`
-- `moduleTitle`
-- `quarter`
-- `content`
-- `keyTerms`
-- `dateCompleted`
-
-### `lib/services/gemini_service.dart`
-
-Owns all Firebase AI Logic calls:
+`GeminiService` handles:
 
 - `simplifyWord`
 - `generateQuizQuestions`
 - `evaluateQuizAnswers`
+- `conductAssessmentConversation`
+- `getAssessmentGreeting`
 - `conductConversation`
 - `getInitialGreeting`
+- `translateText`
 
-It uses:
+`LessonSuggestionService` handles:
 
-```dart
-FirebaseAI.googleAI().generativeModel(
-  model: AppConstants.geminiModel,
-)
-```
+- Teacher recommendations for student struggling topics.
+- Class intervention plans.
 
-Firebase AI errors are logged with `debugPrint` and converted into clearer app messages.
+AI error handling:
 
-### `lib/screens/student_home_screen.dart`
+- Empty responses are converted to user-facing retry messages.
+- Firebase AI SDK parsing failures are caught.
+- Service-disabled, invalid API key, zero quota, quota exceeded, and permission errors are mapped to clearer app messages.
+- Quiz generation and quiz evaluation both have fallback behavior so the student can continue if AI fails.
 
-Shows the Grade 7 subject list and links to module browsing.
+## Dialect Support
 
-### `lib/screens/subject_modules_screen.dart`
+The UI now uses the word "dialect" because the supported choices are Filipino languages/dialects used by students.
 
-Shows the selected subject's quarter modules.
+Supported choices are defined in `lib/models/translation_models.dart`:
 
-### `lib/screens/module_lessons_screen.dart`
+| Code | Display |
+| --- | --- |
+| `en` | English |
+| `tl` | Tagalog |
+| `ceb` | Cebuano |
+| `ilo` | Ilocano |
+| `hil` | Hiligaynon |
+| `war` | Waray |
+| `pam` | Kapampangan |
+| `bik` | Bikol |
+| `pan` | Pangasinan |
 
-Shows lessons inside one module and opens `LessonReadingScreen`.
+Important implementation note: several internal class names, field names, and Hive keys still use `language` or `preferredLanguage`. These names are kept for compatibility with existing local and Firestore data. User-facing copy should say `dialect`.
 
-### `lib/screens/lesson_reading_screen.dart`
+Translation-related files:
 
-Renders tappable lesson text, checks the word cache, calls `GeminiService.simplifyWord`, saves learned concepts, and opens the learning recap.
+| File | Purpose |
+| --- | --- |
+| `lib/screens/language_selector_screen.dart` | First-login dialect selection UI. |
+| `lib/screens/student_settings_screen.dart` | Dialect setting after login. |
+| `lib/services/translation_service.dart` | Runtime translation with memory and Hive cache. |
+| `lib/widgets/translatable_text.dart` | Widget for translated UI strings. |
+| `lib/utils/translations.dart` | Static translated labels. |
+| `lib/models/translation_models.dart` | Supported dialect enum and cache models. |
 
-### `lib/services/local_storage_service.dart`
+## Data Storage
 
-Hive boxes:
+### Hive
 
-| Box | Constant | Purpose |
-| --- | --- | --- |
-| `lessons` | `AppConstants.lessonsBox` | Lesson completion and learned concepts |
-| `scores` | `AppConstants.scoresBox` | Quiz responses |
-| `conversations` | `AppConstants.conversationsBox` | AI conversation records |
-| `user` | `AppConstants.userBox` | Current signed-in user |
-| `word_cache` | `AppConstants.cacheBox` | Cached AI word explanations |
+Hive is initialized in `LocalStorageService.init()`.
 
-Important keys:
+| Box | Purpose |
+| --- | --- |
+| `lessons` | Lesson completion and learned concepts. |
+| `scores` | Quiz responses. |
+| `conversations` | AI assessment/conversation records. |
+| `user` | Current local user. |
+| `word_cache` | Cached word explanations. |
+| `translation_cache` | Cached UI translations. |
+| `language_preference` | Preferred dialect and seeder status. |
+
+Common Hive keys:
 
 ```text
 currentUser
@@ -292,86 +302,222 @@ completed_<lessonId>
 learned_<lessonId>
 quiz_<lessonId>
 ai_<lessonId>
+preferred_language
+seeder_completed
+```
+
+### Firestore
+
+Firestore access is centralized in `lib/services/firestore_service.dart`.
+
+Collections currently used:
+
+```text
+users/{uid}
+users/{uid}/quizResults/{resultId}
+users/{uid}/assessmentResults/{resultId}
+users/{uid}/learnedConcepts/{conceptId}
+teachers/{teacherId}/students/{studentId}
+teachers/{teacherId}/modules/{moduleId}
+```
+
+Firestore is treated as optional in some flows. When unavailable, the app logs the error and keeps local progress where possible.
+
+## Important Files
+
+| Path | Purpose |
+| --- | --- |
+| `lib/main.dart` | App startup, Firebase init, Hive init, Material app. |
+| `lib/firebase_options.dart` | FlutterFire-generated Firebase config. Do not edit by hand unless regenerating is impossible. |
+| `lib/utils/constants.dart` | Model name, demo credentials, Hive box names, app info. |
+| `lib/utils/theme.dart` | Global Material theme. |
+| `lib/data/sample_lessons.dart` | Official Grade 7 curriculum outline mapped into subject/module/lesson seed data. |
+| `lib/data/sample_students.dart` | Demo teacher/student data. |
+| `lib/services/auth_service.dart` | Firebase Auth, demo login fallback, local user session. |
+| `lib/services/local_storage_service.dart` | Hive persistence. |
+| `lib/services/firestore_service.dart` | Firestore persistence and teacher/student/module APIs. |
+| `lib/services/gemini_service.dart` | Student-facing Firebase AI Logic calls. |
+| `lib/services/lesson_suggestion_service.dart` | Teacher-facing AI suggestions. |
+| `lib/services/translation_service.dart` | Runtime translation cache and dialect preference support. |
+| `lib/screens/login_screen.dart` | Login and quick demo buttons. |
+| `lib/screens/student_home_screen.dart` | Student subject dashboard. |
+| `lib/screens/subject_modules_screen.dart` | Modules inside a subject. |
+| `lib/screens/module_lessons_screen.dart` | Lessons inside a module. |
+| `lib/screens/lesson_reading_screen.dart` | Tappable reading experience and learned concept logging. |
+| `lib/screens/learning_recap_screen.dart` | Review screen for selected words/concepts before quiz. |
+| `lib/screens/quiz_screen.dart` | AI quiz generation, answer submission, save results. |
+| `lib/screens/ai_assessment_screen.dart` | AI assessment conversation after quiz. |
+| `lib/screens/my_progress_screen.dart` | Student progress view. |
+| `lib/screens/teacher_dashboard_screen.dart` | Teacher overview and actions. |
+| `lib/screens/teacher_students_screen.dart` | Teacher student list and enrollment. |
+| `lib/screens/teacher_student_detail_screen.dart` | Student progress details and suggestions. |
+| `lib/screens/teacher_modules_screen.dart` | Teacher module list. |
+| `lib/screens/teacher_module_upload_screen.dart` | Create/edit teacher modules. |
+| `assets/images/Klaro-logo.png` | App logo. |
+| `scripts/add_demo_student_to_teacher.dart` | One-off helper script for adding `demo-student` to `demo-teacher` in Firestore. |
+
+## Models
+
+| Model | File | Notes |
+| --- | --- | --- |
+| `AppUser` | `lib/models/app_user.dart` | Current signed-in app user and role. |
+| `UserProfile` | `lib/models/user_profile.dart` | Firestore user profile. |
+| `CurriculumSubject` | `lib/models/curriculum.dart` | Subject containing modules. |
+| `CurriculumModule` | `lib/models/curriculum.dart` | Module containing lessons. |
+| `Lesson` | `lib/models/lesson.dart` | Lesson content, key terms, module metadata. |
+| `LearnedConcept` | `lib/models/learned_concept.dart` | Word/concept selected during reading. |
+| `QuizQuestion` | `lib/models/quiz_question.dart` | Multiple-choice and short-answer questions. |
+| `QuizResponse` | `lib/models/quiz_response.dart` | Saved quiz result and attempt metadata. |
+| `AIConversation` | `lib/models/ai_conversation.dart` | AI assessment conversation and score. |
+| `TeacherStudent` | `lib/models/teacher_student.dart` | Teacher class enrollment record. |
+| `StudentProgressSummary` | `lib/models/teacher_student.dart` | Aggregated quiz/AI progress for teachers. |
+| `ModuleUpload` | `lib/models/module_upload.dart` | Teacher-created module content. |
+| `LessonSuggestion` | `lib/models/lesson_suggestion.dart` | AI-generated teaching suggestion. |
+| `TranslationRequest`, `TranslationResponse`, `TranslationCacheEntry`, `LanguagePreference` | `lib/models/translation_models.dart` | Translation and dialect cache support. |
+
+## Development Workflow
+
+Install dependencies:
+
+```powershell
+flutter pub get
+```
+
+Format Dart files:
+
+```powershell
+dart format lib test scripts
+```
+
+Analyze:
+
+```powershell
+flutter analyze
+```
+
+Run on connected Android device:
+
+```powershell
+flutter run
+```
+
+Build debug APK:
+
+```powershell
+flutter build apk --debug
+```
+
+Run the demo Firestore helper script:
+
+```powershell
+dart run scripts/add_demo_student_to_teacher.dart
 ```
 
 ## Testing Checklist
 
+Use this after major changes:
+
 1. Confirm `android/app/google-services.json` exists.
 2. Confirm `lib/firebase_options.dart` exists.
-3. Confirm both Firebase files use the same project.
-4. Enable Firebase AI Logic for the project.
-5. Run `flutter pub get`.
-6. Run `flutter build apk --debug`.
-7. Run on Android phone.
-8. Test Student quick login.
-9. Open `Science 7 -> Quarter 1 Matter -> Scientific Ways of Acquiring Knowledge and Solving Problems`.
-10. Tap a word and confirm the explanation popup works.
-11. Tap `Review Learning Recap` and confirm selected words appear.
-12. Start and submit a quiz.
-13. Continue to AI conversation.
-14. Test Teacher quick login and dashboard.
+3. Confirm both files point to Firebase project `klaro-851a6`.
+4. Confirm Firebase Auth email/password sign-in is enabled.
+5. Confirm Firestore is enabled.
+6. Confirm Firebase AI Logic is enabled and has quota for `gemini-3.1-flash-lite-preview`.
+7. Run `flutter pub get`.
+8. Run `flutter build apk --debug`.
+9. Run on an Android phone.
+10. Log in with the student demo account.
+11. Select a dialect.
+12. Open a subject, module, and lesson.
+13. Tap a content word and confirm the popup returns an explanation.
+14. Tap `Review Learning Recap` and confirm selected words are listed.
+15. Start and submit a quiz.
+16. Continue to AI assessment and complete the conversation.
+17. Check `My Progress`.
+18. Log in with the teacher demo account.
+19. Open students, modules, and dashboard views.
+20. Confirm teacher suggestions load when progress data exists.
 
 ## Troubleshooting
 
-### Tapping words says Firebase AI Logic is not enabled
+### `flutterfire` is not recognized
 
-Enable Firebase AI Logic for the project:
+The Dart global pub cache bin folder is not on PATH. Use the full command:
+
+```powershell
+dart pub global run flutterfire_cli:flutterfire configure --project=klaro-851a6
+```
+
+The FlutterFire CLI also requires the official Firebase CLI.
+
+### Firebase CLI login fails
+
+Install or repair the official Firebase CLI, then run:
+
+```powershell
+firebase --version
+firebase login
+```
+
+If the packaged Firebase CLI is broken, install the npm version from a working Node setup.
+
+### Word explanation says Firebase AI Logic is not enabled
+
+Enable Firebase AI Logic for the same Firebase project used by the Android app. Wait a few minutes, restart the app, then try again.
+
+### Word explanation says quota is `limit: 0`
+
+That means the selected Firebase project/model currently has zero available quota. It is a project/model quota issue, not a local app counter. Check Firebase AI Logic and Google AI quota/billing for `gemini-3.1-flash-lite-preview`, or switch `AppConstants.geminiModel` to a model with available quota.
+
+### Firebase rejects the Android API key
+
+Check that:
+
+- `android/app/google-services.json` belongs to project `klaro-851a6`.
+- The Android app package is `com.example.klaro`.
+- `lib/firebase_options.dart` was generated for the same Firebase project.
+- The app was rebuilt after replacing Firebase config files.
+
+### Login fails
+
+Check that Firebase Auth email/password sign-in is enabled and that the account exists in Firebase. The local demo credentials should still work because `AuthService` checks them before Firebase Auth.
+
+### Translated text overflows
+
+Most recent UI work uses wrapping/flexible text in key screens, but longer dialect translations can still expose layout issues. Prefer `Flexible`, `Expanded`, `Wrap`, `maxLines`, or scrollable content when adding new translated labels.
+
+### Firestore data does not appear in teacher screens
+
+Check the teacher id and collection path:
 
 ```text
-https://console.firebase.google.com/project/klaro-851a6/genai
+teachers/{teacherId}/students/{studentId}
+teachers/{teacherId}/modules/{moduleId}
 ```
 
-Wait a few minutes after enabling, then restart the app.
+For demo mode, the expected ids are:
 
-### Firebase AI says quota exceeded with `limit: 0`
-
-That means the Firebase project has no quota for the selected Gemini model, not that the app already used too much. Klaro currently uses `gemini-2.5-flash-lite`.
-
-### Firebase login fails
-
-Check:
-
-- Firebase Authentication has Email/Password enabled.
-- Test accounts exist in Firebase.
-- `android/app/google-services.json` belongs to the same Firebase project.
-- Android package in Firebase is `com.example.klaro`.
-
-Student/Teacher quick login should still work even if Firebase login is unavailable.
-
-### `flutter` is not recognized
-
-Use:
-
-```powershell
-C:\Users\Ron\develop\flutter\bin\flutter.bat --version
+```text
+demo-teacher
+demo-student
 ```
 
-### Gradle says `JAVA_HOME` is missing
+## Known Gaps
 
-Use Android Studio's bundled JBR:
+- Android is the primary tested platform.
+- Release signing is not configured.
+- Some internal names still say `language` even though the UI says `dialect`.
+- Lesson content is generated seed content, not full official DepEd module text.
+- `ai_conversation_screen.dart`, `performance_summary_screen.dart`, and `student_dashboard_screen.dart` are still present as older or alternate screens.
+- Firestore and Firebase AI failures are handled with fallbacks in some student flows, but teacher AI suggestions depend on Firebase AI being available.
+- Analyzer may still report style/deprecation warnings in older UI code.
 
-```powershell
-$env:JAVA_HOME = 'C:\Program Files\Android\Android Studio\jbr'
-$env:Path = "$env:JAVA_HOME\bin;$env:Path"
-```
+## Contributor Notes
 
-Then rebuild.
-
-## Development Notes
-
-- Keep UI changes consistent with `lib/utils/theme.dart`.
-- Store local-only data through `LocalStorageService`.
-- Keep AI prompt and response parsing logic inside `GeminiService`.
-- Add or update curriculum seed data in `lib/data/sample_lessons.dart`.
-- Keep the hierarchy as `Subject -> Module -> Lesson`.
-- Do not hardcode separate Gemini API keys in Dart files.
-- Avoid deleting Hive data unless deliberately testing first-run behavior.
-
-## Known Gaps / Future Work
-
-- Full official DepEd lesson body content is not imported yet; current lessons use generated starter text from the curriculum metadata.
-- Real teacher-created lessons are not implemented yet.
-- Firestore is installed but not yet used for lesson/class data.
-- Teacher dashboard uses demo data.
-- Release signing is not configured; release currently uses debug signing.
-- Existing analyzer output may include older style warnings such as deprecated `withOpacity` usage.
+- Keep curriculum navigation as `Subject -> Module -> Lesson`.
+- Add curriculum seed updates in `lib/data/sample_lessons.dart`.
+- Keep AI prompt work in `GeminiService` or `LessonSuggestionService`.
+- Keep local persistence changes inside `LocalStorageService`.
+- Keep Firestore path changes inside `FirestoreService`.
+- Do not commit real API keys, private service accounts, or local signing secrets.
+- User-facing copy should say `dialect`; internal compatibility fields may still say `language`.

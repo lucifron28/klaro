@@ -56,7 +56,6 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
       ),
       body: Column(
         children: [
-
           // Lesson content
           Expanded(
             child: SingleChildScrollView(
@@ -155,8 +154,6 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
     for (int i = 0; i < words.length; i++) {
       final word = words[i];
       final cleanWord = word.replaceAll(RegExp(r'[^a-zA-Z]'), '');
-      final isKeyTerm = widget.lesson.keyTerms
-          .any((term) => term.toLowerCase() == cleanWord.toLowerCase());
       final isContentWord = Helpers.isContentWord(cleanWord);
       final isHighlighted =
           _selectedWord?.toLowerCase() == cleanWord.toLowerCase();
@@ -202,7 +199,7 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
     final cacheKey = '${languageCode}_$word';
     final cached = _localStorage.getCachedWordExplanation(cacheKey);
     if (cached != null && _hasUsableExplanation(cached)) {
-      await _recordLearnedConcept(word, cached);
+      await _recordLearnedConcept(word, cached, languageCode);
       _showWordPopup(word, cached['explanation']!, cached['tagalog']!);
       return;
     }
@@ -228,7 +225,7 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
 
       // Cache the result with language-specific key
       await _localStorage.cacheWordExplanation(cacheKey, result);
-      await _recordLearnedConcept(word, result);
+      await _recordLearnedConcept(word, result, languageCode);
 
       // Close loading popup and show result
       if (mounted) {
@@ -265,6 +262,7 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
   Future<void> _recordLearnedConcept(
     String word,
     Map<String, String> data,
+    String languageCode,
   ) async {
     if (!_hasUsableExplanation(data)) return;
 
@@ -272,6 +270,7 @@ class _LessonReadingScreenState extends State<LessonReadingScreen> {
       word: word,
       explanation: data['explanation']!.trim(),
       tagalog: (data['tagalog'] ?? '').trim(),
+      languageCode: languageCode,
       selectedAt: DateTime.now(),
     );
 

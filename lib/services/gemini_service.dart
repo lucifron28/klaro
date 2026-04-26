@@ -1,6 +1,7 @@
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:flutter/foundation.dart';
 import 'package:klaro/models/quiz_question.dart';
+import 'package:klaro/services/translation_service.dart';
 import 'package:klaro/utils/constants.dart';
 import 'package:klaro/utils/helpers.dart';
 
@@ -106,58 +107,44 @@ class GeminiService {
   Future<Map<String, String>> simplifyWord(
     String word, {
     String? context,
-    String targetLanguage = 'tl', // Default to Tagalog for backward compatibility
+    String targetLanguage =
+        'tl', // Default to Tagalog for backward compatibility
   }) async {
-    // Get language name from code
-    final languageNames = {
-      'en': 'English',
-      'tl': 'Tagalog',
-      'ceb': 'Cebuano',
-      'ilo': 'Ilocano',
-      'hil': 'Hiligaynon',
-      'war': 'Waray',
-      'pam': 'Kapampangan',
-      'bik': 'Bikol',
-      'pag': 'Pangasinan',
-    };
-
-    final languageName = languageNames[targetLanguage] ?? 'Tagalog';
-
     final prompt = '''
 You are a helpful tutor for Filipino Grade 7 students.
 Explain this word in very simple terms that a 12-13-year-old can understand.
-Also provide a $languageName translation/explanation.
-Keep each answer to one short sentence.
+Keep the answer to one short sentence.
 
 Word: $word
 ${context != null ? 'Context: "$context"' : ''}
 
 Respond in this exact JSON format only, no other text:
 {
-  "explanation": "simple explanation here",
-  "tagalog": "$languageName explanation here"
+  "explanation": "simple explanation here"
 }
 ''';
 
     final text = await _generateText(prompt, maxOutputTokens: 512);
     final parsed = Helpers.tryParseJson(text);
 
+    String explanation;
     if (parsed != null && parsed is Map) {
-      return {
-        'explanation':
-            parsed['explanation']?.toString() ?? 'Unable to explain.',
-        'tagalog':
-            parsed['tagalog']?.toString() ?? 'Hindi available ang translation.',
-      };
+      explanation = parsed['explanation']?.toString() ?? 'Unable to explain.';
+    } else if (text.trim().startsWith('{')) {
+      throw const GeminiServiceException('Klaro AI returned incomplete JSON.');
+    } else {
+      explanation = text;
     }
 
-    if (text.trim().startsWith('{')) {
-      throw const GeminiServiceException('Klaro AI returned incomplete JSON.');
-    }
+    final translation = await TranslationService().translate(
+      explanation,
+      targetLanguage,
+      sourceLanguage: 'en',
+    );
 
     return {
-      'explanation': text,
-      'tagalog': 'Hindi available ang translation.',
+      'explanation': explanation,
+      'tagalog': translation,
     };
   }
 
@@ -335,7 +322,8 @@ Respond in this exact JSON format only, no other text:
     }).join('\n');
 
     final totalAttempts = correctAnswers + incorrectAnswers;
-    final consecutiveIncorrect = _countConsecutiveIncorrect(conversationHistory);
+    final consecutiveIncorrect =
+        _countConsecutiveIncorrect(conversationHistory);
 
     final prompt = '''
 You are Klaro, a friendly and encouraging AI Assessment assistant helping a Filipino Grade 7 student learn and demonstrate their understanding.
@@ -489,7 +477,8 @@ Respond as Klaro, the friendly AI Assessment assistant.
     } catch (error) {
       debugPrint('Assessment conversation failed: $error');
       return {
-        'message': 'I had trouble understanding. Can you try explaining again? Or if you need help, just ask me to explain the concept!',
+        'message':
+            'I had trouble understanding. Can you try explaining again? Or if you need help, just ask me to explain the concept!',
         'isComplete': false,
         'isQuestion': true,
       };
@@ -504,12 +493,14 @@ Respond as Klaro, the friendly AI Assessment assistant.
       final msg = history[i];
       if (msg['role'] == 'ai') {
         final text = msg['message']?.toLowerCase() ?? '';
-        if (text.contains('incorrect') || 
-            text.contains('not quite') || 
+        if (text.contains('incorrect') ||
+            text.contains('not quite') ||
             text.contains('not exactly') ||
             text.contains('try again')) {
           count++;
-        } else if (text.contains('correct') || text.contains('good') || text.contains('right')) {
+        } else if (text.contains('correct') ||
+            text.contains('good') ||
+            text.contains('right')) {
           break; // Stop counting if we hit a correct answer
         }
       }
@@ -601,45 +592,17 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
     return "Hi there! I'm Klaro, your AI tutor. Let's talk about \"$lessonTitle\" to make sure you really understand it. Ready? Tell me the main idea of this lesson in your own words.";
   }
 
-  /// Translate static UI text to target language
+  /// Legacy adapter for older call sites. New translation logic lives in
+  /// TranslationService and uses Google Cloud Translation API.
   Future<String> translateText(String text, String targetLanguage) async {
-    // Get language name from code
-    final languageNames = {
-      'en': 'English',
-      'tl': 'Tagalog',
-      'ceb': 'Cebuano',
-      'ilo': 'Ilocano',
-      'hil': 'Hiligaynon',
-      'war': 'Waray',
-      'pam': 'Kapampangan',
-      'bik': 'Bikol',
-      'pan': 'Pangasinan',
-    };
-
-    final languageName = languageNames[targetLanguage] ?? targetLanguage;
-
-    final prompt = '''
-You are a professional translator for Filipino educational content.
-Translate the following English text to $languageName.
-
-Rules:
-- Maintain the original meaning and tone
-- Use natural, conversational language appropriate for Grade 7 students
-- Keep technical terms in English if commonly used that way
-- Preserve any placeholders like {name} or {count}
-- Do NOT add explanations or additional text
-
-Text to translate: "$text"
-
-Respond with ONLY the translated text, no explanations or additional text.
-''';
-
     try {
-      final translation = await _generateText(prompt, maxOutputTokens: 512);
-      return translation.trim();
+      return await TranslationService().translate(
+        text,
+        targetLanguage,
+        sourceLanguage: 'en',
+      );
     } catch (error) {
       debugPrint('Translation failed: $error');
-      // Fallback to original text
       return text;
     }
   }

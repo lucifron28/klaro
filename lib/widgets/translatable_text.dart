@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:klaro/services/local_storage_service.dart';
-import 'package:klaro/utils/translations.dart';
+import 'package:klaro/services/translation_service.dart';
 
 /// ============================================================
 /// Translatable Text Widget
 /// ============================================================
 /// A widget that automatically translates static UI text based on
-/// the user's preferred language using hardcoded translations.
+/// the user's preferred language using Google Cloud Translation API.
 ///
 /// Usage:
 /// ```dart
@@ -37,6 +37,7 @@ class TranslatableText extends StatefulWidget {
 
 class _TranslatableTextState extends State<TranslatableText> {
   final LocalStorageService _localStorage = LocalStorageService();
+  final TranslationService _translationService = TranslationService();
   String? _translatedText;
 
   @override
@@ -70,8 +71,10 @@ class _TranslatableTextState extends State<TranslatableText> {
 
       debugPrint('TranslatableText loading: "${widget.text}" with language: $languageCode');
 
-      // Get hardcoded translation
-      final translated = AppTranslations.translate(widget.text, languageCode);
+      final translated = await _translationService.translate(
+        widget.text,
+        languageCode,
+      );
 
       debugPrint('TranslatableText result: "$translated"');
 

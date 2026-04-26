@@ -8,7 +8,7 @@ class AppConstants {
   AppConstants._();
 
   // Firebase AI model used by GeminiService.
-  static const String geminiModel = 'gemini-3.1-flash-lite-preview';
+  static const String geminiModel = 'gemini-3-flash-preview';
 
   // Firebase test accounts for the hackathon demo.
   static const String testStudentEmail = 'student@test.com';

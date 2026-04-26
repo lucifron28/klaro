@@ -3,7 +3,9 @@ import 'package:klaro/models/learned_concept.dart';
 import 'package:klaro/models/lesson.dart';
 import 'package:klaro/models/app_user.dart';
 import 'package:klaro/screens/quiz_screen.dart';
+import 'package:klaro/services/google_cloud_translation_service.dart';
 import 'package:klaro/services/local_storage_service.dart';
+import 'package:klaro/services/translation_service.dart';
 import 'package:klaro/utils/theme.dart';
 import 'package:klaro/widgets/translatable_text.dart';
 
@@ -28,12 +30,18 @@ class LearningRecapScreen extends StatefulWidget {
 
 class _LearningRecapScreenState extends State<LearningRecapScreen> {
   final LocalStorageService _localStorage = LocalStorageService();
+  final TranslationService _translationService = TranslationService();
   AppUser? _user;
+  late List<LearnedConcept> _concepts;
+  String _currentLanguageCode = 'tl';
+  bool _isRefreshingConcepts = false;
 
   @override
   void initState() {
     super.initState();
+    _concepts = [...widget.learnedConcepts];
     _loadUser();
+    _refreshConceptDialect();
   }
 
   Future<void> _loadUser() async {
@@ -43,9 +51,63 @@ class _LearningRecapScreenState extends State<LearningRecapScreen> {
     }
   }
 
+  Future<void> _refreshConceptDialect() async {
+    final languageCode = await _localStorage.getLanguagePreference() ?? 'tl';
+    final normalizedLanguage =
+        GoogleCloudTranslationService.cloudLanguageCode(languageCode);
+
+    if (mounted) {
+      setState(() {
+        _currentLanguageCode = normalizedLanguage;
+        _isRefreshingConcepts = true;
+      });
+    }
+
+    final refreshed = <LearnedConcept>[];
+    var changed = false;
+
+    for (final concept in _concepts) {
+      final conceptLanguage = GoogleCloudTranslationService.cloudLanguageCode(
+        concept.languageCode,
+      );
+      final needsRefresh = concept.tagalog.trim().isEmpty ||
+          conceptLanguage != normalizedLanguage;
+
+      if (!needsRefresh) {
+        refreshed.add(concept);
+        continue;
+      }
+
+      final translated = await _translationService.translate(
+        concept.explanation,
+        normalizedLanguage,
+      );
+
+      refreshed.add(
+        concept.copyWith(
+          tagalog: translated,
+          languageCode: normalizedLanguage,
+        ),
+      );
+      changed = true;
+    }
+
+    if (changed) {
+      await _localStorage.saveLearnedConcepts(widget.lesson.id, refreshed);
+    }
+
+    if (mounted) {
+      setState(() {
+        _concepts = refreshed;
+        _currentLanguageCode = normalizedLanguage;
+        _isRefreshingConcepts = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final concepts = [...widget.learnedConcepts]
+    final concepts = [..._concepts]
       ..sort((a, b) => b.selectedAt.compareTo(a.selectedAt)); // Recent first
 
     return Scaffold(
@@ -89,8 +151,17 @@ class _LearningRecapScreenState extends State<LearningRecapScreen> {
               children: [
                 if (concepts.isEmpty)
                   _buildEmptyState()
-                else
+                else ...[
+                  if (_isRefreshingConcepts)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: LinearProgressIndicator(
+                        color: KlaroTheme.primaryBlue,
+                        backgroundColor: Colors.white,
+                      ),
+                    ),
                   ...concepts.map(_buildConceptCard),
+                ],
               ],
             ),
           ),
@@ -109,14 +180,16 @@ class _LearningRecapScreenState extends State<LearningRecapScreen> {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _user == null ? null : () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => QuizScreen(lesson: widget.lesson),
-                    ),
-                  );
-                },
+                onPressed: _user == null
+                    ? null
+                    : () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => QuizScreen(lesson: widget.lesson),
+                          ),
+                        );
+                      },
                 icon: Icon(Icons.quiz_rounded),
                 label: TranslatableText('Start Quiz'),
                 style: ElevatedButton.styleFrom(
@@ -135,7 +208,6 @@ class _LearningRecapScreenState extends State<LearningRecapScreen> {
       ),
     );
   }
-
 
   Widget _buildEmptyState() {
     return Container(
@@ -214,6 +286,7 @@ class _LearningRecapScreenState extends State<LearningRecapScreen> {
           _buildRecapLine(
             icon: Icons.translate,
             color: KlaroTheme.lightBlue,
+            label: _languageName(_currentLanguageCode),
             text: concept.tagalog,
           ),
         ],
@@ -224,6 +297,7 @@ class _LearningRecapScreenState extends State<LearningRecapScreen> {
   Widget _buildRecapLine({
     required IconData icon,
     required Color color,
+    String? label,
     required String text,
   }) {
     return Row(
@@ -232,16 +306,48 @@ class _LearningRecapScreenState extends State<LearningRecapScreen> {
         Icon(icon, color: color, size: 18),
         SizedBox(width: 10),
         Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.45,
-              color: KlaroTheme.textDark,
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (label != null) ...[
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: KlaroTheme.textMuted,
+                  ),
+                ),
+                SizedBox(height: 2),
+              ],
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 14,
+                  height: 1.45,
+                  color: KlaroTheme.textDark,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
+  }
+
+  String _languageName(String code) {
+    const names = {
+      'en': 'English',
+      'tl': 'Tagalog',
+      'ceb': 'Cebuano',
+      'ilo': 'Ilocano',
+      'hil': 'Hiligaynon',
+      'war': 'Waray',
+      'pam': 'Kapampangan',
+      'bik': 'Bikol',
+      'pag': 'Pangasinan',
+      'pan': 'Pangasinan',
+    };
+    return names[code] ?? 'Translation';
   }
 }

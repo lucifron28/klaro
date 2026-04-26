@@ -4,6 +4,84 @@ Klaro is a Flutter learning app for Filipino Grade 7 students. It organizes the 
 
 Built for InnOlympics 2026, Track A: Pangarap sa Pagkatuto.
 
+## Submission
+
+| Item | Link / Details |
+| --- | --- |
+| GitHub repository | [https://github.com/lucifron28/klaro](https://github.com/lucifron28/klaro) |
+| Release APK | [`release/klaro-v1.0.0-release.apk`](release/klaro-v1.0.0-release.apk) |
+| Release APK SHA-256 | `7DCC1D0ED046A461E79C4D4F6643D2DF89710E2B418EDD5E37AB1E2EA8B58766` |
+| Built APK output | `build/app/outputs/flutter-apk/app-release.apk` |
+| Android package id | `com.example.klaro` |
+
+The submitted APK is a release-mode Android build generated with:
+
+```powershell
+C:\Users\Ron\develop\flutter\bin\flutter.bat build apk --release
+```
+
+Note: the current Android release build is signed with the debug signing config for hackathon distribution. It is installable on Android devices, but it is not Play Store production-signed.
+
+## How To Download And Run
+
+### Run The APK On Android
+
+1. Download [`release/klaro-v1.0.0-release.apk`](release/klaro-v1.0.0-release.apk) from the repository.
+2. Transfer it to an Android phone, or download it directly on the phone.
+3. If Android blocks installation, enable installation from unknown apps for the browser/file manager you are using.
+4. Open the APK and install Klaro.
+5. Launch the app and use the demo accounts below.
+
+### Run Locally For Development
+
+```powershell
+cd C:\Users\Ron\InnOlympics\klaro
+C:\Users\Ron\develop\flutter\bin\flutter.bat pub get
+C:\Users\Ron\develop\flutter\bin\flutter.bat run
+```
+
+Optional web/localhost run for development:
+
+```powershell
+C:\Users\Ron\develop\flutter\bin\flutter.bat run -d chrome --web-port 8080
+```
+
+Android is the primary tested target for the submitted build.
+
+## Project Overview
+
+### Specific Problem
+
+Many Grade 7 learners struggle to understand lesson materials when vocabulary, academic English, or unfamiliar concepts get in the way. Teachers also need a fast way to see which students are struggling and what topics need intervention.
+
+### Proposed Solution
+
+Klaro provides an AI-assisted reading and assessment flow for Grade 7 lessons. Students read lessons, tap confusing words for simplified explanations and dialect support, review the words they learned, take a quiz, and complete an AI assessment conversation. Teachers can view student progress, manage students/modules, and generate AI-backed lesson suggestions for topics where learners struggle.
+
+### Features Used To Implement The Solution
+
+- DepEd Grade 7 curriculum structure: `Subject -> Module -> Lesson`.
+- Interactive lesson reading with tappable words.
+- Google Cloud Translation API for dialect translation through `TranslationService`.
+- Firebase AI Logic with Gemini for word simplification, quiz generation, quiz evaluation, AI assessment, and teacher suggestions.
+- Firebase Auth for student and teacher accounts.
+- Cloud Firestore for user profiles, quiz results, AI assessment results, learned concepts, teacher-student records, and teacher modules.
+- Hive local storage for offline-friendly user/session/progress/cache data.
+- Dialect selector and settings for English, Tagalog, Cebuano, Ilocano, Hiligaynon, Waray, Kapampangan, Bikol, and Pangasinan.
+- Learning recap that logs selected words/concepts before the quiz.
+- Student progress screen and teacher dashboard.
+
+### Credits, Tools, Frameworks, And Resources
+
+- Flutter and Dart for the mobile application framework.
+- Firebase Core, Firebase Auth, Cloud Firestore, and Firebase AI Logic.
+- Gemini through Firebase AI Logic.
+- Google Cloud Translation API.
+- Google Fonts Flutter package.
+- Hive / Hive Flutter for local persistence.
+- Material Design / Material 3 Flutter widgets.
+- DepEd Grade 7 curriculum outline supplied for the project module list.
+
 ## Current Scope
 
 The current app supports:

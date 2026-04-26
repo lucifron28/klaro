@@ -59,18 +59,15 @@ class MessageBubble extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isStudent
-                    ? KlaroTheme.primaryBlue
-                    : Colors.white,
+                color: isStudent ? KlaroTheme.primaryBlue : Colors.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16),
                   topRight: Radius.circular(16),
                   bottomLeft: Radius.circular(isStudent ? 16 : 4),
                   bottomRight: Radius.circular(isStudent ? 4 : 16),
                 ),
-                border: isStudent
-                    ? null
-                    : Border.all(color: Colors.grey.shade200),
+                border:
+                    isStudent ? null : Border.all(color: Colors.grey.shade200),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.04),
@@ -146,13 +143,28 @@ class MessageBubble extends StatelessWidget {
           RegExp(r'\[([^\]]+)\]\([^)]+\)'),
           (match) => match.group(1) ?? '',
         )
-        .replaceAll(RegExp(r'`([^`]+)`'), r'$1')
+        .replaceAllMapped(
+          RegExp(r'`([^`]+)`'),
+          (match) => match.group(1) ?? '',
+        )
         .replaceAll(RegExp(r'^\s{0,3}#{1,6}\s*', multiLine: true), '')
         .replaceAll(RegExp(r'^\s{0,3}>\s?', multiLine: true), '')
-        .replaceAll(RegExp(r'\*\*([^*]+)\*\*'), r'$1')
-        .replaceAll(RegExp(r'__([^_]+)__'), r'$1')
-        .replaceAll(RegExp(r'\*([^*\n]+)\*'), r'$1')
-        .replaceAll(RegExp(r'_([^_\n]+)_'), r'$1')
+        .replaceAllMapped(
+          RegExp(r'\*\*([^*]+)\*\*'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAllMapped(
+          RegExp(r'__([^_]+)__'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAllMapped(
+          RegExp(r'\*([^*\n]+)\*'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAllMapped(
+          RegExp(r'_([^_\n]+)_'),
+          (match) => match.group(1) ?? '',
+        )
         .replaceAll(RegExp(r'^\s*[-*+]\s+', multiLine: true), '- ')
         .replaceAll(RegExp(r'\n{3,}'), '\n\n')
         .trim();

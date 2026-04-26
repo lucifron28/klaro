@@ -18,11 +18,12 @@ class GeminiServiceException implements Exception {
 class GeminiService {
   /// Create a model instance with custom generation config.
   GenerativeModel _modelWith({
+    required String modelName,
     double temperature = 0.2,
     int maxOutputTokens = 4096,
   }) {
     return FirebaseAI.googleAI().generativeModel(
-      model: AppConstants.geminiModel,
+      model: modelName,
       generationConfig: GenerationConfig(
         temperature: temperature,
         maxOutputTokens: maxOutputTokens,
@@ -36,41 +37,102 @@ class GeminiService {
     double temperature = 0.2,
     int maxOutputTokens = 4096,
   }) async {
-    final model = _modelWith(
-      temperature: temperature,
-      maxOutputTokens: maxOutputTokens,
-    );
+    final modelNames = AppConstants.geminiModelFallbacks;
+    FirebaseAIException? lastFirebaseAIError;
 
-    try {
-      final response = await model.generateContent([Content.text(prompt)]);
-      final text = response.text;
+    for (var i = 0; i < modelNames.length; i++) {
+      final modelName = modelNames[i];
+      final isLastModel = i == modelNames.length - 1;
+      final model = _modelWith(
+        modelName: modelName,
+        temperature: temperature,
+        maxOutputTokens: maxOutputTokens,
+      );
 
-      if (text == null || text.trim().isEmpty) {
+      try {
+        final response = await model.generateContent([Content.text(prompt)]);
+        final text = response.text;
+
+        if (text == null || text.trim().isEmpty) {
+          throw const GeminiServiceException(
+            'Klaro AI returned an empty response. Please try again.',
+          );
+        }
+
+        if (modelName != AppConstants.geminiModel) {
+          debugPrint('Firebase AI fallback succeeded with model: $modelName');
+        }
+        return text.trim();
+      } on GeminiServiceException {
+        rethrow;
+      } on FirebaseAISdkException catch (error, stackTrace) {
+        debugPrint('Firebase AI SDK error on $modelName: ${error.message}');
+        debugPrintStack(stackTrace: stackTrace);
         throw const GeminiServiceException(
-          'Klaro AI returned an empty response. Please try again.',
+          'The Firebase AI SDK could not read the response. Update packages and try again.',
+        );
+      } on FirebaseAIException catch (error, stackTrace) {
+        lastFirebaseAIError = error;
+        debugPrint(
+            'Firebase AI request failed on $modelName: ${error.message}');
+        debugPrintStack(stackTrace: stackTrace);
+
+        if (_shouldTryNextModel(error.message) && !isLastModel) {
+          final nextModel = modelNames[i + 1];
+          debugPrint('Trying Firebase AI fallback model: $nextModel');
+          continue;
+        }
+
+        throw GeminiServiceException(_friendlyFirebaseAIMessage(error.message));
+      } catch (error, stackTrace) {
+        debugPrint('Klaro AI request failed on $modelName: $error');
+        debugPrintStack(stackTrace: stackTrace);
+        throw const GeminiServiceException(
+          'Klaro AI is unavailable right now. Check internet and Firebase AI setup.',
         );
       }
-
-      return text.trim();
-    } on GeminiServiceException {
-      rethrow;
-    } on FirebaseAISdkException catch (error, stackTrace) {
-      debugPrint('Firebase AI SDK error: ${error.message}');
-      debugPrintStack(stackTrace: stackTrace);
-      throw const GeminiServiceException(
-        'The Firebase AI SDK could not read the response. Update packages and try again.',
-      );
-    } on FirebaseAIException catch (error, stackTrace) {
-      debugPrint('Firebase AI request failed: ${error.message}');
-      debugPrintStack(stackTrace: stackTrace);
-      throw GeminiServiceException(_friendlyFirebaseAIMessage(error.message));
-    } catch (error, stackTrace) {
-      debugPrint('Klaro AI request failed: $error');
-      debugPrintStack(stackTrace: stackTrace);
-      throw const GeminiServiceException(
-        'Klaro AI is unavailable right now. Check internet and Firebase AI setup.',
-      );
     }
+
+    throw GeminiServiceException(
+      _friendlyFirebaseAIMessage(
+        lastFirebaseAIError?.message ??
+            'All configured Firebase AI models failed.',
+      ),
+    );
+  }
+
+  bool _shouldTryNextModel(String message) {
+    final normalized = message.toLowerCase();
+
+    if (normalized.contains('api_key_invalid') ||
+        normalized.contains('api key') ||
+        normalized.contains('permission_denied') ||
+        normalized.contains('permission denied') ||
+        normalized.contains('service_disabled') ||
+        normalized.contains('firebase ai logic api') ||
+        normalized.contains('vertex ai in firebase api')) {
+      return false;
+    }
+
+    return normalized.contains('quota') ||
+        normalized.contains('rate limit') ||
+        normalized.contains('rate-limit') ||
+        normalized.contains('resource_exhausted') ||
+        normalized.contains('too many requests') ||
+        normalized.contains('429') ||
+        normalized.contains('traffic') ||
+        normalized.contains('overload') ||
+        normalized.contains('overloaded') ||
+        normalized.contains('unavailable') ||
+        normalized.contains('503') ||
+        normalized.contains('deadline') ||
+        normalized.contains('timeout') ||
+        normalized.contains('timed out') ||
+        normalized.contains('internal') ||
+        normalized.contains('500') ||
+        normalized.contains('not found') ||
+        normalized.contains('404') ||
+        normalized.contains('model') && normalized.contains('not supported');
   }
 
   String _friendlyFirebaseAIMessage(String message) {
@@ -360,7 +422,7 @@ CONVERSATION FLOW RULES:
      * Don't just say "wrong" - explain WHY it's incorrect
      * Provide a hint or guide them toward the right thinking
      * Ask a simpler related question to build confidence
-     * If they've struggled (${consecutiveIncorrect} consecutive incorrect), offer more detailed guidance
+     * If they've struggled ($consecutiveIncorrect consecutive incorrect), offer more detailed guidance
 
 4. KEEP THE CONVERSATION NATURAL:
    - Keep the response friendly and natural, but in English only
@@ -387,7 +449,7 @@ Conversation History:
 $historyText
 
 ${correctAnswers >= 3 ? '''
-🎉 ASSESSMENT COMPLETE - PASSED! 
+ASSESSMENT COMPLETE - PASSED
 The student has demonstrated understanding with 3 correct answers.
 Write an encouraging final message that:
 - Celebrates their achievement
@@ -395,7 +457,7 @@ Write an encouraging final message that:
 - Encourages them to keep learning
 Then add: ASSESSMENT_COMPLETE: {"correctAnswers": $correctAnswers, "totalAttempts": $totalAttempts, "passed": true, "summary": "Successfully demonstrated understanding of [key concepts]"}
 ''' : incorrectAnswers >= 3 ? '''
-📚 ASSESSMENT COMPLETE - NEEDS REVIEW
+ASSESSMENT COMPLETE - NEEDS REVIEW
 The student needs more practice with this lesson.
 Write a supportive final message that:
 - Acknowledges their effort
@@ -509,7 +571,7 @@ Respond as Klaro, the friendly AI Assessment assistant.
   }
 
   String getAssessmentGreeting(String lessonTitle) {
-    return "Hi! I'm Klaro, your AI Assessment assistant. 👋\n\nLet's have a conversation about \"$lessonTitle\" to see how well you understand it. Don't worry - this is a learning conversation, not just a test!\n\n📝 Here's how it works:\n• You need 3 correct answers to pass\n• If you're unsure, just ask me for help or hints\n• I'll guide you through the concepts\n• Take your time and think through your answers\n\nReady? Let's start with an easy one: What is the main idea of this lesson? Explain it in your own words. 😊";
+    return "Hi! I'm Klaro, your AI Assessment assistant.\n\nLet's have a conversation about \"$lessonTitle\" to see how well you understand it. You may answer in English or any Filipino dialect you are comfortable with, and I will reply in English.\n\nHere's how it works:\n- You need 3 correct answers to pass.\n- If you're unsure, ask me for help or hints.\n- I'll guide you through the concepts.\n- Take your time and think through your answers.\n\nReady? Let's start with an easy one: What is the main idea of this lesson? Explain it in your own words.";
   }
 
   Future<Map<String, dynamic>> conductConversation(
@@ -534,6 +596,10 @@ Rules:
 - Be encouraging, supportive, and use simple language.
 - Relate concepts to everyday Filipino life when possible.
 - Keep responses short (2-3 sentences max).
+- Understand student messages written in English, Tagalog, Cebuano, Ilocano, Hiligaynon, Waray, Kapampangan, Bikol, Pangasinan, or mixed dialects.
+- Always reply in English only, even when the student writes in another dialect.
+- Do not use Markdown formatting. No headings, tables, bold, italics, code blocks, or markdown links.
+- Use short plain-text paragraphs. If you need a list, use simple dash bullets only.
 ${isNearEnd ? '''
 - This is exchange $exchangeCount. It is time to wrap up.
 - After your response, provide a final assessment.
@@ -589,7 +655,7 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
   }
 
   String getInitialGreeting(String lessonTitle) {
-    return "Hi there! I'm Klaro, your AI tutor. Let's talk about \"$lessonTitle\" to make sure you really understand it. Ready? Tell me the main idea of this lesson in your own words.";
+    return "Hi there! I'm Klaro, your AI tutor. Let's talk about \"$lessonTitle\" to make sure you really understand it. You may answer in English or any Filipino dialect you are comfortable with, and I will reply in English. Ready? Tell me the main idea of this lesson in your own words.";
   }
 
   /// Legacy adapter for older call sites. New translation logic lives in
@@ -605,5 +671,39 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
       debugPrint('Translation failed: $error');
       return text;
     }
+  }
+
+  String _cleanChatMessage(String value) {
+    return value
+        .replaceAll(RegExp(r'```[\s\S]*?```'), '')
+        .replaceAllMapped(
+          RegExp(r'\[([^\]]+)\]\([^)]+\)'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAllMapped(
+          RegExp(r'`([^`]+)`'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAll(RegExp(r'^\s{0,3}#{1,6}\s*', multiLine: true), '')
+        .replaceAll(RegExp(r'^\s{0,3}>\s?', multiLine: true), '')
+        .replaceAllMapped(
+          RegExp(r'\*\*([^*]+)\*\*'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAllMapped(
+          RegExp(r'__([^_]+)__'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAllMapped(
+          RegExp(r'\*([^*\n]+)\*'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAllMapped(
+          RegExp(r'_([^_\n]+)_'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAll(RegExp(r'^\s*[-*+]\s+', multiLine: true), '- ')
+        .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+        .trim();
   }
 }

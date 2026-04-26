@@ -11,9 +11,9 @@ import 'package:klaro/utils/constants.dart';
 
 class LessonSuggestionService {
   /// Generate a model instance
-  GenerativeModel _model() {
+  GenerativeModel _model(String modelName) {
     return FirebaseAI.googleAI().generativeModel(
-      model: AppConstants.geminiModel,
+      model: modelName,
       generationConfig: GenerationConfig(
         temperature: 0.3,
         maxOutputTokens: 2048,
@@ -23,21 +23,79 @@ class LessonSuggestionService {
 
   /// Core method: send a prompt and get text back
   Future<String> _generateText(String prompt) async {
-    final model = _model();
+    final modelNames = AppConstants.geminiModelFallbacks;
 
-    try {
-      final response = await model.generateContent([Content.text(prompt)]);
-      final text = response.text;
+    for (var i = 0; i < modelNames.length; i++) {
+      final modelName = modelNames[i];
+      final isLastModel = i == modelNames.length - 1;
+      final model = _model(modelName);
 
-      if (text == null || text.trim().isEmpty) {
-        throw Exception('AI returned an empty response');
+      try {
+        final response = await model.generateContent([Content.text(prompt)]);
+        final text = response.text;
+
+        if (text == null || text.trim().isEmpty) {
+          throw Exception('AI returned an empty response');
+        }
+
+        if (modelName != AppConstants.geminiModel) {
+          debugPrint(
+            'Lesson suggestion fallback succeeded with model: $modelName',
+          );
+        }
+        return text.trim();
+      } on FirebaseAIException catch (error) {
+        debugPrint(
+          'Lesson suggestion AI failed on $modelName: ${error.message}',
+        );
+        if (_shouldTryNextModel(error.message) && !isLastModel) {
+          debugPrint(
+            'Trying lesson suggestion fallback model: ${modelNames[i + 1]}',
+          );
+          continue;
+        }
+        rethrow;
+      } catch (error) {
+        debugPrint('AI generation error on $modelName: $error');
+        rethrow;
       }
-
-      return text.trim();
-    } catch (error) {
-      debugPrint('AI generation error: $error');
-      rethrow;
     }
+
+    throw Exception('All configured Firebase AI models failed.');
+  }
+
+  bool _shouldTryNextModel(String message) {
+    final normalized = message.toLowerCase();
+
+    if (normalized.contains('api_key_invalid') ||
+        normalized.contains('api key') ||
+        normalized.contains('permission_denied') ||
+        normalized.contains('permission denied') ||
+        normalized.contains('service_disabled') ||
+        normalized.contains('firebase ai logic api') ||
+        normalized.contains('vertex ai in firebase api')) {
+      return false;
+    }
+
+    return normalized.contains('quota') ||
+        normalized.contains('rate limit') ||
+        normalized.contains('rate-limit') ||
+        normalized.contains('resource_exhausted') ||
+        normalized.contains('too many requests') ||
+        normalized.contains('429') ||
+        normalized.contains('traffic') ||
+        normalized.contains('overload') ||
+        normalized.contains('overloaded') ||
+        normalized.contains('unavailable') ||
+        normalized.contains('503') ||
+        normalized.contains('deadline') ||
+        normalized.contains('timeout') ||
+        normalized.contains('timed out') ||
+        normalized.contains('internal') ||
+        normalized.contains('500') ||
+        normalized.contains('not found') ||
+        normalized.contains('404') ||
+        normalized.contains('model') && normalized.contains('not supported');
   }
 
   /// Generate lesson suggestions for a student based on their progress
@@ -102,7 +160,7 @@ Keep recommendations practical and culturally appropriate for Filipino students.
 
     try {
       final response = await _generateText(prompt);
-      
+
       // Parse the response
       final recommendations = <String>[];
       final focusAreas = <String>[];
@@ -113,7 +171,7 @@ Keep recommendations practical and culturally appropriate for Filipino students.
 
       for (final line in lines) {
         final trimmed = line.trim();
-        
+
         if (trimmed.startsWith('RECOMMENDATIONS:')) {
           currentSection = 'recommendations';
           continue;
@@ -155,7 +213,8 @@ Keep recommendations practical and culturally appropriate for Filipino students.
       }
 
       if (teachingStrategy.isEmpty) {
-        teachingStrategy = 'Use a combination of visual aids, hands-on activities, and simplified explanations. Encourage peer learning and provide frequent feedback.';
+        teachingStrategy =
+            'Use a combination of visual aids, hands-on activities, and simplified explanations. Encourage peer learning and provide frequent feedback.';
       }
 
       // Determine difficulty level

@@ -214,7 +214,7 @@ Implementation note: `.env` is loaded at startup and is listed as a Flutter asse
 | Local storage | Hive / Hive Flutter |
 | AI | Firebase AI Logic SDK |
 | AI package | `firebase_ai: ^2.3.0` |
-| Gemini model | `gemini-3.1-flash-lite-preview` from `AppConstants.geminiModel` |
+| Gemini models | Ordered fallback list from `AppConstants.geminiModelFallbacks` |
 | State management | Mostly local `StatefulWidget` state and services |
 | Curriculum source | Local Dart seed data in `lib/data/sample_lessons.dart` |
 
@@ -350,7 +350,39 @@ AI error handling:
 - Empty responses are converted to user-facing retry messages.
 - Firebase AI SDK parsing failures are caught.
 - Service-disabled, invalid API key, zero quota, quota exceeded, and permission errors are mapped to clearer app messages.
+- Quota, rate-limit, overloaded traffic, temporary unavailability, timeout, 500/503, 404/not-found, and unsupported-model errors automatically try the next configured Gemini model.
 - Quiz generation and quiz evaluation both have fallback behavior so the student can continue if AI fails.
+
+### Gemini Model Fallbacks
+
+Primary and backup models are defined in `lib/utils/constants.dart`.
+
+Automatic fallback order:
+
+| Order | Model | Role |
+| ---: | --- | --- |
+| 1 | `gemini-3.1-flash-lite-preview` | Primary low-latency model for high-volume app usage. |
+| 2 | `gemini-3-flash-preview` | Fast backup when Flash-Lite has quota or traffic issues. |
+| 3 | `gemini-2.5-flash-lite` | Stable fast backup. |
+| 4 | `gemini-2.5-flash` | Stable quality/latency backup. |
+| 5 | `gemini-2.5-pro` | Last high-capability stable backup. |
+| 6 | `gemini-2.0-flash-lite` | Legacy last-resort fallback while still available. |
+| 7 | `gemini-2.0-flash` | Legacy last-resort fallback while still available. |
+
+Reference list of relevant Firebase AI Logic text models:
+
+```text
+gemini-3.1-pro-preview
+gemini-3-flash-preview
+gemini-3.1-flash-lite-preview
+gemini-2.5-pro
+gemini-2.5-flash
+gemini-2.5-flash-lite
+gemini-2.0-flash
+gemini-2.0-flash-lite
+```
+
+`gemini-3.1-pro-preview` is listed for reference but is not enabled in automatic fallback because it can require a paid plan. Firebase recommends using Remote Config for production model changes, but this MVP keeps the fallback list local for predictable demo behavior.
 
 ## Dialect Support
 

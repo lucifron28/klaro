@@ -121,17 +121,18 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
       if (isComplete) {
         // Assessment complete - AI triggered completion
         _correctAnswers = response['correctAnswers'] ?? _correctAnswers;
-        _incorrectAnswers = response['totalAttempts'] != null 
+        _incorrectAnswers = response['totalAttempts'] != null
             ? (response['totalAttempts'] as int) - _correctAnswers
             : _incorrectAnswers;
-        _totalAttempts = response['totalAttempts'] ?? (_correctAnswers + _incorrectAnswers);
+        _totalAttempts =
+            response['totalAttempts'] ?? (_correctAnswers + _incorrectAnswers);
         _passed = response['passed'] ?? false;
         _summary = response['summary'] ?? 'Assessment completed.';
 
         setState(() => _isAssessmentComplete = true);
 
         // Calculate score (percentage)
-        final score = _totalAttempts > 0 
+        final score = _totalAttempts > 0
             ? ((_correctAnswers / _totalAttempts) * 100).toDouble()
             : 0.0;
 
@@ -149,16 +150,17 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
         );
 
         await _localStorage.saveAIConversation(assessment, userId: _user?.uid);
-        
+
         // Save to Firestore if available and user is loaded
         if (_user != null) {
           try {
-            await _firestoreService.saveAssessmentResult(_user!.uid, assessment);
+            await _firestoreService.saveAssessmentResult(
+                _user!.uid, assessment);
           } catch (e) {
             debugPrint('Failed to save to Firestore: $e');
           }
         }
-        
+
         // Show completion dialog
         _showCompletionDialog();
       } else {
@@ -170,25 +172,28 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
             if (isCorrect) {
               _correctAnswers++;
               // Show brief success feedback
-              _showFeedbackSnackbar('✓ Correct!', KlaroTheme.success);
+              _showFeedbackSnackbar('Correct!', KlaroTheme.success);
             } else {
               _incorrectAnswers++;
               // Show brief feedback
-              _showFeedbackSnackbar('Keep trying! Read the explanation above.', KlaroTheme.warning);
+              _showFeedbackSnackbar('Keep trying! Read the explanation above.',
+                  KlaroTheme.warning);
             }
           });
-          
+
           // Manual check for completion (fallback if AI doesn't trigger it)
           if (_correctAnswers >= 3 || _incorrectAnswers >= 3) {
             _completeAssessment();
           }
         } else {
           // It was a question - show helpful indicator
-          _showFeedbackSnackbar('💡 Here\'s some help for you!', KlaroTheme.primaryBlue);
+          _showFeedbackSnackbar(
+              'Here is some help for you!', KlaroTheme.primaryBlue);
         }
       }
     } catch (e) {
-      _addMessage('ai', 'Sorry, I had trouble understanding. Can you try again? Or ask me for help if you need it!');
+      _addMessage('ai',
+          'Sorry, I had trouble understanding. Can you try again? Or ask me for help if you need it!');
     } finally {
       setState(() => _isAITyping = false);
     }
@@ -209,17 +214,17 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
   Future<void> _completeAssessment() async {
     // Prevent multiple calls
     if (_isAssessmentComplete) return;
-    
+
     setState(() => _isAssessmentComplete = true);
-    
+
     _totalAttempts = _correctAnswers + _incorrectAnswers;
     _passed = _correctAnswers >= 3;
-    _summary = _passed 
+    _summary = _passed
         ? 'Successfully demonstrated understanding of key concepts'
         : 'Needs to review: ${widget.lesson.title}';
 
     // Calculate score (percentage)
-    final score = _totalAttempts > 0 
+    final score = _totalAttempts > 0
         ? ((_correctAnswers / _totalAttempts) * 100).toDouble()
         : 0.0;
 
@@ -237,7 +242,7 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
     );
 
     await _localStorage.saveAIConversation(assessment, userId: _user?.uid);
-    
+
     // Save to Firestore if available and user is loaded
     if (_user != null) {
       try {
@@ -273,7 +278,7 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                 width: double.infinity,
                 padding: EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: _passed 
+                  color: _passed
                       ? KlaroTheme.success.withOpacity(0.1)
                       : KlaroTheme.warning.withOpacity(0.1),
                   borderRadius: BorderRadius.only(
@@ -287,7 +292,8 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                       width: 80,
                       height: 80,
                       decoration: BoxDecoration(
-                        color: _passed ? KlaroTheme.success : KlaroTheme.warning,
+                        color:
+                            _passed ? KlaroTheme.success : KlaroTheme.warning,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -302,14 +308,15 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
-                        color: _passed ? KlaroTheme.success : KlaroTheme.warning,
+                        color:
+                            _passed ? KlaroTheme.success : KlaroTheme.warning,
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
-              
+
               // Content
               Padding(
                 padding: EdgeInsets.all(24),
@@ -317,7 +324,8 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                   children: [
                     // Score display
                     Container(
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(12),
@@ -339,7 +347,7 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                       ),
                     ),
                     SizedBox(height: 16),
-                    
+
                     // Message
                     Text(
                       _passed
@@ -353,7 +361,7 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                       textAlign: TextAlign.center,
                     ),
                     SizedBox(height: 24),
-                    
+
                     // Action buttons
                     if (_passed) ...[
                       SizedBox(
@@ -512,9 +520,11 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildScoreBadge('Correct', _correctAnswers, KlaroTheme.success),
+                  _buildScoreBadge(
+                      'Correct', _correctAnswers, KlaroTheme.success),
                   SizedBox(width: 16),
-                  _buildScoreBadge('Incorrect', _incorrectAnswers, KlaroTheme.error),
+                  _buildScoreBadge(
+                      'Incorrect', _incorrectAnswers, KlaroTheme.error),
                 ],
               ),
             ),
@@ -567,17 +577,17 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                       child: Row(
                         children: [
                           _buildQuickActionButton(
-                            'Give me a hint 💡',
+                            'Give me a hint',
                             'Can you give me a hint about this?',
                           ),
                           SizedBox(width: 8),
                           _buildQuickActionButton(
-                            'Explain more 📖',
+                            'Explain more',
                             'Can you explain this concept in simpler terms?',
                           ),
                           SizedBox(width: 8),
                           _buildQuickActionButton(
-                            'Example please 🌟',
+                            'Example please',
                             'Can you give me an example?',
                           ),
                         ],
@@ -593,8 +603,9 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.lightbulb_outline, 
-                          size: 16, 
+                        Icon(
+                          Icons.lightbulb_outline,
+                          size: 16,
                           color: KlaroTheme.primaryBlue,
                         ),
                         SizedBox(width: 8),
@@ -627,11 +638,13 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                             ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide(color: Colors.grey.shade300),
+                              borderSide:
+                                  BorderSide(color: Colors.grey.shade300),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(24),
-                              borderSide: BorderSide(color: Colors.grey.shade300),
+                              borderSide:
+                                  BorderSide(color: Colors.grey.shade300),
                             ),
                           ),
                           onSubmitted: (_) => _sendMessage(),
@@ -645,7 +658,8 @@ class _AIAssessmentScreenState extends State<AIAssessmentScreen> {
                         ),
                         child: IconButton(
                           onPressed: _isAITyping ? null : _sendMessage,
-                          icon: Icon(Icons.send_rounded, color: Colors.white, size: 20),
+                          icon: Icon(Icons.send_rounded,
+                              color: Colors.white, size: 20),
                         ),
                       ),
                     ],

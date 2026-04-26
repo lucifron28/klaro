@@ -209,7 +209,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                       TranslatableText(
                         'Kumusta',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: KlaroTheme.textDark,
                         ),
@@ -217,7 +217,7 @@ class _TeacherDashboardScreenState extends State<TeacherDashboardScreen> {
                       Text(
                         ', ${widget.user.name}!',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: KlaroTheme.textDark,
                         ),

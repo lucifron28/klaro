@@ -117,7 +117,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                             'Kumusta',
                             languageCode: _currentLanguageCode,
                             style: TextStyle(
-                              fontSize: 23,
+                              fontSize: 20,
                               fontWeight: FontWeight.w800,
                               color: KlaroTheme.textDark,
                             ),
@@ -125,7 +125,7 @@ class _StudentHomeScreenState extends State<StudentHomeScreen> {
                           Text(
                             ', ${widget.user.name}!',
                             style: TextStyle(
-                              fontSize: 23,
+                              fontSize: 20,
                               fontWeight: FontWeight.w800,
                               color: KlaroTheme.textDark,
                             ),

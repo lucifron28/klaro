@@ -10,7 +10,7 @@ Built for InnOlympics 2026, Track A: Pangarap sa Pagkatuto.
 | --- | --- |
 | GitHub repository | [https://github.com/lucifron28/klaro](https://github.com/lucifron28/klaro) |
 | Release APK | [`release/klaro-v1.0.0-release.apk`](release/klaro-v1.0.0-release.apk) |
-| Release APK SHA-256 | `7DCC1D0ED046A461E79C4D4F6643D2DF89710E2B418EDD5E37AB1E2EA8B58766` |
+| Release APK SHA-256 | `9B9447D7E8E1435315BE605AD2BB584073D3D63BFC10158AA78673AAEEFEFA61` |
 | Built APK output | `build/app/outputs/flutter-apk/app-release.apk` |
 | Android package id | `com.example.klaro` |
 
@@ -492,7 +492,8 @@ Firestore is treated as optional in some flows. When unavailable, the app logs t
 | `lib/screens/teacher_student_detail_screen.dart` | Student progress details and suggestions. |
 | `lib/screens/teacher_modules_screen.dart` | Teacher module list. |
 | `lib/screens/teacher_module_upload_screen.dart` | Create/edit teacher modules. |
-| `assets/images/Klaro-logo.png` | App logo. |
+| `assets/images/klaro-icon.png` | App launcher icon (homescreen). |
+| `assets/images/Klaro-logo.png` | In-app logo asset. |
 | `scripts/add_demo_student_to_teacher.dart` | One-off helper script for adding `demo-student` to `demo-teacher` in Firestore. |
 
 ## Models

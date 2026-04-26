@@ -336,6 +336,13 @@ YOUR TEACHING PHILOSOPHY:
 - Make learning feel like a natural conversation, not an interrogation
 
 CONVERSATION FLOW RULES:
+0. LANGUAGE AND FORMAT:
+   - Understand student messages written in English, Tagalog, Cebuano, Ilocano, Hiligaynon, Waray, Kapampangan, Bikol, Pangasinan, or mixed dialects.
+   - Always reply in English only, even when the student writes in another dialect.
+   - Do not translate your reply into the student's dialect.
+   - Do not use Markdown formatting. No headings, tables, bold, italics, code blocks, or markdown links.
+   - Use short plain-text paragraphs. If you need a list, use simple dash bullets only.
+
 1. DISTINGUISH between questions and answer attempts:
    - Questions: "What do you mean?", "Can you explain?", "I don't understand", "Help me"
    - Answer attempts: Direct responses to your questions, explanations, definitions
@@ -356,7 +363,7 @@ CONVERSATION FLOW RULES:
      * If they've struggled (${consecutiveIncorrect} consecutive incorrect), offer more detailed guidance
 
 4. KEEP THE CONVERSATION NATURAL:
-   - Use conversational Filipino-English mix when appropriate
+   - Keep the response friendly and natural, but in English only
    - Ask "Why do you think that?" or "Can you explain more?" to deepen understanding
    - Reference their previous correct answers to build on their knowledge
    - Make connections between concepts
@@ -429,7 +436,7 @@ Respond as Klaro, the friendly AI Assessment assistant.
       // Check for assessment completion
       if (text.contains('ASSESSMENT_COMPLETE:')) {
         final parts = text.split('ASSESSMENT_COMPLETE:');
-        final message = parts[0].trim();
+        final message = _cleanChatMessage(parts[0]);
         final jsonStr = parts[1].trim();
         final parsed = Helpers.tryParseJson(jsonStr);
 
@@ -446,7 +453,7 @@ Respond as Klaro, the friendly AI Assessment assistant.
       // Check for evaluation
       if (text.contains('EVALUATION:')) {
         final parts = text.split('EVALUATION:');
-        final message = parts[0].trim();
+        final message = _cleanChatMessage(parts[0]);
         final jsonStr = parts[1].trim();
         final parsed = Helpers.tryParseJson(jsonStr);
 
@@ -463,7 +470,7 @@ Respond as Klaro, the friendly AI Assessment assistant.
 
       // Fallback: treat as question/clarification
       return {
-        'message': text.trim(),
+        'message': _cleanChatMessage(text),
         'isComplete': false,
         'isQuestion': true,
       };
@@ -556,7 +563,7 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
 
       if (text.contains('ASSESSMENT_JSON:')) {
         final parts = text.split('ASSESSMENT_JSON:');
-        final message = parts[0].trim();
+        final message = _cleanChatMessage(parts[0]);
         final jsonStr = parts[1].trim();
         final parsed = Helpers.tryParseJson(jsonStr);
 
@@ -569,7 +576,7 @@ Respond as the AI Tutor. Remember: be encouraging and ask questions.
       }
 
       return {
-        'message': text.trim(),
+        'message': _cleanChatMessage(text),
         'isComplete': false,
       };
     } catch (error) {

@@ -20,6 +20,8 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final displayMessage = isStudent ? message : _cleanMarkdown(message);
+
     return Padding(
       padding: EdgeInsets.only(
         left: isStudent ? 48 : 0,
@@ -80,7 +82,7 @@ class MessageBubble extends StatelessWidget {
               child: isLoading
                   ? _buildLoadingIndicator()
                   : Text(
-                      message,
+                      displayMessage,
                       style: TextStyle(
                         fontSize: 15,
                         height: 1.5,
@@ -135,5 +137,24 @@ class MessageBubble extends StatelessWidget {
         );
       },
     );
+  }
+
+  String _cleanMarkdown(String value) {
+    return value
+        .replaceAll(RegExp(r'```[\s\S]*?```'), '')
+        .replaceAllMapped(
+          RegExp(r'\[([^\]]+)\]\([^)]+\)'),
+          (match) => match.group(1) ?? '',
+        )
+        .replaceAll(RegExp(r'`([^`]+)`'), r'$1')
+        .replaceAll(RegExp(r'^\s{0,3}#{1,6}\s*', multiLine: true), '')
+        .replaceAll(RegExp(r'^\s{0,3}>\s?', multiLine: true), '')
+        .replaceAll(RegExp(r'\*\*([^*]+)\*\*'), r'$1')
+        .replaceAll(RegExp(r'__([^_]+)__'), r'$1')
+        .replaceAll(RegExp(r'\*([^*\n]+)\*'), r'$1')
+        .replaceAll(RegExp(r'_([^_\n]+)_'), r'$1')
+        .replaceAll(RegExp(r'^\s*[-*+]\s+', multiLine: true), '- ')
+        .replaceAll(RegExp(r'\n{3,}'), '\n\n')
+        .trim();
   }
 }
